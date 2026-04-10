@@ -650,12 +650,13 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
   const [dictResult,   setDictResult]   = useState<LookupResult | null>(null);
   const [relatedVocab, setRelatedVocab] = useState<VocabItem[]>([]);
   const [loading,      setLoading]      = useState(false);
+  const [errMsg,       setErrMsg]       = useState("");
   const [selOpt,       setSelOpt]       = useState(0);
   const [expandedVocab, setExpandedVocab] = useState<number>(-1);
 
   useEffect(() => {
     const w = input.trim();
-    if (!w) { setDictResult(null); setRelatedVocab([]); setLoading(false); return; }
+    if (!w) { setDictResult(null); setRelatedVocab([]); setLoading(false); setErrMsg(""); return; }
 
     // 1. Instant: find related movie vocab (local, zero latency)
     setRelatedVocab(findRelatedVocab(w, vocab));
@@ -663,18 +664,31 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
     // 2. Debounced: always call API for dictionary definition (min 2 chars)
     if (w.length < 2) { setLoading(false); return; }
     setLoading(true);
+    setErrMsg("");
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(movieTitle)}`);
-        const d = await res.json();
-        if (!cancelled && !d.error) {
-          const opts = Array.isArray(d.options) && d.options.length > 0 ? d.options : [{ translation: d.translation ?? w, brief: d.brief ?? "" }];
-          setDictResult({ word: d.word, phonetic: d.phonetic, translation: opts[0]?.translation ?? "", brief: opts[0]?.brief ?? "", options: opts, fromVocab: false });
-          setSelOpt(0);
+        if (!res.ok) {
+          if (!cancelled) setErrMsg(`查询失败 (${res.status})`);
+          return;
         }
-      } catch { /* ignore */ }
-      finally { if (!cancelled) setLoading(false); }
+        const d = await res.json();
+        if (!cancelled) {
+          if (d.error) {
+            setErrMsg(d.error);
+          } else {
+            const opts = Array.isArray(d.options) && d.options.length > 0 ? d.options : [{ translation: d.translation ?? w, brief: d.brief ?? "" }];
+            setDictResult({ word: d.word ?? w, phonetic: d.phonetic, translation: opts[0]?.translation ?? "", brief: opts[0]?.brief ?? "", options: opts, fromVocab: false });
+            setSelOpt(0);
+          }
+        }
+      } catch (e) {
+        console.error("[word-lookup]", e);
+        if (!cancelled) setErrMsg("网络错误，请重试");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }, 600);
     return () => { cancelled = true; clearTimeout(timer); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -699,6 +713,13 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
           </div>
         )}
       </div>
+
+      {/* ── Error ── */}
+      {errMsg && !loading && (
+        <div style={{ borderTop: "1px solid var(--border)", padding: "10px 14px", color: "#e55", fontSize: "0.78rem" }}>
+          {errMsg}
+        </div>
+      )}
 
       {/* ── Dictionary Result (always from API) ── */}
       {loading && !dictResult && (

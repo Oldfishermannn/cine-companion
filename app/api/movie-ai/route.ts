@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
         messages: [
           {
             role: "user",
-            content: `你是帮助北美华人观众看英语电影的助手。
+            content: `你是帮助中文语境观众看英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
 简介：${plot}
