@@ -268,14 +268,12 @@ export function PreMovie({
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
           <SectionLabel>
             你知道吗
+            <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
             {factsFromCache && (
               <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
             )}
           </SectionLabel>
         </div>
-        <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          零剧透
-        </p>
 
         {factsLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
