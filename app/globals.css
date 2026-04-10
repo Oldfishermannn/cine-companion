@@ -148,8 +148,9 @@ body::before {
   gap: 4px;
 }
 @media (max-width: 480px) {
-  .ratings-row { flex-wrap: wrap; gap: 8px; justify-content: center; }
-  .ratings-row > * { min-width: 44%; }
+  .ratings-row { flex-wrap: wrap; gap: 16px 8px; justify-content: center; }
+  .ratings-row > .rating-item { min-width: 44%; }
+  .ratings-divider { display: none; }
 }
 
 /* Page header */

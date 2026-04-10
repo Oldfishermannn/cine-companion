@@ -978,9 +978,11 @@ function MoviePageContent() {
                             { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: "豆瓣", href: liveRatings?.douban?.url ?? undefined },
                           ].filter(r => r.value).map((r, idx, arr) => (
                             <React.Fragment key={r.label}>
-                              <RatingBlock value={r.value} label={r.label} href={r.href} />
+                              <div className="rating-item" style={{ display: "flex", justifyContent: "center" }}>
+                                <RatingBlock value={r.value} label={r.label} href={r.href} />
+                              </div>
                               {idx < arr.length - 1 && (
-                                <div style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
+                                <div className="ratings-divider" style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
                               )}
                             </React.Fragment>
                           ))}
