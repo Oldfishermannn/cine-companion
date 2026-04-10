@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
-import { RatingBlock, VocabCard, FactCard, SectionLabel, ErrorBanner } from "./shared";
+import { RatingBlock, VocabCard, SectionLabel, ErrorBanner } from "./shared";
 
 interface CastMember {
   name: string;
@@ -38,6 +38,12 @@ interface PreMovieProps {
   setIncludeTrailers: (v: boolean | ((prev: boolean) => boolean)) => void;
 }
 
+/* ── Fact category icons & colors ── */
+const FACT_ICON: Record<string, string> = {
+  "制作花絮": "🎥", "幕后秘闻": "🔍", "选角故事": "🌟",
+  "原著改编": "📖", "技术亮点": "⚡", "导演风格": "🎬",
+};
+
 export function PreMovie({
   data, amcSlug, castMembers, trailerUrl, trailerType, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
@@ -65,7 +71,7 @@ export function PreMovie({
 
   return (
     <>
-      {/* Ratings */}
+      {/* ── Ratings ── */}
       <section>
         <SectionLabel>评分</SectionLabel>
         <div className="ratings-row" style={{
@@ -100,13 +106,13 @@ export function PreMovie({
           )}
         </div>
         {!ratingsLoading && allEmpty && (
-          <p style={{ color: "var(--faint)", fontSize: "0.75rem", textAlign: "center", marginTop: 8, letterSpacing: "0.03em" }}>
+          <p style={{ color: "var(--muted)", fontSize: "0.78rem", textAlign: "center", marginTop: 10, letterSpacing: "0.03em" }}>
             新片上映不久，评分数据待更新
           </p>
         )}
       </section>
 
-      {/* Trailer */}
+      {/* ── Trailer ── */}
       <section>
         <SectionLabel>预告片</SectionLabel>
         {trailerUrl ? (
@@ -131,12 +137,12 @@ export function PreMovie({
         )}
       </section>
 
-      {/* Cast — poster-style cards with scroll fade */}
+      {/* ── Cast ── */}
       {castMembers.length > 0 && (
         <CastSection castMembers={castMembers} />
       )}
 
-      {/* Background */}
+      {/* ── Background ── */}
       <section>
         <SectionLabel>
           观影前背景
@@ -148,13 +154,24 @@ export function PreMovie({
             {[100, 85, 70, 50].map((w, i) => (
               <div key={i} className="skeleton" style={{ height: 12, borderRadius: 4, width: `${w}%` }} />
             ))}
-            <p style={{ color: "var(--faint)", fontSize: "0.65rem", letterSpacing: "0.12em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 生成中…</p>
+            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 生成中…</p>
           </div>
         ) : aiError ? (
           <ErrorBanner message="AI 内容生成失败，请刷新页面重试" />
         ) : aiContent ? (
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Summary lead */}
+            {aiContent.background.summary && (
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "0.92rem",
+                color: "var(--parchment)", lineHeight: 1.8, margin: 0,
+                paddingBottom: 14, borderBottom: "1px solid var(--border)",
+              }}>
+                {aiContent.background.summary}
+              </p>
+            )}
+            {/* Context points */}
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
               {aiContent.background.context.filter((point, i) => {
                 if (i !== 0) return true;
                 const summary = aiContent.background.summary || "";
@@ -162,44 +179,62 @@ export function PreMovie({
                 const overlap = point.slice(0, 30);
                 return !summary.includes(overlap.slice(0, 20));
               }).map((point, i) => (
-                <li key={i} style={{ display: "flex", gap: 10, color: "#A09AB0", fontSize: "0.83rem", lineHeight: 1.7, fontFamily: "var(--font-body)" }}>
-                  <span style={{ color: "var(--gold-dim)", flexShrink: 0, marginTop: 2 }}>▸</span>
-                  <span>{point}</span>
+                <li key={i} style={{ display: "flex", gap: 12, fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
+                  <span style={{ color: "var(--gold)", flexShrink: 0, marginTop: 3, fontSize: "0.6rem" }}>●</span>
+                  <span style={{ color: "#C8C4D4" }}>{point}</span>
                 </li>
               ))}
             </ul>
+            {/* Director note */}
             {aiContent.background.director_note && (
-              <p style={{
+              <div style={{
                 borderTop: "1px solid var(--border)", paddingTop: 14,
-                color: "var(--muted)", fontSize: "0.85rem",
-                lineHeight: 1.8,
-                fontFamily: "var(--font-body)",
+                display: "flex", gap: 10, alignItems: "flex-start",
               }}>
-                🎬 {aiContent.background.director_note}
-              </p>
+                <span style={{ fontSize: "0.85rem", flexShrink: 0, marginTop: 2 }}>🎬</span>
+                <p style={{
+                  color: "#B8B4C4", fontSize: "0.88rem",
+                  lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0,
+                }}>
+                  {aiContent.background.director_note}
+                </p>
+              </div>
             )}
+            {/* Spoiler unlock */}
             {!spoilerUnlocked ? (
               <button
                 onClick={() => setSpoilerUnlocked(true)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--faint)", fontSize: "0.8rem", textDecoration: "underline", textUnderlineOffset: 3, letterSpacing: "0.02em", fontFamily: "var(--font-body)", padding: 0, alignSelf: "flex-start" }}
+                style={{
+                  background: "rgba(217,119,6,0.06)", border: "1px solid rgba(217,119,6,0.2)",
+                  borderRadius: 8, cursor: "pointer", color: "#D97706",
+                  fontSize: "0.8rem", letterSpacing: "0.02em",
+                  fontFamily: "var(--font-body)", padding: "8px 14px",
+                  alignSelf: "flex-start", transition: "background 0.2s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(217,119,6,0.12)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(217,119,6,0.06)"; }}
               >
-                解锁轻剧透（第一幕提示）
+                🔓 解锁轻剧透（第一幕提示）
               </button>
             ) : (
-              <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14 }}>
-                <p style={{ color: "#D97706", fontSize: "0.72rem", letterSpacing: "0.06em", marginBottom: 10, fontFamily: "var(--font-body)" }}>⚠ 含轻微剧透</p>
+              <div style={{
+                borderTop: "1px solid var(--border)", paddingTop: 14,
+                background: "rgba(217,119,6,0.04)", borderRadius: 8, padding: 14,
+                marginTop: -4,
+              }}>
+                <p style={{ color: "#F59E0B", fontSize: "0.72rem", letterSpacing: "0.06em", marginBottom: 10, fontFamily: "var(--font-body)", fontWeight: 500 }}>⚠ 含轻微剧透</p>
                 {funFacts?.first_act_hint ? (
-                  <p style={{ color: "var(--muted)", fontSize: "0.83rem", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
+                  <p style={{ color: "#C8C4D4", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0 }}>
                     {funFacts.first_act_hint}
                   </p>
                 ) : factsLoading ? (
                   <div className="skeleton" style={{ height: 48, borderRadius: 6 }} />
                 ) : aiContent.background.wikipedia ? (
-                  <p style={{ color: "var(--muted)", fontSize: "0.8rem", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
+                  <p style={{ color: "#B8B4C4", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0 }}>
                     {aiContent.background.wikipedia.slice(0, 400)}…
                   </p>
                 ) : (
-                  <p style={{ color: "var(--faint)", fontSize: "0.78rem", fontFamily: "var(--font-body)" }}>暂无提示信息</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", margin: 0 }}>暂无提示信息</p>
                 )}
               </div>
             )}
@@ -207,22 +242,20 @@ export function PreMovie({
         ) : null}
       </section>
 
-      {/* Fun Facts — right after background */}
+      {/* ── Fun Facts ── */}
       <section>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
-          <SectionLabel>
-            幕后花絮
-            <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
-            {factsFromCache && (
-              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
-            )}
-          </SectionLabel>
-        </div>
+        <SectionLabel>
+          幕后花絮
+          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
+          {factsFromCache && (
+            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
+          )}
+        </SectionLabel>
 
         {factsLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
+              <div key={i} className="skeleton" style={{ height: 56, borderRadius: 12 }} />
             ))}
           </div>
         ) : factsError ? (
@@ -232,19 +265,17 @@ export function PreMovie({
         ) : null}
       </section>
 
-      {/* Vocabulary */}
+      {/* ── Vocabulary ── */}
       <section>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 6 }}>
-          <SectionLabel>
-            关键词汇
-            {aiFromCache && (
-              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>
-                ⚡ 已缓存
-              </span>
-            )}
-          </SectionLabel>
-        </div>
-        <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
+        <SectionLabel>
+          关键词汇
+          {aiFromCache && (
+            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>
+              ⚡ 已缓存
+            </span>
+          )}
+        </SectionLabel>
+        <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-body)" }}>
           点击展开解释 · ▶ 播放发音
         </p>
 
@@ -277,10 +308,19 @@ export function PreMovie({
                 const s = CATEGORY_STYLES[cat] || { dot: "var(--muted)", text: "var(--muted)" };
                 return (
                   <div key={cat} style={{ marginBottom: 20 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
-                      <span style={{ width: 7, height: 7, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
-                      <span style={{ fontSize: "0.72rem", color: s.text, letterSpacing: "0.08em", fontFamily: "var(--font-body)" }}>
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 8, marginBottom: 10,
+                      paddingBottom: 6, borderBottom: `1px solid ${s.dot}22`,
+                    }}>
+                      <span style={{
+                        width: 8, height: 8, borderRadius: "50%", background: s.dot, flexShrink: 0,
+                        boxShadow: `0 0 6px ${s.dot}44`,
+                      }} />
+                      <span style={{ fontSize: "0.78rem", color: s.text, letterSpacing: "0.06em", fontFamily: "var(--font-body)", fontWeight: 500 }}>
                         {cat}
+                      </span>
+                      <span style={{ fontSize: "0.65rem", color: "var(--faint)", fontFamily: "var(--font-body)" }}>
+                        {groups[cat].length}
                       </span>
                     </div>
                     <div className="vocab-grid">
@@ -297,18 +337,18 @@ export function PreMovie({
         ) : null}
       </section>
 
-      {/* Break Calculator — only show when loading or has data */}
+      {/* ── Break Calculator ── */}
       {(breaksLoading || breaksError || breaksContent) && (
       <section>
         <SectionLabel>厕所时间</SectionLabel>
-        <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
+        <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
           AI 分析叙事节奏，推荐不错过关键剧情的起身时机
         </p>
 
         {breaksContent && (
         <div style={{ marginBottom: 16, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px" }}>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", flexShrink: 0 }}>🎬 场次时间</span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--parchment)", flexShrink: 0 }}>🎬 场次时间</span>
             <input
               type="time"
               value={movieStartTime}
@@ -323,7 +363,7 @@ export function PreMovie({
             <div style={{ width: 32, height: 18, borderRadius: 9, background: includeTrailers ? "var(--gold)" : "var(--faint)", position: "relative", flexShrink: 0, transition: "background 0.2s" }}>
               <div style={{ position: "absolute", top: 2, left: includeTrailers ? 16 : 2, width: 14, height: 14, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
             </div>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: includeTrailers ? "var(--muted)" : "var(--faint)" }}>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: includeTrailers ? "var(--parchment)" : "var(--muted)" }}>
               包含预告片时间
             </span>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: includeTrailers ? "var(--gold-dim)" : "var(--faint)", marginLeft: "auto" }}>
@@ -336,7 +376,7 @@ export function PreMovie({
         {breaksLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />)}
-            <p style={{ color: "var(--faint)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 分析中…</p>
+            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 分析中…</p>
           </div>
         ) : breaksError ? (
           <ErrorBanner message="厕所时间分析失败，请刷新页面重试" />
@@ -359,29 +399,54 @@ export function PreMovie({
                 timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
               }
               return (
-                <div key={i} style={{ background: "var(--bg-card)", border: `1px solid ${isBest ? "rgba(200,151,58,0.35)" : "var(--border)"}`, borderRadius: 12, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <div style={{ flexShrink: 0, textAlign: "center", minWidth: 56 }}>
+                <div key={i} style={{
+                  background: isBest
+                    ? "linear-gradient(135deg, rgba(200,151,58,0.08) 0%, var(--bg-card) 100%)"
+                    : "var(--bg-card)",
+                  border: `1px solid ${isBest ? "rgba(200,151,58,0.35)" : "var(--border)"}`,
+                  borderRadius: 12, padding: "16px 18px",
+                  display: "flex", gap: 16, alignItems: "flex-start",
+                  boxShadow: isBest ? "0 4px 16px rgba(200,151,58,0.08)" : "none",
+                }}>
+                  <div style={{ flexShrink: 0, textAlign: "center", minWidth: 60 }}>
                     {timeRange ? (
-                      <div style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", fontWeight: 600, color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1.4, whiteSpace: "nowrap" }}>
+                      <div style={{
+                        fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 600,
+                        color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1.4, whiteSpace: "nowrap",
+                      }}>
                         {timeRange}
                       </div>
                     ) : (
                       <>
-                        <div style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 500, color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1 }}>
+                        <div style={{
+                          fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 500,
+                          color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1,
+                        }}>
                           {b.minute}
                         </div>
-                        <div style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: 2, fontFamily: "var(--font-body)" }}>分钟</div>
+                        <div style={{ fontSize: "0.68rem", color: "var(--muted)", marginTop: 3, fontFamily: "var(--font-body)" }}>分钟</div>
                       </>
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      {isBest && <span style={{ fontSize: "0.65rem", padding: "1px 7px", borderRadius: 10, background: "rgba(200,151,58,0.15)", color: "var(--gold)", fontFamily: "var(--font-body)", letterSpacing: "0.04em" }}>⭐ 最佳</span>}
-                      <span style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      {isBest && (
+                        <span style={{
+                          fontSize: "0.68rem", padding: "2px 10px", borderRadius: 10,
+                          background: "rgba(200,151,58,0.15)", color: "var(--gold)",
+                          fontFamily: "var(--font-body)", letterSpacing: "0.04em", fontWeight: 600,
+                        }}>
+                          ⭐ 最佳时机
+                        </span>
+                      )}
+                      <span style={{ fontSize: "0.73rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                         {timeRange ? `第 ${b.minute} 分钟 · ` : ""}安全 {b.duration} 分钟 · 风险 {b.miss_risk}
                       </span>
                     </div>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "#A09AB0", lineHeight: 1.6, margin: 0 }}>{b.scene_hint}</p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.88rem",
+                      color: "#C0BACA", lineHeight: 1.7, margin: 0,
+                    }}>{b.scene_hint}</p>
                   </div>
                 </div>
               );
@@ -389,7 +454,7 @@ export function PreMovie({
           </div>
         ) : null}
 
-        {/* AMC link — contextually placed after break times */}
+        {/* AMC link */}
         {amcUrl && (
           <p style={{ textAlign: "center", marginTop: 20, marginBottom: 0 }}>
             <a
@@ -397,7 +462,7 @@ export function PreMovie({
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontFamily: "var(--font-body)", fontSize: "0.75rem", letterSpacing: "0.04em",
+                fontFamily: "var(--font-body)", fontSize: "0.78rem", letterSpacing: "0.04em",
                 color: "var(--muted)", textDecoration: "none",
                 transition: "color 0.15s",
               }}
@@ -414,7 +479,7 @@ export function PreMovie({
   );
 }
 
-// Collapsible fun facts — show 4 by default
+/* ── Collapsible Fun Facts ── */
 function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
   const [expanded, setExpanded] = useState(false);
   const LIMIT = 4;
@@ -422,10 +487,47 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
   const hasMore = facts.length > LIMIT;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      {visible.map((item, i) => (
-        <FactCard key={i} item={item} index={i} />
-      ))}
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {visible.map((item, i) => {
+        const icon = FACT_ICON[item.category] ?? "🎬";
+        return (
+          <div
+            key={i}
+            className="poster-enter"
+            style={{
+              "--r": "0deg",
+              animationDelay: `${i * 40}ms`,
+              background: "var(--bg-card)", border: "1px solid var(--border)",
+              borderRadius: 12, padding: "16px 18px",
+            } as React.CSSProperties}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <span style={{
+                fontSize: "1.1rem", flexShrink: 0, lineHeight: 1.4,
+                width: 32, height: 32, borderRadius: 8,
+                background: "rgba(200,151,58,0.06)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>{icon}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <span style={{
+                  display: "inline-block", fontSize: "0.68rem", padding: "2px 10px",
+                  borderRadius: 20, background: "rgba(200,151,58,0.1)", color: "var(--gold)",
+                  fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginBottom: 6,
+                  fontWeight: 500,
+                }}>
+                  {item.category}
+                </span>
+                <p style={{
+                  fontFamily: "var(--font-body)", fontSize: "0.88rem",
+                  color: "#C8C4D4", letterSpacing: "0.02em", lineHeight: 1.75, margin: 0,
+                }}>
+                  {item.fact}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
       {hasMore && !expanded && (
         <button
           onClick={() => setExpanded(true)}
@@ -446,7 +548,7 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
   );
 }
 
-// Feature 4: Cast section with scroll fade indicator
+/* ── Cast Section ── */
 function CastSection({ castMembers }: { castMembers: CastMember[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showFade, setShowFade] = useState(true);
@@ -486,7 +588,7 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
                 ) : (
                   <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
                     <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
-                    <span style={{ color: "var(--faint)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
+                    <span style={{ color: "var(--muted)", fontSize: "0.6rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
                   </div>
                 )}
                 <div style={{
@@ -513,7 +615,6 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
             </a>
           ))}
         </div>
-        {/* Scroll fade indicator */}
         {showFade && (
           <div style={{
             position: "absolute", top: 0, right: 0, bottom: 8, width: 40,
