@@ -56,7 +56,7 @@ export function HomeClient({ catalog, genres, referenceDate }: {
     catalog.map(() => ({ poster: null, fetched: false }))
   );
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
-  const [sortMode, setSortMode] = useState<SortMode>("newest");
+  const [sortMode, setSortMode] = useState<SortMode>("rating");
   const router = useRouter();
 
   const fetchPoster = useCallback((movie: CatalogMovie, i: number) => {
