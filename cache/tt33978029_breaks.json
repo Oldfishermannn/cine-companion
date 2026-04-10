@@ -1,0 +1,1 @@
+{"breaks":[{"minute":30,"duration":4,"scene_hint":"第一幕收尾，角色完成初始目标后短暂喘息，氛围相对平静，像是暴风雨前的宁静","miss_risk":"低"},{"minute":58,"duration":5,"scene_hint":"第二幕中段过渡区，场景切换至新地点，节奏放缓，角色之间有对话铺垫","miss_risk":"低"},{"minute":78,"duration":3,"scene_hint":"第二幕末段，追逐暂时中止，有简短的策略商议场景，紧张感短暂释放","miss_risk":"中"}],"best_break":58,"runtime_min":108}

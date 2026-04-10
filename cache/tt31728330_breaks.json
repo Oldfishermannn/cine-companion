@@ -1,0 +1,1 @@
+{"breaks":[{"minute":32,"duration":4,"scene_hint":"第一幕收尾，女主角刚适应新环境，节奏放缓，有一段日常生活/探索场景作为过渡","miss_risk":"低"},{"minute":65,"duration":5,"scene_hint":"第二幕中段，两个悬疑段落之间的间隙，气氛相对平稳，角色处于短暂的喘息与反思状态","miss_risk":"低"},{"minute":88,"duration":3,"scene_hint":"高潮前的铺垫阶段，节奏尚未完全拉满，场景以对话或环境渲染为主","miss_risk":"中"}],"best_break":65,"runtime_min":120}

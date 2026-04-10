@@ -1,0 +1,1 @@
+{"breaks":[{"minute":28,"duration":4,"scene_hint":"第一幕收尾，主角刚完成初步探索，进入一段相对平静的过场/环境展示镜头","miss_risk":"低"},{"minute":54,"duration":5,"scene_hint":"第二幕中段，两个动作段落之间的喘息节点，角色有短暂的对话交流或世界切换过渡","miss_risk":"低"},{"minute":72,"duration":3,"scene_hint":"第三幕前的短暂缓冲，情绪稍有低落、氛围沉淀的慢节奏段落","miss_risk":"中"}],"best_break":54,"runtime_min":98}
