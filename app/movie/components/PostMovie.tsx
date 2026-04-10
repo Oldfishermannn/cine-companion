@@ -266,7 +266,7 @@ export function PostMovie({
               {/* ── Spoiler Fun Facts ── */}
               {postContent.spoiler_fun_facts.length > 0 && (
                 <section>
-                  <SectionLabel>你知道吗（含剧透）</SectionLabel>
+                  <SectionLabel>幕后揭秘</SectionLabel>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {postContent.spoiler_fun_facts.map((f, i) => (
                       <FactCard key={i} item={{ fact: f.fact, category: f.category as FunFactItem["category"] }} index={i} />

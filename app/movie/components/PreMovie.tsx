@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, VocabItem } from "../types";
+import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, FactCard, SectionLabel, ErrorBanner } from "./shared";
 
@@ -228,11 +228,7 @@ export function PreMovie({
         ) : factsError ? (
           <ErrorBanner message="花絮加载失败，请刷新页面重试" />
         ) : funFacts ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {funFacts.fun_facts.map((item, i) => (
-              <FactCard key={i} item={item} index={i} />
-            ))}
-          </div>
+          <CollapsibleFacts facts={funFacts.fun_facts} />
         ) : null}
       </section>
 
@@ -415,6 +411,38 @@ export function PreMovie({
       </section>
       )}
     </>
+  );
+}
+
+// Collapsible fun facts — show 4 by default
+function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const LIMIT = 4;
+  const visible = expanded ? facts : facts.slice(0, LIMIT);
+  const hasMore = facts.length > LIMIT;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {visible.map((item, i) => (
+        <FactCard key={i} item={item} index={i} />
+      ))}
+      {hasMore && !expanded && (
+        <button
+          onClick={() => setExpanded(true)}
+          style={{
+            background: "none", border: "1px solid var(--border)",
+            borderRadius: 10, padding: "10px 0", cursor: "pointer",
+            color: "var(--muted)", fontSize: "0.78rem",
+            fontFamily: "var(--font-body)", letterSpacing: "0.04em",
+            transition: "border-color 0.2s, color 0.2s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(200,151,58,0.25)"; e.currentTarget.style.color = "var(--parchment)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--muted)"; }}
+        >
+          展开更多（还有 {facts.length - LIMIT} 条）
+        </button>
+      )}
+    </div>
   );
 }
 
