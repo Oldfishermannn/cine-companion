@@ -139,20 +139,29 @@ export function HomeClient({ catalog, genres }: {
           ))}
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: "0.65rem", color: "var(--faint)", letterSpacing: "0.06em", fontFamily: "var(--font-body)" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 6, marginBottom: 4 }}>
+          <span style={{ fontSize: "0.65rem", color: "var(--faint)", letterSpacing: "0.06em", fontFamily: "var(--font-body)", marginRight: 4 }}>
             {filterCount} 部
           </span>
-          <button
-            onClick={() => setSortMode(s => s === "newest" ? "rating" : s === "rating" ? "oldest" : "newest")}
-            style={{
-              padding: "4px 12px", borderRadius: 6, fontSize: "0.68rem", fontFamily: "var(--font-body)",
-              border: "1px solid var(--border)", background: "transparent", color: "var(--muted)",
-              cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
-            }}
-          >
-            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "评分最高 ★" : "最早上映 ↑"}
-          </button>
+          {([
+            { mode: "rating" as SortMode, label: "评分最高 ★" },
+            { mode: "newest" as SortMode, label: "最新上映 ↓" },
+            { mode: "oldest" as SortMode, label: "最早上映 ↑" },
+          ]).map(({ mode, label }) => (
+            <button
+              key={mode}
+              onClick={() => setSortMode(mode)}
+              style={{
+                padding: "4px 12px", borderRadius: 6, fontSize: "0.68rem", fontFamily: "var(--font-body)",
+                border: `1px solid ${sortMode === mode ? "rgba(200,151,58,0.5)" : "var(--border)"}`,
+                background: sortMode === mode ? "rgba(200,151,58,0.12)" : "transparent",
+                color: sortMode === mode ? "var(--gold)" : "var(--muted)",
+                cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
+              }}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -116,11 +116,12 @@ export function FactCard({ item, index }: { item: FunFactItem; index: number }) 
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
         <span style={{ fontSize: "1rem", flexShrink: 0, lineHeight: 1.4 }}>{icon}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: "inline-block", fontSize: "0.65rem", padding: "1px 7px", borderRadius: 20, background: "rgba(200,151,58,0.08)", color: "var(--gold-dim)", fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginBottom: 4 }}>
+            {item.category}
+          </span>
+          <br />
           <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", letterSpacing: "0.02em", lineHeight: 1.6 }}>
             {item.fact}
-          </span>
-          <span style={{ display: "inline-block", fontSize: "0.65rem", padding: "1px 7px", borderRadius: 20, background: "rgba(200,151,58,0.08)", color: "var(--gold-dim)", fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginLeft: 8 }}>
-            {item.category}
           </span>
         </div>
       </div>
