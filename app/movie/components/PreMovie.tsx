@@ -48,8 +48,39 @@ export function PreMovie({
   const ratingsLoading = liveRatings === null;
   const allEmpty = !imdbScore && !rtScore && !mcScore && !liveRatings?.douban?.score;
 
+  const amcSlug = data.title.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "-");
+  const amcUrl = `https://www.amctheatres.com/movies/${amcSlug}`;
+
   return (
     <>
+      {/* AMC Tickets */}
+      <section>
+        <a
+          href={amcUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            padding: "14px 20px",
+            background: "linear-gradient(135deg, #C41230 0%, #8B0D24 100%)",
+            border: "1px solid rgba(196,18,48,0.4)",
+            borderRadius: 12,
+            textDecoration: "none",
+            cursor: "pointer",
+            transition: "opacity 0.15s, transform 0.15s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.opacity = "0.9"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "none"; }}
+        >
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.88rem", fontWeight: 600, color: "#fff", letterSpacing: "0.04em" }}>
+            🎟 AMC 购票
+          </span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: "rgba(255,255,255,0.7)" }}>
+            →
+          </span>
+        </a>
+      </section>
+
       {/* Ratings */}
       <section>
         <SectionLabel>评分</SectionLabel>
