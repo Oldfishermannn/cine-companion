@@ -253,22 +253,59 @@ export function HomeClient({ catalog, genres }: {
             <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>本周新片</span>
           </div>
-          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
-            {recentReleases.map(m => (
-              <div
-                key={m.title}
-                className="coming-soon-card"
-                onClick={() => router.push(movieUrl(m))}
-              >
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 400 }}>
-                  {m.zh}
-                </p>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "#4ADE80", margin: "5px 0 0", letterSpacing: "0.03em", fontWeight: 300 }}>
-                  {fmtReleaseDate(m.released)} 上映
-                </p>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", color: "var(--faint)", margin: "2px 0 0", fontWeight: 300 }}>{m.genre}</p>
-              </div>
-            ))}
+          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+            {recentReleases.map(m => {
+              const idx = catalog.findIndex(c => c.title === m.title);
+              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
+              return (
+                <div
+                  key={m.title}
+                  onClick={() => router.push(movieUrl(m))}
+                  style={{
+                    flexShrink: 0, width: 200, cursor: "pointer",
+                    background: "var(--bg-card)", border: "1px solid var(--border)",
+                    borderRadius: 12, overflow: "hidden",
+                    transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
+                    display: "flex", flexDirection: "row", gap: 0,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(74,222,128,0.25)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                >
+                  {/* Mini poster */}
+                  <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
+                    {posterSrc ? (
+                      <Image src={posterSrc} alt={m.zh} fill style={{ objectFit: "cover" }} sizes="64px" />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Info */}
+                  <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 4, minWidth: 0 }}>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.85rem",
+                      color: "var(--parchment)", margin: 0,
+                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
+                    }}>
+                      {m.zh}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.7rem",
+                      color: "#4ADE80", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
+                    }}>
+                      {fmtReleaseDate(m.released)} 上映
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.65rem",
+                      color: "var(--muted)", margin: 0, fontWeight: 300,
+                    }}>
+                      {m.genre}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -280,22 +317,57 @@ export function HomeClient({ catalog, genres }: {
             <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>即将上映</span>
           </div>
-          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
-            {comingSoon.map(m => (
-              <div
-                key={m.title}
-                className="coming-soon-card"
-                onClick={() => router.push(movieUrl(m))}
-              >
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 400 }}>
-                  {m.zh}
-                </p>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--gold-dim)", margin: "5px 0 0", letterSpacing: "0.03em", fontWeight: 300 }}>
-                  {fmtReleaseDate(m.released)} 上映
-                </p>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", color: "var(--faint)", margin: "2px 0 0", fontWeight: 300 }}>{m.genre}</p>
-              </div>
-            ))}
+          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+            {comingSoon.map(m => {
+              const idx = catalog.findIndex(c => c.title === m.title);
+              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
+              return (
+                <div
+                  key={m.title}
+                  onClick={() => router.push(movieUrl(m))}
+                  style={{
+                    flexShrink: 0, width: 200, cursor: "pointer",
+                    background: "var(--bg-card)", border: "1px solid var(--border)",
+                    borderRadius: 12, overflow: "hidden",
+                    transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
+                    display: "flex", flexDirection: "row", gap: 0,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,168,83,0.25)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                >
+                  <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
+                    {posterSrc ? (
+                      <Image src={posterSrc} alt={m.zh} fill style={{ objectFit: "cover" }} sizes="64px" />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 4, minWidth: 0 }}>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.85rem",
+                      color: "var(--parchment)", margin: 0,
+                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
+                    }}>
+                      {m.zh}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.7rem",
+                      color: "var(--gold-dim)", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
+                    }}>
+                      {fmtReleaseDate(m.released)} 上映
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.65rem",
+                      color: "var(--muted)", margin: 0, fontWeight: 300,
+                    }}>
+                      {m.genre}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
