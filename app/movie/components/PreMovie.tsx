@@ -198,6 +198,35 @@ export function PreMovie({
         ) : null}
       </section>
 
+      {/* Fun Facts — right after background */}
+      <section>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
+          <SectionLabel>
+            你知道吗
+            <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
+            {factsFromCache && (
+              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
+            )}
+          </SectionLabel>
+        </div>
+
+        {factsLoading ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
+            ))}
+          </div>
+        ) : factsError ? (
+          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
+        ) : funFacts ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {funFacts.fun_facts.map((item, i) => (
+              <FactCard key={i} item={item} index={i} />
+            ))}
+          </div>
+        ) : null}
+      </section>
+
       {/* Vocabulary */}
       <section>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 6 }}>
@@ -259,35 +288,6 @@ export function PreMovie({
                 );
               });
             })()}
-          </div>
-        ) : null}
-      </section>
-
-      {/* Fun Facts */}
-      <section>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
-          <SectionLabel>
-            你知道吗
-            <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
-            {factsFromCache && (
-              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
-            )}
-          </SectionLabel>
-        </div>
-
-        {factsLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
-            ))}
-          </div>
-        ) : factsError ? (
-          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
-        ) : funFacts ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {funFacts.fun_facts.map((item, i) => (
-              <FactCard key={i} item={item} index={i} />
-            ))}
           </div>
         ) : null}
       </section>
