@@ -633,59 +633,37 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
   const [result,  setResult]  = useState<LookupResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [selOpt,  setSelOpt]  = useState(0);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const doLookup = async (w: string) => {
+  // Debounce via useEffect — canonical React pattern, no stale closure issues
+  useEffect(() => {
+    const w = input.trim();
     if (!w) { setResult(null); setLoading(false); return; }
     setLoading(true);
-    setResult(null);
-    setSelOpt(0);
-    try {
-      // 1. Exact / fuzzy match in movie vocab first
-      const vocabHit = findVocabMatch(w, vocab);
-      if (vocabHit) {
-        setResult({
-          word: vocabHit.word,
-          matchedWord: norm(vocabHit.word) !== norm(w) ? vocabHit.word : undefined,
-          phonetic: null,
-          translation: vocabHit.translation,
-          brief: vocabHit.explanation,
-          fromVocab: true,
-        });
-        setLoading(false);
-        return;
-      }
-      // 2. API fallback — pass fuzzy candidates as context
-      const candidates = vocab
-        .map(v => ({ v, d: levenshtein(norm(w), norm(v.word)) }))
-        .sort((a, b) => a.d - b.d).slice(0, 3).filter(x => x.d <= 5)
-        .map(x => x.v.word).join(", ");
-      const context = [movieTitle, candidates ? `可能是: ${candidates}` : ""].filter(Boolean).join(" | ");
-      const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(context)}`);
-      const d = await res.json();
-      if (!d.error) {
-        const opts = Array.isArray(d.options) && d.options.length > 0
-          ? d.options : [{ translation: d.translation ?? d.word, brief: d.brief ?? "" }];
-        const firstOpt = opts[0];
-        setResult({
-          word: d.word, phonetic: d.phonetic,
-          translation: firstOpt ? firstOpt.translation : "",
-          brief: firstOpt ? firstOpt.brief : "",
-          options: opts,
-          fromVocab: false,
-        });
-      }
-    } catch { /* ignore */ }
-    finally { setLoading(false); }
-  };
-
-  const handleChange = (val: string) => {
-    setInput(val);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setResult(null); setLoading(false); return; }
-    setLoading(true);
-    debounceRef.current = setTimeout(() => doLookup(val.trim()), 600);
-  };
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        // 1. Exact / fuzzy vocab match first
+        const vocabHit = findVocabMatch(w, vocab);
+        if (vocabHit && !cancelled) {
+          setResult({ word: vocabHit.word, matchedWord: norm(vocabHit.word) !== norm(w) ? vocabHit.word : undefined, phonetic: null, translation: vocabHit.translation, brief: vocabHit.explanation, fromVocab: true });
+          setLoading(false); return;
+        }
+        // 2. API fallback
+        const candidates = vocab.map(v => ({ v, d: levenshtein(norm(w), norm(v.word)) })).sort((a, b) => a.d - b.d).slice(0, 3).filter(x => x.d <= 5).map(x => x.v.word).join(", ");
+        const context = [movieTitle, candidates ? `可能是: ${candidates}` : ""].filter(Boolean).join(" | ");
+        const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(context)}`);
+        const d = await res.json();
+        if (!cancelled && !d.error) {
+          const opts = Array.isArray(d.options) && d.options.length > 0 ? d.options : [{ translation: d.translation ?? w, brief: d.brief ?? "" }];
+          setResult({ word: d.word, phonetic: d.phonetic, translation: opts[0]?.translation ?? "", brief: opts[0]?.brief ?? "", options: opts, fromVocab: false });
+          setSelOpt(0);
+        }
+      } catch { /* ignore */ }
+      finally { if (!cancelled) setLoading(false); }
+    }, 600);
+    return () => { cancelled = true; clearTimeout(timer); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input]);
 
   const activeOpt = result?.options?.[selOpt] ?? null;
 
@@ -695,7 +673,7 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
         <span style={{ padding: "0 12px", color: "var(--faint)", fontSize: "0.85rem", flexShrink: 0 }}>🔤</span>
         <input
           value={input}
-          onChange={e => handleChange(e.target.value)}
+          onChange={e => setInput(e.target.value)}
           placeholder="输入听到的英文词（支持模糊识别）…"
           style={{ flex: 1, background: "none", border: "none", outline: "none", color: "var(--parchment)", fontFamily: "var(--font-body)", fontSize: "0.88rem", padding: "12px 0", caretColor: "var(--gold)" }}
         />

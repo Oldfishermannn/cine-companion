@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface BreakWindow {
@@ -141,38 +141,33 @@ function WatchPageContent() {
     setStartTime(Date.now());
   };
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const doLookup = useCallback(async (w: string) => {
-    if (!w) { setLookupResult(null); setLookupError(""); return; }
+  // Debounce via useEffect — canonical React pattern, no stale closure issues
+  useEffect(() => {
+    const w = wordInput.trim();
+    if (!w) { setLookupResult(null); setLookupError(""); setLookupLoading(false); return; }
     setLookupLoading(true);
-    setLookupError("");
-    setLookupResult(null);
-    setSelectedOption(0);
-    try {
-      const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(title)}`);
-      const data = await res.json();
-      if (data.error) { setLookupError("查询失败"); return; }
-      // Normalize: ensure options is always a non-empty array
-      const options = Array.isArray(data.options) && data.options.length > 0
-        ? data.options
-        : [{ translation: data.translation ?? data.word, brief: data.brief ?? "" }];
-      setLookupResult({ ...data, options });
-    } catch {
-      setLookupError("网络错误");
-    } finally {
-      setLookupLoading(false);
-    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(title)}`);
+        const data = await res.json();
+        if (cancelled) return;
+        if (data.error) { setLookupError("查询失败"); return; }
+        const options = Array.isArray(data.options) && data.options.length > 0
+          ? data.options : [{ translation: data.translation ?? w, brief: data.brief ?? "" }];
+        setLookupResult({ ...data, options });
+        setSelectedOption(0);
+      } catch {
+        if (!cancelled) setLookupError("网络错误");
+      } finally {
+        if (!cancelled) setLookupLoading(false);
+      }
+    }, 600);
+    return () => { cancelled = true; clearTimeout(timer); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title]);
+  }, [wordInput]);
 
-  const handleInputChange = (val: string) => {
-    setWordInput(val);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setLookupResult(null); setLookupError(""); setLookupLoading(false); return; }
-    setLookupLoading(true); // show spinner immediately
-    debounceRef.current = setTimeout(() => doLookup(val.trim()), 600);
-  };
+  const handleInputChange = (val: string) => setWordInput(val);
 
   // Vocabulary suggestions while typing (terms that include the typed word)
   const vocabSuggestions: VocabItem[] = wordInput.trim().length >= 2
@@ -420,10 +415,7 @@ function WatchPageContent() {
               {vocabSuggestions.map((v, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    setWordInput(v.word);
-                    doLookup(v.word);
-                  }}
+                  onClick={() => setWordInput(v.word)}
                   style={{
                     padding: "4px 12px",
                     borderRadius: 20,
