@@ -223,8 +223,10 @@ function MoviePageContent() {
             {!data.poster && (
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 30% 50%, rgba(212,168,83,0.05) 0%, transparent 70%)" }} />
             )}
+            {/* Dark overlay to tame bright posters */}
+            <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,15,0.55)", zIndex: 1 }} />
             {/* Bottom gradient fade */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 140, background: "linear-gradient(to bottom, transparent, var(--bg))", zIndex: 2 }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 160, background: "linear-gradient(to bottom, transparent, var(--bg))", zIndex: 2 }} />
 
             <div className="movie-hero-inner">
               {data.poster ? (
