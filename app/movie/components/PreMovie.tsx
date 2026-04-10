@@ -146,7 +146,7 @@ export function PreMovie({
                     </p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.58rem",
-                      color: m.role === "director" ? "var(--gold-dim)" : "var(--faint)",
+                      color: m.role === "director" ? "var(--gold)" : "rgba(180,175,190,0.85)",
                       margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                     }}>
                       {m.role === "director" ? "导演" : m.character || "演员"}
