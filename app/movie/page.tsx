@@ -50,6 +50,7 @@ function MoviePageContent() {
   const [postFromCache, setPostFromCache] = useState(false);
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiFromCache, setAiFromCache] = useState(false);
@@ -90,6 +91,12 @@ function MoviePageContent() {
 
         saveHistory({ id: d.id, title: d.title, poster: d.poster, year: d.year });
         setPersonalScores(loadRating(d.id));
+
+        // Cast with photos
+        fetch(`/api/cast?id=${encodeURIComponent(d.id)}`)
+          .then(r => r.json())
+          .then(c => { if (c.cast) setCastMembers(c.cast); })
+          .catch(() => {});
 
         // Stage 3: Live ratings
         const ratingsParams = new URLSearchParams({ title: d.title, year: d.year || "", imdbId: d.id || "" });
@@ -255,6 +262,7 @@ function MoviePageContent() {
                 <PreMovie
                   data={data}
                   amcSlug={amcSlug}
+                  castMembers={castMembers}
                   aiContent={aiContent}
                   aiLoading={aiLoading}
                   aiFromCache={aiFromCache}

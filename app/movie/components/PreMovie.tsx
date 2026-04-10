@@ -1,13 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, FactCard, SectionLabel, ErrorBanner } from "./shared";
 
+interface CastMember {
+  name: string;
+  role: string;
+  character?: string;
+  photo: string | null;
+  imdbUrl: string | null;
+}
+
 interface PreMovieProps {
   data: MovieData;
   amcSlug: string;
+  castMembers: CastMember[];
   aiContent: AiContent | null;
   aiLoading: boolean;
   aiFromCache: boolean;
@@ -27,7 +37,7 @@ interface PreMovieProps {
 }
 
 export function PreMovie({
-  data, amcSlug, aiContent, aiLoading, aiFromCache, aiError,
+  data, amcSlug, castMembers, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
@@ -93,6 +103,57 @@ export function PreMovie({
           </p>
         )}
       </section>
+
+      {/* Cast */}
+      {castMembers.length > 0 && (
+        <section>
+          <SectionLabel>卡司</SectionLabel>
+          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+            {castMembers.map((m, i) => (
+              <a
+                key={i}
+                href={m.imdbUrl ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  flexShrink: 0, width: 88, textDecoration: "none",
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                }}
+              >
+                <div style={{
+                  width: 64, height: 64, borderRadius: "50%", overflow: "hidden",
+                  background: "var(--bg-card)", border: `1px solid ${m.role === "director" ? "rgba(200,151,58,0.4)" : "var(--border)"}`,
+                  flexShrink: 0,
+                }}>
+                  {m.photo ? (
+                    <Image src={m.photo} alt={m.name} width={64} height={64} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", color: "var(--faint)" }}>
+                      {m.role === "director" ? "🎬" : "👤"}
+                    </div>
+                  )}
+                </div>
+                <div style={{ textAlign: "center", width: "100%" }}>
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "0.7rem", color: "var(--muted)",
+                    margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    lineHeight: 1.3,
+                  }}>
+                    {m.name}
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "0.6rem",
+                    color: m.role === "director" ? "var(--gold-dim)" : "var(--faint)",
+                    margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {m.role === "director" ? "导演" : m.character || "演员"}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Background */}
       <section>
