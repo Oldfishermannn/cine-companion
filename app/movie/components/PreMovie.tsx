@@ -255,13 +255,15 @@ export function PreMovie({
         ) : null}
       </section>
 
-      {/* Break Calculator */}
+      {/* Break Calculator — only show when loading or has data */}
+      {(breaksLoading || breaksError || breaksContent) && (
       <section>
         <SectionLabel>厕所时间</SectionLabel>
         <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
           AI 分析叙事节奏，推荐不错过关键剧情的起身时机
         </p>
 
+        {breaksContent && (
         <div style={{ marginBottom: 16, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px" }}>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", flexShrink: 0 }}>🎬 场次时间</span>
@@ -287,6 +289,7 @@ export function PreMovie({
             </span>
           </div>
         </div>
+        )}
 
         {breaksLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -364,6 +367,7 @@ export function PreMovie({
           </p>
         )}
       </section>
+      )}
     </>
   );
 }
