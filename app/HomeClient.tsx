@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 import type { CatalogMovie } from "./catalog";
 export type { CatalogMovie };
@@ -222,10 +223,11 @@ export function HomeClient({ catalog, genres }: {
     <>
       {/* ── Featured Hero ── */}
       {featured && (
-        <div
+        <Link
+          href={movieUrl(featured.movie)}
+          prefetch={true}
           className="featured-hero w-full fade-up"
-          style={{ maxWidth: 960, animationDelay: "60ms", marginTop: 32 }}
-          onClick={() => router.push(movieUrl(featured.movie))}
+          style={{ maxWidth: 960, animationDelay: "60ms", marginTop: 32, textDecoration: "none", color: "inherit", display: "block" }}
         >
           {posters[featured.origIdx].poster && (
             <div
@@ -312,10 +314,10 @@ export function HomeClient({ catalog, genres }: {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       )}
 
-      {/* ── Recent Releases 本周新片 ── */}
+      {/* ── Recent Releases 近期上映 ── */}
       {recentReleases.length > 0 && (
         <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 28, marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
@@ -495,7 +497,7 @@ export function HomeClient({ catalog, genres }: {
                 inWatchlist={watchlist.has(movie.title)}
                 onToggleWatchlist={toggleWatchlist}
                 onVisible={() => fetchPoster(movie, origIdx)}
-                onClick={() => router.push(movieUrl(movie))}
+                href={movieUrl(movie)}
               />
             ))}
           </div>
@@ -514,7 +516,7 @@ export function HomeClient({ catalog, genres }: {
 }
 
 /* ── Poster Card ── */
-function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, onToggleWatchlist, onVisible, onClick }: {
+function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, onToggleWatchlist, onVisible, href }: {
   movie: CatalogMovie;
   posterInfo: PosterInfo;
   index: number;
@@ -522,7 +524,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
   inWatchlist: boolean;
   onToggleWatchlist: (title: string, e: React.MouseEvent) => void;
   onVisible: () => void;
-  onClick: () => void;
+  href: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -541,14 +543,16 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
   }, [posterInfo.fetched, index]);
 
   return (
-    <div
-      ref={ref}
+    <Link
+      ref={ref as React.Ref<HTMLAnchorElement>}
+      href={href}
+      prefetch={true}
       className={`poster-card ${posterInfo.fetched ? "poster-enter" : ""}`}
       style={{
         "--r": "0deg",
         animationDelay: `${Math.min(index % 20, 15) * 40}ms`,
+        textDecoration: "none", color: "inherit",
       } as React.CSSProperties}
-      onClick={onClick}
     >
       <div className="poster-frame">
         {!posterInfo.fetched ? (
@@ -610,6 +614,6 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
           {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

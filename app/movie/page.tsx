@@ -155,7 +155,7 @@ function MoviePageContent() {
   if (!query) { router.push("/"); return null; }
 
   return (
-    <main style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <main className="page-enter" style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
       {/* Sticky Header — glassmorphism */}
