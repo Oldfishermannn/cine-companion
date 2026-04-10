@@ -33,6 +33,7 @@ function MoviePageContent() {
   const router = useRouter();
   const query = searchParams.get("q") || "";
   const zhFromUrl = searchParams.get("zh") || "";
+  const amcSlug = searchParams.get("amc") || "";
   const [data, setData] = useState<MovieData | null>(null);
   const [aiContent, setAiContent] = useState<AiContent | null>(null);
   const [liveRatings, setLiveRatings] = useState<LiveRatings | null>(null);
@@ -253,6 +254,7 @@ function MoviePageContent() {
               {mode === "pre" && (
                 <PreMovie
                   data={data}
+                  amcSlug={amcSlug}
                   aiContent={aiContent}
                   aiLoading={aiLoading}
                   aiFromCache={aiFromCache}

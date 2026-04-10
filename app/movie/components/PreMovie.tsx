@@ -7,6 +7,7 @@ import { RatingBlock, VocabCard, FactCard, SectionLabel, ErrorBanner } from "./s
 
 interface PreMovieProps {
   data: MovieData;
+  amcSlug: string;
   aiContent: AiContent | null;
   aiLoading: boolean;
   aiFromCache: boolean;
@@ -26,7 +27,7 @@ interface PreMovieProps {
 }
 
 export function PreMovie({
-  data, aiContent, aiLoading, aiFromCache, aiError,
+  data, amcSlug, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
@@ -48,13 +49,12 @@ export function PreMovie({
   const ratingsLoading = liveRatings === null;
   const allEmpty = !imdbScore && !rtScore && !mcScore && !liveRatings?.douban?.score;
 
-  const amcSlug = data.title.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "-");
-  const amcUrl = `https://www.amctheatres.com/movies/${amcSlug}`;
+  const amcUrl = amcSlug ? `https://www.amctheatres.com/movies/${amcSlug}` : null;
 
   return (
     <>
       {/* AMC Tickets */}
-      <section>
+      {amcUrl && <section>
         <a
           href={amcUrl}
           target="_blank"
@@ -79,7 +79,7 @@ export function PreMovie({
             →
           </span>
         </a>
-      </section>
+      </section>}
 
       {/* Ratings */}
       <section>

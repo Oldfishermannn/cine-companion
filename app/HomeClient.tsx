@@ -10,6 +10,7 @@ export interface CatalogMovie {
   year: string;
   released: string;
   genre: string;
+  amc: string;
 }
 
 function parseReleaseDate(s: string): number {
@@ -98,13 +99,20 @@ export function HomeClient({ catalog, genres, referenceDate }: {
   }, [genreFilter, sortMode, catalog]);
 
   const { newThisWeek, nowShowing } = useMemo(() => {
-    const now = new Date(referenceDate).getTime();
-    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const ref = new Date(referenceDate);
+    const now = ref.getTime();
+    // Monday of this week (getDay: 0=Sun, 1=Mon, ...)
+    const day = ref.getDay();
+    const diffToMonday = day === 0 ? 6 : day - 1; // Sunday → 6 days back
+    const monday = new Date(ref);
+    monday.setDate(ref.getDate() - diffToMonday);
+    monday.setHours(0, 0, 0, 0);
+    const mondayTs = monday.getTime();
     const nw: typeof indexedMovies = [];
     const ns: typeof indexedMovies = [];
     for (const item of indexedMovies) {
       const t = parseReleaseDate(item.movie.released);
-      if (t >= weekAgo && t <= now) nw.push(item);
+      if (t >= mondayTs && t <= now) nw.push(item);
       else ns.push(item);
     }
     return { newThisWeek: nw, nowShowing: ns };
@@ -183,7 +191,7 @@ export function HomeClient({ catalog, genres, referenceDate }: {
                   posterInfo={posters[origIdx]}
                   index={origIdx}
                   catalogReleased={movie.released}
-                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
+                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
                 />
               ))}
             </div>
@@ -214,7 +222,7 @@ export function HomeClient({ catalog, genres, referenceDate }: {
                   posterInfo={posters[origIdx]}
                   index={origIdx}
                   catalogReleased={movie.released}
-                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
+                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
                 />
               ))}
             </div>
