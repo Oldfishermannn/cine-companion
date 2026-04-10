@@ -1,0 +1,1 @@
+{"breaks":[{"minute":32,"duration":4,"scene_hint":"第一幕刚刚收尾，气氛短暂平静，角色之间进行一段较为日常的对话交流，节奏放缓","miss_risk":"低"},{"minute":62,"duration":4,"scene_hint":"两段主要行动之间的过渡段落，场景切换至宫廷内部的铺垫性交谈，情绪较为克制","miss_risk":"低"},{"minute":81,"duration":3,"scene_hint":"第三幕行动高峰前的短暂喘息，以氛围渲染和人物独白/旁白为主，节奏略为舒缓","miss_risk":"中"}],"best_break":32,"runtime_min":113}

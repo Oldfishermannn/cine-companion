@@ -1,0 +1,1 @@
+{"breaks":[{"minute":28,"duration":4,"scene_hint":"第一幕收尾，主角完成了某个初步目标，故事即将进入新阶段——情绪短暂平稳，适合离开","miss_risk":"低"},{"minute":55,"duration":5,"scene_hint":"第二幕中段的过渡区间，训练或备战类场景，节奏放缓，气氛偏励志抒情","miss_risk":"低"},{"minute":72,"duration":3,"scene_hint":"大赛前的准备阶段，可能有团队聚集、更衣室对话等铺垫性场景，对白多于动作","miss_risk":"中"}],"best_break":55,"runtime_min":100}
