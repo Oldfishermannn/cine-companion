@@ -261,47 +261,47 @@ export function HomeClient({ catalog, genres }: {
             </div>
 
             {/* Featured info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <div className="featured-info" style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{
-                  fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+                  fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase",
                   color: "var(--gold)", fontFamily: "var(--font-body)", fontWeight: 500,
-                  padding: "3px 10px", borderRadius: 4,
+                  padding: "2px 8px", borderRadius: 4,
                   background: "rgba(212,168,83,0.1)", border: "1px solid rgba(212,168,83,0.15)",
                 }}>
                   #{featured.movie.rank} 推荐
                 </span>
-                <span style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+                <span style={{ fontSize: "0.62rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                   {featured.movie.genre}
                 </span>
               </div>
               <h2 style={{
                 fontFamily: "system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif",
-                fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
+                fontSize: "clamp(1.25rem, 3vw, 2rem)",
                 fontWeight: 600,
                 color: "var(--parchment)",
-                margin: "0 0 4px",
+                margin: "0 0 2px",
                 lineHeight: 1.2,
                 letterSpacing: "0.02em",
               }}>
                 {featured.movie.zh}
               </h2>
-              <p style={{
+              <p className="featured-eng-title" style={{
                 fontFamily: "var(--font-display)",
-                fontSize: "0.95rem",
+                fontSize: "0.88rem",
                 color: "var(--muted)",
-                margin: "0 0 14px",
+                margin: "0 0 10px",
                 letterSpacing: "0.04em",
                 fontStyle: "italic",
               }}>
                 {featured.movie.title}
               </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                   {fmtReleaseDate(featured.movie.released) || featured.movie.year} 上映
                 </span>
-                <span style={{
-                  fontSize: "0.68rem", color: "var(--gold-dim)", fontFamily: "var(--font-body)",
+                <span className="featured-detail-link" style={{
+                  fontSize: "0.66rem", color: "var(--gold-dim)", fontFamily: "var(--font-body)",
                   display: "flex", alignItems: "center", gap: 4,
                 }}>
                   查看详情
