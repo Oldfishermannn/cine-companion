@@ -628,65 +628,49 @@ function levenshtein(a: string, b: string): number {
 
 function norm(s: string) { return s.toLowerCase().replace(/[^a-z0-9]/g, ""); }
 
-// Returns exact or best fuzzy match from vocab list, or null
-function findVocabMatch(input: string, vocab: VocabItem[]): VocabItem | null {
+// Find all vocab items related to the input: exact, prefix, substring, or fuzzy
+function findRelatedVocab(input: string, vocab: VocabItem[]): VocabItem[] {
   const q = norm(input);
-  if (!q || !vocab.length) return null;
-  // Exact
-  const exact = vocab.find(v => norm(v.word) === q);
-  if (exact) return exact;
-  // Prefix: "solar" → "solar dimming" — input is a prefix of a vocab word (min 2 chars)
-  if (q.length >= 2) {
-    const prefixMatches = vocab.filter(v => norm(v.word).startsWith(q) && norm(v.word).length > q.length);
-    if (prefixMatches.length > 0) {
-      // Pick shortest (most specific) match
-      return prefixMatches.sort((a, b) => norm(a.word).length - norm(b.word).length)[0];
-    }
-  }
-  // Fuzzy: score each word, take best within threshold
-  let best: VocabItem | null = null;
-  let bestScore = Infinity;
+  if (!q || q.length < 2 || !vocab.length) return [];
+  const results: { v: VocabItem; rank: number }[] = [];
   for (const v of vocab) {
     const w = norm(v.word);
+    if (w === q) { results.push({ v, rank: 0 }); continue; }                          // exact
+    if (w.startsWith(q)) { results.push({ v, rank: 1 }); continue; }                  // prefix: "solar" → "solar dimming"
+    if (w.includes(q) || q.includes(w)) { results.push({ v, rank: 2 }); continue; }   // substring
     const dist = levenshtein(q, w);
-    // Threshold: 1 edit per 4 chars, min 1, max 3
     const threshold = Math.min(3, Math.max(1, Math.floor(Math.max(q.length, w.length) / 4)));
-    if (dist <= threshold && dist < bestScore) {
-      bestScore = dist;
-      best = v;
-    }
+    if (dist <= threshold) { results.push({ v, rank: 3 }); }                           // fuzzy
   }
-  return best;
+  return results.sort((a, b) => a.rank - b.rank).map(r => r.v);
 }
 
 function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: VocabItem[] }) {
-  const [input,   setInput]   = useState("");
-  const [result,  setResult]  = useState<LookupResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [selOpt,  setSelOpt]  = useState(0);
+  const [input,        setInput]        = useState("");
+  const [dictResult,   setDictResult]   = useState<LookupResult | null>(null);
+  const [relatedVocab, setRelatedVocab] = useState<VocabItem[]>([]);
+  const [loading,      setLoading]      = useState(false);
+  const [selOpt,       setSelOpt]       = useState(0);
+  const [expandedVocab, setExpandedVocab] = useState<number>(-1);
 
-  // Debounce via useEffect — canonical React pattern, no stale closure issues
   useEffect(() => {
     const w = input.trim();
-    if (!w) { setResult(null); setLoading(false); return; }
+    if (!w) { setDictResult(null); setRelatedVocab([]); setLoading(false); return; }
+
+    // 1. Instant: find related movie vocab (local, zero latency)
+    setRelatedVocab(findRelatedVocab(w, vocab));
+
+    // 2. Debounced: always call API for dictionary definition (min 2 chars)
+    if (w.length < 2) { setLoading(false); return; }
     setLoading(true);
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
-        // 1. Exact / fuzzy vocab match first
-        const vocabHit = findVocabMatch(w, vocab);
-        if (vocabHit && !cancelled) {
-          setResult({ word: vocabHit.word, matchedWord: norm(vocabHit.word) !== norm(w) ? vocabHit.word : undefined, phonetic: null, translation: vocabHit.translation, brief: vocabHit.explanation, fromVocab: true });
-          setLoading(false); return;
-        }
-        // 2. API fallback
-        const candidates = vocab.map(v => ({ v, d: levenshtein(norm(w), norm(v.word)) })).sort((a, b) => a.d - b.d).slice(0, 3).filter(x => x.d <= 5).map(x => x.v.word).join(", ");
-        const context = [movieTitle, candidates ? `可能是: ${candidates}` : ""].filter(Boolean).join(" | ");
-        const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(context)}`);
+        const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(movieTitle)}`);
         const d = await res.json();
         if (!cancelled && !d.error) {
           const opts = Array.isArray(d.options) && d.options.length > 0 ? d.options : [{ translation: d.translation ?? w, brief: d.brief ?? "" }];
-          setResult({ word: d.word, phonetic: d.phonetic, translation: opts[0]?.translation ?? "", brief: opts[0]?.brief ?? "", options: opts, fromVocab: false });
+          setDictResult({ word: d.word, phonetic: d.phonetic, translation: opts[0]?.translation ?? "", brief: opts[0]?.brief ?? "", options: opts, fromVocab: false });
           setSelOpt(0);
         }
       } catch { /* ignore */ }
@@ -696,16 +680,17 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input]);
 
-  const activeOpt = result?.options?.[selOpt] ?? null;
+  const activeOpt = dictResult?.options?.[selOpt] ?? null;
 
   return (
     <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+      {/* ── Input ── */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <span style={{ padding: "0 12px", color: "var(--faint)", fontSize: "0.85rem", flexShrink: 0 }}>🔤</span>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder="输入听到的英文词（支持模糊识别）…"
+          placeholder="输入英文单词，查释义…"
           style={{ flex: 1, background: "none", border: "none", outline: "none", color: "var(--parchment)", fontFamily: "var(--font-body)", fontSize: "0.88rem", padding: "12px 0", caretColor: "var(--gold)" }}
         />
         {loading && (
@@ -714,28 +699,25 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
           </div>
         )}
       </div>
-      {loading && (
+
+      {/* ── Dictionary Result (always from API) ── */}
+      {loading && !dictResult && (
         <div style={{ borderTop: "1px solid var(--border)", padding: "10px 14px", color: "var(--faint)", fontSize: "0.78rem", letterSpacing: "0.06em" }}>
           查询中…
         </div>
       )}
-      {result && !loading && (
+      {dictResult && (
         <div style={{ borderTop: "1px solid var(--border)", padding: "12px 14px" }}>
-          {/* Word + phonetic */}
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 500, color: "var(--parchment)" }}>
-              {result.matchedWord || result.word}
+              {dictResult.word}
             </span>
-            {result.phonetic && <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{result.phonetic}</span>}
-            {result.matchedWord && result.matchedWord.toLowerCase() !== result.word.toLowerCase() && (
-              <span style={{ fontSize: "0.68rem", color: "var(--faint)" }}>（识别自"{result.word}"）</span>
-            )}
-            {result.fromVocab && <span style={{ fontSize: "0.65rem", padding: "1px 6px", borderRadius: 8, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)" }}>本片词汇</span>}
+            {dictResult.phonetic && <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{dictResult.phonetic}</span>}
           </div>
-          {/* Option chips (only when >1) */}
-          {!result.fromVocab && result.options && result.options.length > 1 && (
+          {/* Multiple meaning chips */}
+          {dictResult.options && dictResult.options.length > 1 && (
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
-              {result.options.map((opt, idx) => (
+              {dictResult.options.map((opt, idx) => (
                 <button key={idx} onClick={() => setSelOpt(idx)} style={{
                   padding: "3px 12px", borderRadius: 20, fontFamily: "var(--font-body)", fontSize: "0.75rem", cursor: "pointer",
                   border: `1px solid ${selOpt === idx ? "rgba(200,151,58,0.4)" : "var(--border)"}`,
@@ -747,13 +729,45 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
               ))}
             </div>
           )}
-          {/* Detail */}
           <span style={{ fontSize: "0.88rem", color: "var(--gold)" }}>
-            {activeOpt ? activeOpt.translation : result.translation}
+            {activeOpt ? activeOpt.translation : dictResult.translation}
           </span>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "#A09AB0", lineHeight: 1.6, margin: "4px 0 0" }}>
-            {activeOpt ? activeOpt.brief : result.brief}
+            {activeOpt ? activeOpt.brief : dictResult.brief}
           </p>
+          {activeOpt?.example && (
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: "var(--faint)", lineHeight: 1.5, margin: "6px 0 0", fontStyle: "italic" }}>
+              {activeOpt.example}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* ── Related Movie Vocab (highlighted, instant) ── */}
+      {relatedVocab.length > 0 && (
+        <div style={{ borderTop: "1px solid var(--border)", padding: "10px 14px", background: "rgba(200,151,58,0.03)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: "0.65rem", padding: "1px 8px", borderRadius: 8, background: "rgba(200,151,58,0.12)", color: "var(--gold)", letterSpacing: "0.04em" }}>本片相关</span>
+            <span style={{ fontSize: "0.68rem", color: "var(--faint)" }}>以下词汇在影片中出现</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {relatedVocab.map((v, i) => (
+              <div key={i}
+                onClick={() => setExpandedVocab(expandedVocab === i ? -1 : i)}
+                style={{ cursor: "pointer", padding: "6px 10px", borderRadius: 8, border: "1px solid rgba(200,151,58,0.15)", background: expandedVocab === i ? "rgba(200,151,58,0.06)" : "transparent", transition: "all 0.15s" }}
+              >
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--gold)", fontWeight: 500 }}>{v.word}</span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: "var(--muted)", flexShrink: 0 }}>{v.translation}</span>
+                </div>
+                {expandedVocab === i && (
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: "#A09AB0", lineHeight: 1.6, margin: "6px 0 2px" }}>
+                    {v.explanation}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
