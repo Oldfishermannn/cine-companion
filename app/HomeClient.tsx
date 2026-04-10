@@ -51,6 +51,61 @@ function saveWatchlist(set: Set<string>) {
   try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify([...set])); } catch {}
 }
 
+/* ── Horizontal scroll with mouse drag ── */
+function HScrollRow({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const moved = useRef(false);
+
+  const onDown = (e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    dragging.current = true;
+    moved.current = false;
+    startX.current = e.pageX - el.offsetLeft;
+    scrollLeft.current = el.scrollLeft;
+    el.style.cursor = "grabbing";
+    el.style.userSelect = "none";
+  };
+  const onMove = (e: React.MouseEvent) => {
+    if (!dragging.current) return;
+    const el = ref.current!;
+    const x = e.pageX - el.offsetLeft;
+    const walk = x - startX.current;
+    if (Math.abs(walk) > 4) moved.current = true;
+    el.scrollLeft = scrollLeft.current - walk;
+  };
+  const onUp = () => {
+    if (!ref.current) return;
+    dragging.current = false;
+    ref.current.style.cursor = "grab";
+    ref.current.style.userSelect = "";
+    // Block click if we dragged
+    if (moved.current) {
+      const blocker = (e: MouseEvent) => { e.stopPropagation(); e.preventDefault(); };
+      ref.current.addEventListener("click", blocker, { capture: true, once: true });
+    }
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseDown={onDown}
+      onMouseMove={onMove}
+      onMouseUp={onUp}
+      onMouseLeave={onUp}
+      style={{
+        display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8,
+        scrollbarWidth: "none", cursor: "grab",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function movieUrl(m: CatalogMovie): string {
   return `/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`;
 }
@@ -253,7 +308,7 @@ export function HomeClient({ catalog, genres }: {
             <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>本周新片</span>
           </div>
-          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+          <HScrollRow>
             {recentReleases.map(m => {
               const idx = catalog.findIndex(c => c.title === m.title);
               const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
@@ -271,7 +326,6 @@ export function HomeClient({ catalog, genres }: {
                   onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(74,222,128,0.25)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)"; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  {/* Mini poster */}
                   <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
                     {posterSrc ? (
                       <Image src={posterSrc} alt={m.zh} fill style={{ objectFit: "cover" }} sizes="64px" />
@@ -281,7 +335,6 @@ export function HomeClient({ catalog, genres }: {
                       </div>
                     )}
                   </div>
-                  {/* Info */}
                   <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 4, minWidth: 0 }}>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.85rem",
@@ -306,7 +359,7 @@ export function HomeClient({ catalog, genres }: {
                 </div>
               );
             })}
-          </div>
+          </HScrollRow>
         </div>
       )}
 
@@ -317,7 +370,7 @@ export function HomeClient({ catalog, genres }: {
             <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>即将上映</span>
           </div>
-          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+          <HScrollRow>
             {comingSoon.map(m => {
               const idx = catalog.findIndex(c => c.title === m.title);
               const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
@@ -368,7 +421,7 @@ export function HomeClient({ catalog, genres }: {
                 </div>
               );
             })}
-          </div>
+          </HScrollRow>
         </div>
       )}
 
