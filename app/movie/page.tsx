@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -590,7 +590,7 @@ function Divider() {
   return <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent)" }} />;
 }
 
-interface LookupResult { word: string; phonetic: string | null; translation: string; brief: string; fromVocab?: boolean; matchedWord?: string; }
+interface LookupResult { word: string; phonetic: string | null; translation: string; brief: string; fromVocab?: boolean; matchedWord?: string; options?: Array<{ translation: string; brief: string; example?: string | null }>; selectedOption?: number; }
 
 // ── Levenshtein distance ────────────────────────────────────────────────────
 function levenshtein(a: string, b: string): number {
@@ -629,17 +629,19 @@ function findVocabMatch(input: string, vocab: VocabItem[]): VocabItem | null {
 }
 
 function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: VocabItem[] }) {
-  const [input, setInput] = useState("");
-  const [result, setResult] = useState<LookupResult | null>(null);
+  const [input,   setInput]   = useState("");
+  const [result,  setResult]  = useState<LookupResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selOpt,  setSelOpt]  = useState(0);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const lookup = async () => {
-    const w = input.trim();
-    if (!w || loading) return;
+  const doLookup = async (w: string) => {
+    if (!w) { setResult(null); setLoading(false); return; }
     setLoading(true);
     setResult(null);
+    setSelOpt(0);
     try {
-      // 1. Check movie vocab list first (fuzzy)
+      // 1. Exact / fuzzy match in movie vocab first
       const vocabHit = findVocabMatch(w, vocab);
       if (vocabHit) {
         setResult({
@@ -653,55 +655,89 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
         setLoading(false);
         return;
       }
-      // 2. Fallback to API; include top-3 fuzzy vocab candidates as context hint
+      // 2. API fallback — pass fuzzy candidates as context
       const candidates = vocab
         .map(v => ({ v, d: levenshtein(norm(w), norm(v.word)) }))
-        .sort((a, b) => a.d - b.d)
-        .slice(0, 3)
-        .filter(x => x.d <= 5)
-        .map(x => x.v.word)
-        .join(", ");
+        .sort((a, b) => a.d - b.d).slice(0, 3).filter(x => x.d <= 5)
+        .map(x => x.v.word).join(", ");
       const context = [movieTitle, candidates ? `可能是: ${candidates}` : ""].filter(Boolean).join(" | ");
       const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(context)}`);
       const d = await res.json();
-      if (!d.error) setResult({ ...d, fromVocab: false });
+      if (!d.error) {
+        const firstOpt = Array.isArray(d.options) && d.options[0];
+        setResult({
+          word: d.word, phonetic: d.phonetic,
+          translation: firstOpt ? firstOpt.translation : "",
+          brief: firstOpt ? firstOpt.brief : "",
+          options: d.options,
+          fromVocab: false,
+        });
+      }
     } catch { /* ignore */ }
     finally { setLoading(false); }
   };
 
+  const handleChange = (val: string) => {
+    setInput(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!val.trim()) { setResult(null); setLoading(false); return; }
+    setLoading(true);
+    debounceRef.current = setTimeout(() => doLookup(val.trim()), 600);
+  };
+
+  const activeOpt = result?.options?.[selOpt] ?? null;
+
   return (
-    <div style={{ margin: "14px 0 24px", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <span style={{ padding: "0 12px", color: "var(--faint)", fontSize: "0.85rem", flexShrink: 0 }}>🔤</span>
         <input
           value={input}
-          onChange={e => { setInput(e.target.value); if (result) setResult(null); }}
-          onKeyDown={e => e.key === "Enter" && lookup()}
+          onChange={e => handleChange(e.target.value)}
           placeholder="输入听到的英文词（支持模糊识别）…"
           style={{ flex: 1, background: "none", border: "none", outline: "none", color: "var(--parchment)", fontFamily: "var(--font-body)", fontSize: "0.88rem", padding: "12px 0", caretColor: "var(--gold)" }}
         />
-        <button
-          onClick={lookup}
-          disabled={!input.trim() || loading}
-          style={{ padding: "8px 16px", background: loading ? "transparent" : "rgba(200,151,58,0.12)", color: loading ? "var(--faint)" : "var(--gold)", border: "none", borderLeft: "1px solid var(--border)", cursor: input.trim() && !loading ? "pointer" : "default", fontFamily: "var(--font-body)", fontSize: "0.78rem", transition: "all 0.15s", flexShrink: 0 }}
-        >
-          {loading ? "…" : "查"}
-        </button>
+        {loading && (
+          <div style={{ padding: "0 14px", display: "flex", alignItems: "center" }}>
+            <div style={{ width: 13, height: 13, border: "1.5px solid var(--border)", borderTopColor: "var(--gold-dim)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+          </div>
+        )}
       </div>
-      {result && (
+      {result && !loading && (
         <div style={{ borderTop: "1px solid var(--border)", padding: "12px 14px" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+          {/* Word + phonetic */}
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 500, color: "var(--parchment)" }}>
               {result.matchedWord || result.word}
             </span>
-            {result.phonetic && <span style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--muted)" }}>{result.phonetic}</span>}
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.88rem", color: "var(--gold)", marginLeft: 2 }}>{result.translation}</span>
+            {result.phonetic && <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{result.phonetic}</span>}
             {result.matchedWord && result.matchedWord.toLowerCase() !== result.word.toLowerCase() && (
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--faint)" }}>（识别自"{result.word}"）</span>
+              <span style={{ fontSize: "0.68rem", color: "var(--faint)" }}>（识别自"{result.word}"）</span>
             )}
-            {result.fromVocab && <span style={{ fontSize: "0.65rem", padding: "1px 6px", borderRadius: 8, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)", fontFamily: "var(--font-body)" }}>本片词汇</span>}
+            {result.fromVocab && <span style={{ fontSize: "0.65rem", padding: "1px 6px", borderRadius: 8, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)" }}>本片词汇</span>}
           </div>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "#A09AB0", lineHeight: 1.6, margin: 0 }}>{result.brief}</p>
+          {/* Option chips (only when >1) */}
+          {!result.fromVocab && result.options && result.options.length > 1 && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
+              {result.options.map((opt, idx) => (
+                <button key={idx} onClick={() => setSelOpt(idx)} style={{
+                  padding: "3px 12px", borderRadius: 20, fontFamily: "var(--font-body)", fontSize: "0.75rem", cursor: "pointer",
+                  border: `1px solid ${selOpt === idx ? "rgba(200,151,58,0.4)" : "var(--border)"}`,
+                  background: selOpt === idx ? "rgba(200,151,58,0.1)" : "transparent",
+                  color: selOpt === idx ? "var(--gold)" : "var(--muted)", transition: "all 0.15s",
+                }}>
+                  {opt.translation}
+                </button>
+              ))}
+            </div>
+          )}
+          {/* Detail */}
+          <span style={{ fontSize: "0.88rem", color: "var(--gold)" }}>
+            {activeOpt ? activeOpt.translation : result.translation}
+          </span>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "#A09AB0", lineHeight: 1.6, margin: "4px 0 0" }}>
+            {activeOpt ? activeOpt.brief : result.brief}
+          </p>
         </div>
       )}
     </div>
@@ -1161,8 +1197,13 @@ function MoviePageContent() {
             {mode === "during" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
 
-                {/* ── 快速查词 ── */}
-                {data && <InlineWordLookup movieTitle={data.title} vocab={aiContent?.vocabulary ?? []} />}
+                {/* ── 实时查词 ── */}
+                {data && (
+                  <section>
+                    <SectionLabel>实时查词</SectionLabel>
+                    <InlineWordLookup movieTitle={data.title} vocab={aiContent?.vocabulary ?? []} />
+                  </section>
+                )}
 
                 {/* ── Break calculator ── */}
                 <section>
