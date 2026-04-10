@@ -41,9 +41,9 @@ function isPosterMatch(movie: CatalogMovie, d: { title?: string; year?: string }
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; imdbRating?: number; }
 
-type SortMode = "newest" | "oldest";
+type SortMode = "newest" | "oldest" | "rating";
 
 const PAGE_SIZE = 20;
 
@@ -70,7 +70,8 @@ export function HomeClient({ catalog, genres, referenceDate }: {
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
+          const rating = matched && d.ratings?.imdb ? parseFloat(d.ratings.imdb) : NaN;
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined, imdbRating: isNaN(rating) ? undefined : rating };
           return n;
         });
       })
@@ -91,12 +92,17 @@ export function HomeClient({ catalog, genres, referenceDate }: {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
+      if (sortMode === "rating") {
+        const ra = posters[a.origIdx]?.imdbRating ?? 0;
+        const rb = posters[b.origIdx]?.imdbRating ?? 0;
+        return rb - ra; // high to low
+      }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog]);
+  }, [genreFilter, sortMode, catalog, posters]);
 
   const { newThisWeek, nowShowing } = useMemo(() => {
     const ref = new Date(referenceDate);
@@ -161,14 +167,14 @@ export function HomeClient({ catalog, genres, referenceDate }: {
             {filterCount} 部
           </span>
           <button
-            onClick={() => setSortMode(s => s === "newest" ? "oldest" : "newest")}
+            onClick={() => setSortMode(s => s === "newest" ? "rating" : s === "rating" ? "oldest" : "newest")}
             style={{
               padding: "4px 12px", borderRadius: 6, fontSize: "0.68rem", fontFamily: "var(--font-body)",
               border: "1px solid var(--border)", background: "transparent", color: "var(--muted)",
               cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
             }}
           >
-            {sortMode === "newest" ? "最新上映 ↓" : "最早上映 ↑"}
+            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "评分最高 ★" : "最早上映 ↑"}
           </button>
         </div>
       </div>
