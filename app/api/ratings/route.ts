@@ -51,16 +51,7 @@ function titleToRTSlug(title: string): string {
     .replace(/\s+/g, "_");
 }
 
-async function fetchRT(title: string): Promise<{ tomatometer: string | null; audience: string | null; url: string | null }> {
-  const slug = titleToRTSlug(title);
-  const url  = `https://www.rottentomatoes.com/m/${slug}`;
-  const html = await safeFetch(url, {
-    "User-Agent": GOOGLEBOT_UA,
-    "Accept": "text/html,*/*",
-    "Accept-Language": "en-US,en;q=0.9",
-  });
-  if (!html || html.length < 5000) return { tomatometer: null, audience: null, url: null };
-
+function extractRTScores(html: string): { tomatometer: string | null; audience: string | null } {
   let tomatometer: string | null = null;
   let audience: string | null = null;
 
@@ -79,13 +70,51 @@ async function fetchRT(title: string): Promise<{ tomatometer: string | null; aud
     } catch { /* continue */ }
   }
 
-  // Fallback: inline score patterns
+  // Fallback: rt-text element with critics-score class
+  if (!tomatometer) {
+    const rtTextMatch = html.match(/class="critics-score"[^>]*>(\d+)%/);
+    if (rtTextMatch) tomatometer = `${rtTextMatch[1]}%`;
+  }
+
+  // Fallback: inline audience score
   if (!audience) {
     const audMatch = html.match(/"audienceScore"[^}]*"score"\s*:\s*"?([0-9]+)"?/);
     if (audMatch) audience = `${audMatch[1]}%`;
   }
 
-  return { tomatometer, audience, url: (tomatometer || audience) ? url : null };
+  return { tomatometer, audience };
+}
+
+async function fetchRT(title: string, year?: string): Promise<{ tomatometer: string | null; audience: string | null; url: string | null }> {
+  const slug = titleToRTSlug(title);
+  const headers = { "User-Agent": GOOGLEBOT_UA, "Accept": "text/html,*/*", "Accept-Language": "en-US,en;q=0.9" };
+
+  // Try base slug first
+  const baseUrl = `https://www.rottentomatoes.com/m/${slug}`;
+  const html = await safeFetch(baseUrl, headers);
+  if (html && html.length >= 5000) {
+    const scores = extractRTScores(html);
+    if (scores.tomatometer || scores.audience) {
+      return { ...scores, url: baseUrl };
+    }
+  }
+
+  // Fallback: try slug with year suffix (RT often uses e.g. exit_8_2025)
+  if (year) {
+    const yearSlugs = [year, String(parseInt(year) - 1)]; // try both current year and previous
+    for (const y of yearSlugs) {
+      const yearUrl = `https://www.rottentomatoes.com/m/${slug}_${y}`;
+      const yearHtml = await safeFetch(yearUrl, headers);
+      if (yearHtml && yearHtml.length >= 5000) {
+        const scores = extractRTScores(yearHtml);
+        if (scores.tomatometer || scores.audience) {
+          return { ...scores, url: yearUrl };
+        }
+      }
+    }
+  }
+
+  return { tomatometer: null, audience: null, url: null };
 }
 
 // ── Metacritic ────────────────────────────────────────────────────────────────
@@ -112,9 +141,10 @@ async function fetchMetacritic(title: string): Promise<{ metascore: string | nul
     for (const block of ldMatch) {
       try {
         const ld = JSON.parse(block.replace(/<\/?script[^>]*>/g, ""));
-        if (ld.aggregateRating?.ratingValue) {
+        const val = Number(ld.aggregateRating?.ratingValue);
+        if (val && val >= 1 && val <= 100) {
           return {
-            metascore: String(ld.aggregateRating.ratingValue),
+            metascore: String(val),
             userScore: null,
             url,
           };
@@ -126,11 +156,12 @@ async function fetchMetacritic(title: string): Promise<{ metascore: string | nul
   // Fallback patterns
   const msMatch  = html.match(/Metascore[^0-9]*([0-9]{1,3})/);
   const usrMatch = html.match(/User Score[^0-9]*([0-9.]+)/);
+  const msVal = msMatch ? parseInt(msMatch[1]) : null;
 
   return {
-    metascore: msMatch ? msMatch[1] : null,
+    metascore: msVal && msVal >= 1 && msVal <= 100 ? String(msVal) : null,
     userScore: usrMatch ? usrMatch[1] : null,
-    url: msMatch ? url : null,
+    url: msVal && msVal >= 1 && msVal <= 100 ? url : null,
   };
 }
 
@@ -183,7 +214,7 @@ export async function GET(req: NextRequest) {
   // Fetch all four sources in parallel
   const [imdb, rt, mc, douban] = await Promise.all([
     imdbId ? fetchIMDb(imdbId) : Promise.resolve({ score: null, votes: null }),
-    fetchRT(title),
+    fetchRT(title, year),
     fetchMetacritic(title),
     fetchDouban(title, year),
   ]);
