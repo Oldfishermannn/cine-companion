@@ -54,32 +54,26 @@ export function PreMovie({
   return (
     <>
       {/* AMC Tickets */}
-      {amcUrl && <section>
-        <a
-          href={amcUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            padding: "14px 20px",
-            background: "linear-gradient(135deg, #C41230 0%, #8B0D24 100%)",
-            border: "1px solid rgba(196,18,48,0.4)",
-            borderRadius: 12,
-            textDecoration: "none",
-            cursor: "pointer",
-            transition: "opacity 0.15s, transform 0.15s",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.opacity = "0.9"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-          onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "none"; }}
-        >
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.88rem", fontWeight: 600, color: "#fff", letterSpacing: "0.04em" }}>
-            🎟 AMC 购票
-          </span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: "rgba(255,255,255,0.7)" }}>
-            →
-          </span>
-        </a>
-      </section>}
+      {amcUrl && (
+        <div style={{ textAlign: "center", marginBottom: 4 }}>
+          <a
+            href={amcUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: "var(--font-body)", fontSize: "0.72rem", letterSpacing: "0.08em",
+              color: "var(--gold-dim)", textDecoration: "none", textTransform: "uppercase",
+              borderBottom: "1px solid rgba(200,151,58,0.25)",
+              paddingBottom: 2,
+              transition: "color 0.15s, border-color 0.15s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--gold)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.5)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--gold-dim)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.25)"; }}
+          >
+            AMC 购票 →
+          </a>
+        </div>
+      )}
 
       {/* Ratings */}
       <section>

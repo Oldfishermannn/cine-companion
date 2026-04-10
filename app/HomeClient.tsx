@@ -42,7 +42,16 @@ function isPosterMatch(movie: CatalogMovie, d: { title?: string; year?: string }
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; ratingScore?: number; }
+
+/** Normalize IMDb (0-10), RT ("XX%"), Metacritic (0-100) → average on 0-100 scale */
+function computeAvgRating(ratings: { imdb?: string | null; rt?: string | null; metacritic?: string | null }): number | undefined {
+  const scores: number[] = [];
+  if (ratings.imdb) { const v = parseFloat(ratings.imdb); if (!isNaN(v)) scores.push(v * 10); }
+  if (ratings.rt) { const v = parseFloat(ratings.rt); if (!isNaN(v)) scores.push(v); }
+  if (ratings.metacritic) { const v = parseFloat(ratings.metacritic); if (!isNaN(v) && v >= 1 && v <= 100) scores.push(v); }
+  return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : undefined;
+}
 
 type SortMode = "newest" | "oldest" | "rating";
 
@@ -68,9 +77,10 @@ export function HomeClient({ catalog, genres }: {
         const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
         const expectedYear = parseInt(movie.year, 10);
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
+        const avgScore = matched && d.ratings ? computeAvgRating(d.ratings) : undefined;
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined, ratingScore: avgScore };
           return n;
         });
       })
@@ -92,14 +102,17 @@ export function HomeClient({ catalog, genres }: {
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        return a.movie.rank - b.movie.rank; // lower rank = higher priority
+        const ra = posters[a.origIdx]?.ratingScore ?? -1;
+        const rb = posters[b.origIdx]?.ratingScore ?? -1;
+        if (ra !== rb) return rb - ra; // high to low
+        return a.movie.rank - b.movie.rank; // fallback: editorial rank
       }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog]);
+  }, [genreFilter, sortMode, catalog, posters]);
 
   const filterCount = genreFilter
     ? catalog.filter(m => m.genre === genreFilter).length
@@ -151,7 +164,7 @@ export function HomeClient({ catalog, genres }: {
               cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
             }}
           >
-            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "推荐 ★" : "最早上映 ↑"}
+            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "评分最高 ★" : "最早上映 ↑"}
           </button>
         </div>
       </div>
