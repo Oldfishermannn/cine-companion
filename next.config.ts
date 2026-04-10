@@ -8,13 +8,11 @@ const nextConfig: NextConfig = {
     ],
   },
   // Include pre-warmed cache files in serverless function bundles on Vercel
-  experimental: {
-    outputFileTracingIncludes: {
-      "/api/movie-ai":       ["./cache/**/*"],
-      "/api/movie-funfacts": ["./cache/**/*"],
-      "/api/movie-post":     ["./cache/**/*"],
-      "/api/movie-breaks":   ["./cache/**/*"],
-    },
+  outputFileTracingIncludes: {
+    "/api/movie-ai":       ["./cache/**/*"],
+    "/api/movie-funfacts": ["./cache/**/*"],
+    "/api/movie-post":     ["./cache/**/*"],
+    "/api/movie-breaks":   ["./cache/**/*"],
   },
 };
 
