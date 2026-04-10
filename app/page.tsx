@@ -6,26 +6,27 @@ import Image from "next/image";
 
 // 数据来源：amctheatres.com/movies 直接抓取，2026-04-10
 // 中文片名：优先官方译名，无官方译名则标注(暂译)
+// 数据来源：amctheatres.com/movies 直接抓取，2026-04-10（CDP 实时验证）
 const MOVIE_CATALOG = [
-  { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026" }, // zh.wikipedia 确认
-  { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026" }, // 百度百科/豆瓣 确认
-  { title: "You, Me & Tuscany",             zh: "你、我与托斯卡纳",         year: "2026" }, // 暂译，主演 Halle Bailey
-  { title: "Faces of Death",               zh: "死亡之脸",                year: "2026" }, // 暂译，恐怖片翻拍
-  { title: "The Drama",                    zh: "The Drama",               year: "2026" }, // 暂无官方中文译名
-  { title: "Hoppers",                      zh: "狸想世界",                 year: "2026" }, // zh.wikipedia 确认，皮克斯动画
-  { title: "Newborn",                      zh: "新生",                    year: "2026" }, // 暂译，David Oyelowo 主演
-  { title: "Beast",                        zh: "猛兽",                    year: "2026" }, // 暂译，Russell Crowe MMA片
-  { title: "Hunting Matthew Nichols",      zh: "追捕马修·尼科尔斯",        year: "2026" }, // 暂译
-  { title: "A Great Awakening",            zh: "大觉醒",                  year: "2026" }, // 暂译
-  { title: "They Will Kill You",           zh: "他们会杀了你",              year: "2026" }, // 暂译
-  { title: "Reminders of Him",             zh: "念你之名",                 year: "2026" }, // 暂译，Colleen Hoover 改编
-  { title: "Exit 8",                       zh: "8号出口",                  year: "2026" }, // 日文原名 8番出口，同字面
-  { title: "Ready or Not 2: Here I Come",  zh: "准备好了没2：我来了",       year: "2026" }, // Letterboxd 确认
-  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026" }, // Riz Ahmed 主演现代版
-  { title: "Dacoit: A Love Story",         zh: "Dacoit：爱情故事",          year: "2026" }, // 印度片，暂无中文名
-  { title: "ChaO",                         zh: "ChaO",                    year: "2026" }, // 暂无中文译名
-  { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026" }, // 系列官方中文名延续
-  { title: "Goat",                         zh: "传奇山羊",                 year: "2026" }, // 暂译，Sony动画 GOAT
+  { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026", released: "April 1, 2026"    },
+  { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026", released: "March 20, 2026"   },
+  { title: "You, Me & Tuscany",             zh: "你、我与托斯卡纳",         year: "2026", released: "April 10, 2026"   },
+  { title: "Faces of Death",               zh: "死亡之脸",                year: "2026", released: "April 10, 2026"   },
+  { title: "The Drama",                    zh: "The Drama",               year: "2026", released: "April 3, 2026"    },
+  { title: "Hoppers",                      zh: "狸想世界",                 year: "2026", released: "March 6, 2026"    },
+  { title: "Newborn",                      zh: "新生",                    year: "2026", released: "April 10, 2026"   },
+  { title: "Beast",                        zh: "猛兽",                    year: "2026", released: "April 10, 2026"   },
+  { title: "Hunting Matthew Nichols",      zh: "追捕马修·尼科尔斯",        year: "2026", released: "April 10, 2026"   },
+  { title: "A Great Awakening",            zh: "大觉醒",                  year: "2026", released: "April 3, 2026"    },
+  { title: "They Will Kill You",           zh: "他们会杀了你",              year: "2026", released: "March 27, 2026"  },
+  { title: "Reminders of Him",             zh: "念你之名",                 year: "2026", released: "March 13, 2026"  },
+  { title: "Exit 8",                       zh: "8号出口",                  year: "2026", released: "April 10, 2026"  },
+  { title: "Ready or Not 2: Here I Come",  zh: "准备好了没2：我来了",       year: "2026", released: "March 20, 2026"  },
+  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026"  },
+  { title: "Dacoit: A Love Story",         zh: "Dacoit：爱情故事",          year: "2026", released: "April 10, 2026"  },
+  { title: "ChaO",                         zh: "ChaO",                    year: "2026", released: "April 10, 2026"  },
+  { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026", released: "February 27, 2026"},
+  { title: "Goat",                         zh: "传奇山羊",                 year: "2026", released: "February 13, 2026"},
 ];
 
 const PAGE_SIZE = 20; // 首屏20，超出时显示加载更多
@@ -80,9 +81,13 @@ export default function Home() {
       .then(r => r.json())
       .then(d => {
         const matched = isPosterMatch(movie, d);
+        // Only use released date if its year matches expected year (avoid OMDb returning old films)
+        const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
+        const expectedYear = parseInt(movie.year, 10);
+        const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: matched ? d.released : undefined };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
           return n;
         });
       })
@@ -110,8 +115,11 @@ export default function Home() {
         .then(r => r.json())
         .then(d => {
           const matched = isPosterMatch(movie, d);
+          const relY = d.released ? new Date(d.released).getFullYear() : NaN;
+          const expY = parseInt(movie.year, 10);
+          const useRel = matched && !isNaN(relY) && relY === expY;
           setPosters(prev => {
-            const n = [...prev]; n[idx] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: matched ? d.released : undefined }; return n;
+            const n = [...prev]; n[idx] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useRel ? d.released : undefined }; return n;
           });
         })
         .catch(() => setPosters(prev => {
@@ -161,6 +169,7 @@ export default function Home() {
                 movie={movie}
                 posterInfo={posters[i]}
                 index={i}
+                catalogReleased={movie.released}
                 onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
               />
             ))}
@@ -218,10 +227,11 @@ export default function Home() {
   );
 }
 
-function PosterCard({ movie, posterInfo, index, onClick }: {
+function PosterCard({ movie, posterInfo, index, catalogReleased, onClick }: {
   movie: typeof MOVIE_CATALOG[number];
   posterInfo: PosterInfo;
   index: number;
+  catalogReleased?: string;
   onClick: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -301,7 +311,7 @@ function PosterCard({ movie, posterInfo, index, onClick }: {
           {movie.zh}
         </p>
         <span style={{ fontSize: "0.68rem", color: "var(--faint)", letterSpacing: "0.04em", flexShrink: 0 }}>
-          {fmtReleaseDate(posterInfo.released) || movie.year}
+          {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}
         </span>
       </div>
     </div>

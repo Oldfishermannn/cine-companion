@@ -612,6 +612,14 @@ function findVocabMatch(input: string, vocab: VocabItem[]): VocabItem | null {
   // Exact
   const exact = vocab.find(v => norm(v.word) === q);
   if (exact) return exact;
+  // Prefix: "solar" → "solar dimming" — input is a prefix of a vocab word (min 2 chars)
+  if (q.length >= 2) {
+    const prefixMatches = vocab.filter(v => norm(v.word).startsWith(q) && norm(v.word).length > q.length);
+    if (prefixMatches.length > 0) {
+      // Pick shortest (most specific) match
+      return prefixMatches.sort((a, b) => norm(a.word).length - norm(b.word).length)[0];
+    }
+  }
   // Fuzzy: score each word, take best within threshold
   let best: VocabItem | null = null;
   let bestScore = Infinity;
@@ -683,6 +691,11 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
           </div>
         )}
       </div>
+      {loading && (
+        <div style={{ borderTop: "1px solid var(--border)", padding: "10px 14px", color: "var(--faint)", fontSize: "0.78rem", letterSpacing: "0.06em" }}>
+          查询中…
+        </div>
+      )}
       {result && !loading && (
         <div style={{ borderTop: "1px solid var(--border)", padding: "12px 14px" }}>
           {/* Word + phonetic */}
