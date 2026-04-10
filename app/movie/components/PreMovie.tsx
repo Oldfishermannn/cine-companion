@@ -325,7 +325,7 @@ export function PreMovie({
           </SectionLabel>
         </div>
         <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          零剧透 · 点击收起
+          零剧透
         </p>
 
         {factsLoading ? (

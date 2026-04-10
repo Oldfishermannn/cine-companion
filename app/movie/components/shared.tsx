@@ -106,27 +106,23 @@ export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
 }
 
 export function FactCard({ item, index }: { item: FunFactItem; index: number }) {
-  const [open, setOpen] = useState(true);
   const icon = FACT_CATEGORY_ICON[item.category] ?? "🎬";
 
   return (
     <div
       className="poster-enter"
-      style={{ "--r": "0deg", animationDelay: `${index * 40}ms`, background: "var(--bg-card)", border: `1px solid ${open ? "rgba(200,151,58,0.2)" : "var(--border)"}`, borderRadius: 12, padding: "12px 14px", cursor: "pointer", transition: "border-color 0.15s, background 0.15s" } as React.CSSProperties}
-      onClick={() => setOpen(!open)}
-      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--bg-lift)"}
-      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = open ? "var(--bg-lift)" : "var(--bg-card)"}
+      style={{ "--r": "0deg", animationDelay: `${index * 40}ms`, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 16px" } as React.CSSProperties}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-          <span style={{ fontSize: "1rem", flexShrink: 0 }}>{icon}</span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", letterSpacing: "0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: open ? "normal" : "nowrap" }}>
-            {!open ? (item.fact.length > 40 ? item.fact.slice(0, 40) + "…" : item.fact) : item.fact}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+        <span style={{ fontSize: "1rem", flexShrink: 0, lineHeight: 1.4 }}>{icon}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", letterSpacing: "0.02em", lineHeight: 1.6 }}>
+            {item.fact}
+          </span>
+          <span style={{ display: "inline-block", fontSize: "0.65rem", padding: "1px 7px", borderRadius: 20, background: "rgba(200,151,58,0.08)", color: "var(--gold-dim)", fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginLeft: 8 }}>
+            {item.category}
           </span>
         </div>
-        <span style={{ fontSize: "0.7rem", padding: "2px 8px", borderRadius: 20, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)", flexShrink: 0, fontFamily: "var(--font-body)", letterSpacing: "0.02em" }}>
-          {item.category}
-        </span>
       </div>
     </div>
   );
