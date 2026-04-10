@@ -153,7 +153,11 @@ function WatchPageContent() {
       const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(title)}`);
       const data = await res.json();
       if (data.error) { setLookupError("查询失败"); return; }
-      setLookupResult(data);
+      // Normalize: ensure options is always a non-empty array
+      const options = Array.isArray(data.options) && data.options.length > 0
+        ? data.options
+        : [{ translation: data.translation ?? data.word, brief: data.brief ?? "" }];
+      setLookupResult({ ...data, options });
     } catch {
       setLookupError("网络错误");
     } finally {
@@ -459,7 +463,7 @@ function WatchPageContent() {
               </div>
 
               {/* Option chips — only show if >1 option */}
-              {lookupResult.options.length > 1 && (
+              {(lookupResult.options?.length ?? 0) > 1 && (
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
                   {lookupResult.options.map((opt, idx) => (
                     <button
@@ -486,7 +490,8 @@ function WatchPageContent() {
 
               {/* Detail card for selected option */}
               {(() => {
-                const opt = lookupResult.options[selectedOption] ?? lookupResult.options[0];
+                const opt = lookupResult.options?.[selectedOption] ?? lookupResult.options?.[0];
+                if (!opt) return null;
                 return (
                   <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "14px 16px" }}>
                     <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--gold)", fontWeight: 400 }}>

@@ -56,7 +56,15 @@ function isPosterMatch(movie: { title: string; year: string }, d: { title?: stri
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
+
+// "20 Mar 2026" or "March 20, 2026" → "3/20"
+function fmtReleaseDate(s: string | undefined): string {
+  if (!s) return "";
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return "";
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
 
 export default function Home() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -74,7 +82,7 @@ export default function Home() {
         const matched = isPosterMatch(movie, d);
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: matched ? d.released : undefined };
           return n;
         });
       })
@@ -103,7 +111,7 @@ export default function Home() {
         .then(d => {
           const matched = isPosterMatch(movie, d);
           setPosters(prev => {
-            const n = [...prev]; n[idx] = { poster: matched && d.poster ? d.poster : null, fetched: true }; return n;
+            const n = [...prev]; n[idx] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: matched ? d.released : undefined }; return n;
           });
         })
         .catch(() => setPosters(prev => {
@@ -293,7 +301,7 @@ function PosterCard({ movie, posterInfo, index, onClick }: {
           {movie.zh}
         </p>
         <span style={{ fontSize: "0.68rem", color: "var(--faint)", letterSpacing: "0.04em", flexShrink: 0 }}>
-          {movie.year}
+          {fmtReleaseDate(posterInfo.released) || movie.year}
         </span>
       </div>
     </div>

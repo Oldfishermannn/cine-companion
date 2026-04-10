@@ -664,12 +664,14 @@ function InlineWordLookup({ movieTitle, vocab }: { movieTitle: string; vocab: Vo
       const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(context)}`);
       const d = await res.json();
       if (!d.error) {
-        const firstOpt = Array.isArray(d.options) && d.options[0];
+        const opts = Array.isArray(d.options) && d.options.length > 0
+          ? d.options : [{ translation: d.translation ?? d.word, brief: d.brief ?? "" }];
+        const firstOpt = opts[0];
         setResult({
           word: d.word, phonetic: d.phonetic,
           translation: firstOpt ? firstOpt.translation : "",
           brief: firstOpt ? firstOpt.brief : "",
-          options: d.options,
+          options: opts,
           fromVocab: false,
         });
       }
