@@ -246,7 +246,7 @@ function MoviePageContent() {
             <div className="tab-strip">
               {(["pre", "during", "post"] as const).map(m => (
                 <button key={m} onClick={() => setMode(m)} style={{ background: mode === m ? "rgba(200,151,58,0.06)" : "none", border: "none", borderBottom: `2px solid ${mode === m ? "var(--gold)" : "transparent"}`, color: mode === m ? "var(--parchment)" : "var(--faint)", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: mode === m ? 500 : 400, transition: "all 0.15s", marginBottom: -1 }}>
-                  {m === "pre" ? "观 前" : m === "during" ? "观影中" : "观 后"}
+                  {m === "pre" ? "观 前" : m === "during" ? "厕所时间" : "观 后"}
                 </button>
               ))}
             </div>
@@ -272,7 +272,6 @@ function MoviePageContent() {
               {mode === "during" && (
                 <DuringMovie
                   data={data}
-                  aiContent={aiContent}
                   breaksContent={breaksContent}
                   breaksLoading={breaksLoading}
                   breaksError={breaksError}

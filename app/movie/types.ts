@@ -75,17 +75,6 @@ export interface PostContent {
   spoiler_fun_facts: Array<{ fact: string; category: string }>;
 }
 
-export interface LookupResult {
-  word: string;
-  phonetic: string | null;
-  translation: string;
-  brief: string;
-  fromVocab?: boolean;
-  matchedWord?: string;
-  options?: Array<{ translation: string; brief: string; example?: string | null }>;
-  selectedOption?: number;
-}
-
 export interface PersonalRating { imdbId: string; scores: number[]; timestamp: number; }
 
 export const GENRE_ZH: Record<string, string> = {

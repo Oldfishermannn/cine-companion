@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import type { MovieData, AiContent, BreaksContent } from "../types";
+import type { MovieData, BreaksContent } from "../types";
 import { SectionLabel, ErrorBanner } from "./shared";
-import { InlineWordLookup } from "./InlineWordLookup";
 
 interface DuringMovieProps {
   data: MovieData;
-  aiContent: AiContent | null;
   breaksContent: BreaksContent | null;
   breaksLoading: boolean;
   breaksError: boolean;
@@ -18,17 +16,11 @@ interface DuringMovieProps {
 }
 
 export function DuringMovie({
-  data, aiContent, breaksContent, breaksLoading, breaksError,
+  data, breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
 }: DuringMovieProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
-      {/* Word Lookup */}
-      <section>
-        <SectionLabel>实时查词</SectionLabel>
-        <InlineWordLookup movieTitle={data.title} vocab={aiContent?.vocabulary ?? []} />
-      </section>
-
       {/* Break Calculator */}
       <section>
         <SectionLabel>厕所时间</SectionLabel>
