@@ -104,50 +104,54 @@ export function PreMovie({
         )}
       </section>
 
-      {/* Cast */}
+      {/* Cast — poster-style cards */}
       {castMembers.length > 0 && (
         <section>
           <SectionLabel>卡司</SectionLabel>
-          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
             {castMembers.map((m, i) => (
               <a
                 key={i}
                 href={m.imdbUrl ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  flexShrink: 0, width: 88, textDecoration: "none",
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-                }}
+                style={{ flexShrink: 0, width: 100, textDecoration: "none" }}
               >
                 <div style={{
-                  width: 64, height: 64, borderRadius: "50%", overflow: "hidden",
-                  background: "var(--bg-card)", border: `1px solid ${m.role === "director" ? "rgba(200,151,58,0.4)" : "var(--border)"}`,
-                  flexShrink: 0,
+                  aspectRatio: "2/3", width: "100%", overflow: "hidden", borderRadius: 8,
+                  background: "#2A2830", position: "relative",
+                  border: m.role === "director" ? "1.5px solid rgba(200,151,58,0.35)" : "1px solid var(--border)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
                 }}>
                   {m.photo ? (
-                    <Image src={m.photo} alt={m.name} width={64} height={64} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                    <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="100px" />
                   ) : (
-                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", color: "var(--faint)" }}>
-                      {m.role === "director" ? "🎬" : "👤"}
+                    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                      <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
+                      <span style={{ color: "var(--faint)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
                     </div>
                   )}
-                </div>
-                <div style={{ textAlign: "center", width: "100%" }}>
-                  <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "0.7rem", color: "var(--muted)",
-                    margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    lineHeight: 1.3,
+                  {/* Gradient overlay at bottom */}
+                  <div style={{
+                    position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
+                    background: "linear-gradient(to top, rgba(9,9,14,0.92) 0%, rgba(9,9,14,0.4) 60%, transparent 100%)",
+                    display: "flex", flexDirection: "column", justifyContent: "flex-end",
+                    padding: "8px 7px",
                   }}>
-                    {m.name}
-                  </p>
-                  <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "0.6rem",
-                    color: m.role === "director" ? "var(--gold-dim)" : "var(--faint)",
-                    margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
-                    {m.role === "director" ? "导演" : m.character || "演员"}
-                  </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--parchment)",
+                      margin: 0, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {m.name}
+                    </p>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.58rem",
+                      color: m.role === "director" ? "var(--gold-dim)" : "var(--faint)",
+                      margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {m.role === "director" ? "导演" : m.character || "演员"}
+                    </p>
+                  </div>
                 </div>
               </a>
             ))}
