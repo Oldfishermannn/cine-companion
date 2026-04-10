@@ -11,6 +11,7 @@ export interface CatalogMovie {
   released: string;
   genre: string;
   amc: string;
+  rank: number;
 }
 
 function parseReleaseDate(s: string): number {
@@ -41,7 +42,7 @@ function isPosterMatch(movie: CatalogMovie, d: { title?: string; year?: string }
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; imdbRating?: number; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
 
 type SortMode = "newest" | "oldest" | "rating";
 
@@ -70,8 +71,7 @@ export function HomeClient({ catalog, genres, referenceDate }: {
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
         setPosters(prev => {
           const n = [...prev];
-          const rating = matched && d.ratings?.imdb ? parseFloat(d.ratings.imdb) : NaN;
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined, imdbRating: isNaN(rating) ? undefined : rating };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
           return n;
         });
       })
@@ -93,19 +93,19 @@ export function HomeClient({ catalog, genres, referenceDate }: {
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        const ra = posters[a.origIdx]?.imdbRating ?? 0;
-        const rb = posters[b.origIdx]?.imdbRating ?? 0;
-        return rb - ra; // high to low
+        return a.movie.rank - b.movie.rank; // lower rank = higher priority
       }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog, posters]);
+  }, [genreFilter, sortMode, catalog]);
 
   const { newThisWeek, nowShowing } = useMemo(() => {
-    const ref = new Date(referenceDate);
+    // Parse ISO date as local time (not UTC) to match release date parsing
+    const [ry, rm, rd] = referenceDate.split("-").map(Number);
+    const ref = new Date(ry, rm - 1, rd, 23, 59, 59);
     const now = ref.getTime();
     // Monday of this week (getDay: 0=Sun, 1=Mon, ...)
     const day = ref.getDay();
@@ -174,7 +174,7 @@ export function HomeClient({ catalog, genres, referenceDate }: {
               cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
             }}
           >
-            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "评分最高 ★" : "最早上映 ↑"}
+            {sortMode === "newest" ? "最新上映 ↓" : sortMode === "rating" ? "推荐 ★" : "最早上映 ↑"}
           </button>
         </div>
       </div>
