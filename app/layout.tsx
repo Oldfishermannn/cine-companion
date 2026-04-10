@@ -15,7 +15,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "伴影 CineUsher",
+  title: "伴影 CineCompanion",
   description: "北美华人观影助手",
 };
 
