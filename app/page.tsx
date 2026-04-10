@@ -1,36 +1,6 @@
 import type { Metadata } from "next";
-import { HomeClient, type CatalogMovie } from "./HomeClient";
-
-// 数据来源：amctheatres.com/movies 直接抓取，2026-04-10（CDP 实时验证）
-// 中文片名：优先官方译名，无官方译名则标注(暂译)
-// genre: 主类型标签，用于首页筛选
-// rank: 编辑推荐排序（1=最高优先级），用于"推荐"排序模式
-// rank 基于 IMDb / RT / Metacritic 三家均分排序（2026-04-10 实测数据，/api/ratings 验证）
-// 归一化：IMDb ×10, RT 取数字, MC 取数字 → 均值 → 降序排列
-// ≥2 个来源的排前面；仅 1 个来源或无评分的排最后
-const MOVIE_CATALOG: CatalogMovie[] = [
-  { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026", released: "March 20, 2026",    genre: "科幻",  amc: "project-hail-mary-76779",            rank: 1 },  // 85.0 (8.4/94%/77) 3源
-  { title: "Beast",                        zh: "猛兽",                    year: "2026", released: "April 10, 2026",    genre: "动作",  amc: "beast-82916",                        rank: 2 },  // 83.0 (--/92%/74) 2源
-  { title: "Hoppers",                      zh: "狸想世界",                 year: "2026", released: "March 6, 2026",     genre: "动画",  amc: "hoppers-72462",                      rank: 3 },  // 80.7 (7.5/94%/73) 3源
-  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026",   genre: "剧情",  amc: "hamlet-82659",                        rank: 4 },  // 76.7 (6.3/100%/67) 3源
-  { title: "Exit 8",                       zh: "8号出口",                  year: "2026", released: "April 10, 2026",   genre: "惊悚",  amc: "exit-8-82865",                        rank: 5 },  // 75.7 (6.4/94%/69) 3源
-  { title: "ChaO",                         zh: "ChaO",                    year: "2026", released: "April 10, 2026",   genre: "动画",  amc: "chao-82925",                          rank: 6 },  // 75.3 (6.8/94%/64) 3源
-  { title: "Goat",                         zh: "传奇山羊",                 year: "2026", released: "February 13, 2026", genre: "运动",  amc: "goat-77194",                         rank: 7 },  // 75.0 (6.7/94%/64) 3源
-  { title: "Hunting Matthew Nichols",      zh: "追捕马修·尼科尔斯",        year: "2026", released: "April 10, 2026",    genre: "惊悚",  amc: "hunting-matthew-nichols-82455",       rank: 8 },  // 73.0 (5.5/91%/--) 2源
-  { title: "A Great Awakening",            zh: "大觉醒",                  year: "2026", released: "April 3, 2026",     genre: "剧情",  amc: "a-great-awakening-81931",             rank: 9 },  // 71.0 (7.5/67%/--) 2源
-  { title: "The Drama",                    zh: "The Drama",               year: "2026", released: "April 3, 2026",     genre: "喜剧",  amc: "the-drama-81887",                    rank: 10 }, // 70.3 (7.5/77%/59) 3源
-  { title: "Ready or Not 2: Here I Come",  zh: "准备好了没2：我来了",       year: "2026", released: "March 20, 2026",   genre: "惊悚",  amc: "ready-or-not-2-here-i-come-80592",    rank: 11 }, // 67.0 (6.9/74%/58) 3源
-  { title: "They Will Kill You",           zh: "他们会杀了你",              year: "2026", released: "March 27, 2026",   genre: "惊悚",  amc: "they-will-kill-you-71213",            rank: 12 }, // 59.3 (6.5/63%/50) 3源
-  { title: "You, Me & Tuscany",             zh: "你、我与托斯卡纳",         year: "2026", released: "April 10, 2026",    genre: "爱情",  amc: "you-me-tuscany-80165",               rank: 13 }, // 58.5 (6.2/--/55) 2源
-  { title: "Reminders of Him",             zh: "念你之名",                 year: "2026", released: "March 13, 2026",   genre: "爱情",  amc: "reminders-of-him-71462",              rank: 14 }, // 56.7 (6.4/57%/49) 3源
-  { title: "Faces of Death",               zh: "死亡之脸",                year: "2026", released: "April 10, 2026",    genre: "惊悚",  amc: "faces-of-death-82688",                rank: 15 }, // 52.0 (6.5/25%/66) 3源
-  { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026", released: "April 1, 2026",     genre: "动画",  amc: "the-super-mario-galaxy-movie-71465",  rank: 16 }, // 48.3 (6.5/43%/37) 3源
-  { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026", released: "February 27, 2026", genre: "惊悚",  amc: "scream-7-78363",                     rank: 17 }, // 40.3 (5.6/30%/35) 3源
-  { title: "Newborn",                      zh: "新生",                    year: "2026", released: "April 10, 2026",    genre: "惊悚",  amc: "newborn-83288",                      rank: 18 }, // 无可靠评分（RT匹配到同名异片）
-  { title: "Dacoit: A Love Story",         zh: "Dacoit：爱情故事",          year: "2026", released: "April 10, 2026",   genre: "动作",  amc: "dacoit-a-love-story-80879",           rank: 19 }, // 无IMDb/MC评分
-];
-
-const ALL_GENRES = [...new Set(MOVIE_CATALOG.map(m => m.genre))].sort();
+import { HomeClient } from "./HomeClient";
+import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
 
 
 export const metadata: Metadata = {

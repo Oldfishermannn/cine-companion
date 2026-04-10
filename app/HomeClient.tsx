@@ -1,18 +1,11 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export interface CatalogMovie {
-  title: string;
-  zh: string;
-  year: string;
-  released: string;
-  genre: string;
-  amc: string;
-  rank: number;
-}
+import type { CatalogMovie } from "./catalog";
+export type { CatalogMovie };
 
 function parseReleaseDate(s: string): number {
   const d = new Date(s);
@@ -47,6 +40,17 @@ interface PosterInfo { poster: string | null; fetched: boolean; released?: strin
 type SortMode = "newest" | "oldest" | "rating";
 
 const PAGE_SIZE = 20;
+const WATCHLIST_KEY = "cine_watchlist";
+
+function loadWatchlist(): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(WATCHLIST_KEY) ?? "[]"));
+  } catch { return new Set(); }
+}
+
+function saveWatchlist(set: Set<string>) {
+  try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify([...set])); } catch {}
+}
 
 export function HomeClient({ catalog, genres }: {
   catalog: CatalogMovie[];
@@ -57,7 +61,21 @@ export function HomeClient({ catalog, genres }: {
   );
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
+  const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
+
+  // Load watchlist from localStorage on mount
+  useEffect(() => { setWatchlist(loadWatchlist()); }, []);
+
+  const toggleWatchlist = useCallback((title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setWatchlist(prev => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title); else next.add(title);
+      saveWatchlist(next);
+      return next;
+    });
+  }, []);
 
   const fetchPoster = useCallback((movie: CatalogMovie, i: number) => {
     if (posters[i].fetched) return;
@@ -82,8 +100,9 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Feature 3: Lazy load posters — first 8 eagerly, rest via IntersectionObserver
   useEffect(() => {
-    catalog.forEach((movie, i) => fetchPoster(movie, i));
+    catalog.slice(0, 8).forEach((movie, i) => fetchPoster(movie, i));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -92,7 +111,7 @@ export function HomeClient({ catalog, genres }: {
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        return a.movie.rank - b.movie.rank; // static editorial rank, no async jumping
+        return a.movie.rank - b.movie.rank;
       }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
@@ -101,12 +120,55 @@ export function HomeClient({ catalog, genres }: {
     return list;
   }, [genreFilter, sortMode, catalog]);
 
+  // Feature 9: Coming soon movies (released date in the future)
+  const now = Date.now();
+  const comingSoon = useMemo(() => {
+    return catalog
+      .filter(m => parseReleaseDate(m.released) > now)
+      .sort((a, b) => parseReleaseDate(a.released) - parseReleaseDate(b.released));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog]);
+
   const filterCount = genreFilter
     ? catalog.filter(m => m.genre === genreFilter).length
     : catalog.length;
 
   return (
     <>
+      {/* Feature 9: Coming Soon */}
+      {comingSoon.length > 0 && (
+        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "80ms", marginTop: 16, marginBottom: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>即将上映</span>
+          </div>
+          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+            {comingSoon.map(m => {
+              const idx = catalog.indexOf(m);
+              return (
+                <div
+                  key={m.title}
+                  onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
+                  style={{
+                    flexShrink: 0, width: 140, cursor: "pointer",
+                    background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10,
+                    padding: "12px 14px", transition: "border-color 0.15s",
+                  }}
+                >
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {m.zh}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--gold-dim)", margin: "4px 0 0", letterSpacing: "0.03em" }}>
+                    {fmtReleaseDate(m.released)} 上映
+                  </p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", color: "var(--faint)", margin: "2px 0 0" }}>{m.genre}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Filter + Sort Controls */}
       <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 16, marginBottom: 8 }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 12 }}>
@@ -176,6 +238,9 @@ export function HomeClient({ catalog, genres }: {
                 posterInfo={posters[origIdx]}
                 index={origIdx}
                 catalogReleased={movie.released}
+                inWatchlist={watchlist.has(movie.title)}
+                onToggleWatchlist={toggleWatchlist}
+                onVisible={() => fetchPoster(movie, origIdx)}
                 onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
               />
             ))}
@@ -194,17 +259,36 @@ export function HomeClient({ catalog, genres }: {
   );
 }
 
-function PosterCard({ movie, posterInfo, index, catalogReleased, onClick }: {
+function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, onToggleWatchlist, onVisible, onClick }: {
   movie: CatalogMovie;
   posterInfo: PosterInfo;
   index: number;
   catalogReleased?: string;
+  inWatchlist: boolean;
+  onToggleWatchlist: (title: string, e: React.MouseEvent) => void;
+  onVisible: () => void;
   onClick: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Feature 3: IntersectionObserver for lazy poster fetching
+  useEffect(() => {
+    if (posterInfo.fetched || index < 8) return; // first 8 already eagerly loaded
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { onVisible(); observer.disconnect(); } },
+      { rootMargin: "200px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posterInfo.fetched, index]);
 
   return (
     <div
+      ref={ref}
       className={posterInfo.fetched ? "poster-enter" : ""}
       style={{
         "--r": "0deg",
@@ -263,6 +347,24 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, onClick }: {
             <span style={{ color: "var(--muted)", fontSize: "0.62rem", textAlign: "center", lineHeight: 1.4, fontFamily: "var(--font-body)" }}>{movie.zh}</span>
           </div>
         )}
+
+        {/* Feature 6: Watchlist bookmark */}
+        <button
+          onClick={(e) => onToggleWatchlist(movie.title, e)}
+          style={{
+            position: "absolute", top: 6, right: 6, zIndex: 5,
+            width: 28, height: 28, borderRadius: "50%",
+            background: inWatchlist ? "var(--gold)" : "rgba(0,0,0,0.5)",
+            border: inWatchlist ? "none" : "1px solid rgba(255,255,255,0.15)",
+            color: inWatchlist ? "#09090E" : "rgba(255,255,255,0.6)",
+            cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "0.72rem", transition: "all 0.2s",
+            backdropFilter: "blur(4px)",
+          }}
+          title={inWatchlist ? "取消想看" : "标记想看"}
+        >
+          {inWatchlist ? "★" : "☆"}
+        </button>
       </div>
       <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 4 }}>
         <p style={{

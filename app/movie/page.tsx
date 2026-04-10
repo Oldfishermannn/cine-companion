@@ -7,9 +7,10 @@ import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostContent } from "./types";
 import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
-import { Divider } from "./components/shared";
+import { Divider, SectionLabel } from "./components/shared";
 import { PreMovie } from "./components/PreMovie";
 import { PostMovie } from "./components/PostMovie";
+import { MOVIE_CATALOG } from "../catalog";
 
 /** Fetch with 60s timeout + 1 retry for AI endpoints */
 async function fetchRetry(url: string, { timeout = 60_000, retries = 1 } = {}): Promise<Response> {
@@ -51,6 +52,7 @@ function MoviePageContent() {
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
+  const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiFromCache, setAiFromCache] = useState(false);
@@ -96,6 +98,12 @@ function MoviePageContent() {
         fetch(`/api/cast?id=${encodeURIComponent(d.id)}`)
           .then(r => r.json())
           .then(c => { if (c.cast) setCastMembers(c.cast); })
+          .catch(() => {});
+
+        // Trailer from IMDb videos
+        fetch(`/api/trailer?id=${encodeURIComponent(d.id)}`)
+          .then(r => r.json())
+          .then(t => { if (t.url) setTrailerUrl(t.url); })
           .catch(() => {});
 
         // Stage 3: Live ratings
@@ -263,6 +271,7 @@ function MoviePageContent() {
                   data={data}
                   amcSlug={amcSlug}
                   castMembers={castMembers}
+                  trailerUrl={trailerUrl}
                   aiContent={aiContent}
                   aiLoading={aiLoading}
                   aiFromCache={aiFromCache}
@@ -296,6 +305,41 @@ function MoviePageContent() {
                 />
               )}
             </div>
+
+            {/* Feature 8: Similar Movies */}
+            {data && (() => {
+              const genre = (data.genre || "").split(", ")[0];
+              const similar = MOVIE_CATALOG
+                .filter(m => m.title !== data.title && m.genre === MOVIE_CATALOG.find(c => c.title === query)?.genre)
+                .sort((a, b) => a.rank - b.rank)
+                .slice(0, 4);
+              if (similar.length === 0) return null;
+              return (
+                <section style={{ marginTop: 36 }}>
+                  <SectionLabel>同类推荐</SectionLabel>
+                  <div style={{ display: "flex", gap: 12, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+                    {similar.map(m => (
+                      <div
+                        key={m.title}
+                        onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
+                        style={{
+                          flexShrink: 0, width: 130, cursor: "pointer",
+                          background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10,
+                          padding: "14px", transition: "border-color 0.15s",
+                        }}
+                      >
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {m.zh}
+                        </p>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--faint)", margin: "4px 0 0" }}>
+                          {m.genre} · #{m.rank}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })()}
           </div>
         </div>
       )}

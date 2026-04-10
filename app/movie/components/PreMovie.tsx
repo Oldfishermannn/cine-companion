@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
@@ -18,6 +18,7 @@ interface PreMovieProps {
   data: MovieData;
   amcSlug: string;
   castMembers: CastMember[];
+  trailerUrl: string | null;
   aiContent: AiContent | null;
   aiLoading: boolean;
   aiFromCache: boolean;
@@ -37,7 +38,7 @@ interface PreMovieProps {
 }
 
 export function PreMovie({
-  data, amcSlug, castMembers, aiContent, aiLoading, aiFromCache, aiError,
+  data, amcSlug, castMembers, trailerUrl, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
@@ -104,59 +105,25 @@ export function PreMovie({
         )}
       </section>
 
-      {/* Cast — poster-style cards */}
-      {castMembers.length > 0 && (
+      {/* Feature 5: Trailer */}
+      {trailerUrl && (
         <section>
-          <SectionLabel>卡司</SectionLabel>
-          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
-            {castMembers.map((m, i) => (
-              <a
-                key={i}
-                href={m.imdbUrl ?? "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ flexShrink: 0, width: 100, textDecoration: "none" }}
-              >
-                <div style={{
-                  aspectRatio: "2/3", width: "100%", overflow: "hidden", borderRadius: 8,
-                  background: "#2A2830", position: "relative",
-                  border: m.role === "director" ? "1.5px solid rgba(200,151,58,0.35)" : "1px solid var(--border)",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-                }}>
-                  {m.photo ? (
-                    <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="100px" />
-                  ) : (
-                    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                      <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
-                      <span style={{ color: "var(--faint)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
-                    </div>
-                  )}
-                  {/* Gradient overlay at bottom */}
-                  <div style={{
-                    position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-                    background: "linear-gradient(to top, rgba(9,9,14,0.92) 0%, rgba(9,9,14,0.4) 60%, transparent 100%)",
-                    display: "flex", flexDirection: "column", justifyContent: "flex-end",
-                    padding: "8px 7px",
-                  }}>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--parchment)",
-                      margin: 0, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>
-                      {m.name}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.58rem",
-                      color: m.role === "director" ? "var(--gold)" : "rgba(180,175,190,0.85)",
-                      margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>
-                      {m.role === "director" ? "导演" : m.character || "演员"}
-                    </p>
-                  </div>
-                </div>
-              </a>
-            ))}
+          <SectionLabel>预告片</SectionLabel>
+          <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden", background: "#000" }}>
+            <iframe
+              src={trailerUrl}
+              title="Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+            />
           </div>
         </section>
+      )}
+
+      {/* Cast — poster-style cards with scroll fade */}
+      {castMembers.length > 0 && (
+        <CastSection castMembers={castMembers} />
       )}
 
       {/* Background */}
@@ -249,7 +216,13 @@ export function PreMovie({
         {aiLoading ? (
           <div className="vocab-grid">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 50, borderRadius: 12 }} />
+              <div key={i} style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                <div className="skeleton" style={{ width: 24, height: 24, borderRadius: "50%", flexShrink: 0 }} />
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div className="skeleton" style={{ height: 12, borderRadius: 4, width: "60%" }} />
+                  <div className="skeleton" style={{ height: 10, borderRadius: 3, width: "40%" }} />
+                </div>
+              </div>
             ))}
           </div>
         ) : aiError ? (
@@ -434,5 +407,85 @@ export function PreMovie({
       </section>
       )}
     </>
+  );
+}
+
+// Feature 4: Cast section with scroll fade indicator
+function CastSection({ castMembers }: { castMembers: CastMember[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showFade, setShowFade] = useState(true);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const check = () => {
+      setShowFade(el.scrollWidth - el.scrollLeft - el.clientWidth > 10);
+    };
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    return () => el.removeEventListener("scroll", check);
+  }, [castMembers]);
+
+  return (
+    <section>
+      <SectionLabel>卡司</SectionLabel>
+      <div style={{ position: "relative" }}>
+        <div ref={scrollRef} style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+          {castMembers.map((m, i) => (
+            <a
+              key={i}
+              href={m.imdbUrl ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ flexShrink: 0, width: 100, textDecoration: "none" }}
+            >
+              <div style={{
+                aspectRatio: "2/3", width: "100%", overflow: "hidden", borderRadius: 8,
+                background: "#2A2830", position: "relative",
+                border: m.role === "director" ? "1.5px solid rgba(200,151,58,0.35)" : "1px solid var(--border)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+              }}>
+                {m.photo ? (
+                  <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="100px" />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                    <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
+                    <span style={{ color: "var(--faint)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
+                  </div>
+                )}
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
+                  background: "linear-gradient(to top, rgba(9,9,14,0.92) 0%, rgba(9,9,14,0.4) 60%, transparent 100%)",
+                  display: "flex", flexDirection: "column", justifyContent: "flex-end",
+                  padding: "8px 7px",
+                }}>
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--parchment)",
+                    margin: 0, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {m.name}
+                  </p>
+                  <p style={{
+                    fontFamily: "var(--font-body)", fontSize: "0.58rem",
+                    color: m.role === "director" ? "var(--gold)" : "rgba(180,175,190,0.85)",
+                    margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {m.role === "director" ? "导演" : m.character || "演员"}
+                  </p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        {/* Scroll fade indicator */}
+        {showFade && (
+          <div style={{
+            position: "absolute", top: 0, right: 0, bottom: 8, width: 40,
+            background: "linear-gradient(to left, var(--bg) 0%, transparent 100%)",
+            pointerEvents: "none",
+          }} />
+        )}
+      </div>
+    </section>
   );
 }
