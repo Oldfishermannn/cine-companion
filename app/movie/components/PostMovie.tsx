@@ -78,27 +78,31 @@ export function PostMovie({
                 </div>
               </section>
 
-              {/* Characters */}
-              <section>
-                <SectionLabel>人物关系</SectionLabel>
-                <CharacterGraph characters={postContent.characters} relationships={postContent.relationships} />
-              </section>
+              {/* Characters — only if data exists */}
+              {postContent.characters.length > 0 && (
+                <section>
+                  <SectionLabel>人物关系</SectionLabel>
+                  <CharacterGraph characters={postContent.characters} relationships={postContent.relationships} />
+                </section>
+              )}
 
-              {/* Easter Eggs */}
-              <section>
-                <SectionLabel>彩蛋 & 隐藏细节</SectionLabel>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {postContent.easter_eggs.map((egg, i) => (
-                    <div key={i} style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
-                      <span style={{ fontSize: "1.1rem", flexShrink: 0, marginTop: 1 }}>{EGG_ICON[egg.category] ?? "🥚"}</span>
-                      <div>
-                        <span style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", padding: "2px 8px", borderRadius: 20, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)", letterSpacing: "0.05em", display: "inline-block", marginBottom: 6 }}>{egg.category}</span>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.83rem", color: "#B0ACBA", lineHeight: 1.7 }}>{egg.detail}</p>
+              {/* Easter Eggs — only if data exists */}
+              {postContent.easter_eggs.length > 0 && (
+                <section>
+                  <SectionLabel>彩蛋 & 隐藏细节</SectionLabel>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {postContent.easter_eggs.map((egg, i) => (
+                      <div key={i} style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: "1.1rem", flexShrink: 0, marginTop: 1 }}>{EGG_ICON[egg.category] ?? "🥚"}</span>
+                        <div>
+                          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", padding: "2px 8px", borderRadius: 20, background: "rgba(200,151,58,0.1)", color: "var(--gold-dim)", letterSpacing: "0.05em", display: "inline-block", marginBottom: 6 }}>{egg.category}</span>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.83rem", color: "#B0ACBA", lineHeight: 1.7 }}>{egg.detail}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Spoiler Fun Facts */}
               {postContent.spoiler_fun_facts.length > 0 && (
