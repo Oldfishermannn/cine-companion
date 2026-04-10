@@ -8,7 +8,7 @@ import { HomeClient, type CatalogMovie } from "./HomeClient";
 const MOVIE_CATALOG: CatalogMovie[] = [
   { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026", released: "March 20, 2026",    genre: "科幻",  amc: "project-hail-mary-76779",            rank: 1 },
   { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026", released: "April 1, 2026",     genre: "动画",  amc: "the-super-mario-galaxy-movie-71465",  rank: 2 },
-  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026",   genre: "经典",  amc: "hamlet-82659",                        rank: 3 },
+  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026",   genre: "剧情",  amc: "hamlet-82659",                        rank: 3 },
   { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026", released: "February 27, 2026", genre: "惊悚",  amc: "scream-7-78363",                     rank: 4 },
   { title: "Reminders of Him",             zh: "念你之名",                 year: "2026", released: "March 13, 2026",   genre: "爱情",  amc: "reminders-of-him-71462",              rank: 5 },
   { title: "Hoppers",                      zh: "狸想世界",                 year: "2026", released: "March 6, 2026",     genre: "动画",  amc: "hoppers-72462",                      rank: 6 },
