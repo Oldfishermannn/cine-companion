@@ -3,22 +3,24 @@
 import React, { useState } from "react";
 import type { MovieData, AiContent, LiveRatings, FunFacts, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
-import { RatingBlock, VocabCard, FactCard, SectionLabel } from "./shared";
+import { RatingBlock, VocabCard, FactCard, SectionLabel, ErrorBanner } from "./shared";
 
 interface PreMovieProps {
   data: MovieData;
   aiContent: AiContent | null;
   aiLoading: boolean;
   aiFromCache: boolean;
+  aiError: boolean;
   liveRatings: LiveRatings | null;
   funFacts: FunFacts | null;
   factsLoading: boolean;
   factsFromCache: boolean;
+  factsError: boolean;
 }
 
 export function PreMovie({
-  data, aiContent, aiLoading, aiFromCache,
-  liveRatings, funFacts, factsLoading, factsFromCache,
+  data, aiContent, aiLoading, aiFromCache, aiError,
+  liveRatings, funFacts, factsLoading, factsFromCache, factsError,
 }: PreMovieProps) {
   const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
 
@@ -94,6 +96,8 @@ export function PreMovie({
             ))}
             <p style={{ color: "var(--faint)", fontSize: "0.65rem", letterSpacing: "0.12em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 生成中…</p>
           </div>
+        ) : aiError ? (
+          <ErrorBanner message="AI 内容生成失败，请刷新页面重试" />
         ) : aiContent ? (
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -171,6 +175,8 @@ export function PreMovie({
               <div key={i} className="skeleton" style={{ height: 50, borderRadius: 12 }} />
             ))}
           </div>
+        ) : aiError ? (
+          <ErrorBanner message="词汇预习生成失败，请刷新页面重试" />
         ) : aiContent ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {(() => {
@@ -226,6 +232,8 @@ export function PreMovie({
               <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
             ))}
           </div>
+        ) : factsError ? (
+          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
         ) : funFacts ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {funFacts.fun_facts.map((item, i) => (

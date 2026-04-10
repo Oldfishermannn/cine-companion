@@ -156,3 +156,11 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 export function Divider() {
   return <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent)" }} />;
 }
+
+export function ErrorBanner({ message }: { message: string }) {
+  return (
+    <div style={{ background: "rgba(127,29,29,0.2)", border: "1px solid rgba(185,28,28,0.25)", borderRadius: 12, padding: "12px 16px", color: "#FCA5A5", fontSize: "0.82rem", fontFamily: "var(--font-body)", lineHeight: 1.6 }}>
+      {message}
+    </div>
+  );
+}

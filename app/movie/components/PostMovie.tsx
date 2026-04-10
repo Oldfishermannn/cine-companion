@@ -4,7 +4,7 @@ import React from "react";
 import type { MovieData, PostContent, FunFactItem } from "../types";
 import { RATING_DIMS, EGG_ICON } from "../types";
 import { saveRating } from "../utils";
-import { SectionLabel, FactCard } from "./shared";
+import { SectionLabel, FactCard, ErrorBanner } from "./shared";
 import { CharacterGraph } from "./CharacterGraph";
 
 interface PostMovieProps {
@@ -12,6 +12,7 @@ interface PostMovieProps {
   postContent: PostContent | null;
   postLoading: boolean;
   postFromCache: boolean;
+  postError: boolean;
   postUnlocked: boolean;
   setPostUnlocked: (v: boolean) => void;
   personalScores: number[];
@@ -19,7 +20,7 @@ interface PostMovieProps {
 }
 
 export function PostMovie({
-  data, postContent, postLoading, postFromCache,
+  data, postContent, postLoading, postFromCache, postError,
   postUnlocked, setPostUnlocked, personalScores, setPersonalScores,
 }: PostMovieProps) {
   return (
@@ -50,6 +51,8 @@ export function PostMovie({
               {[120, 80, 100, 60, 90].map((w, i) => <div key={i} className="skeleton" style={{ height: i === 0 ? 120 : 48, borderRadius: 12, width: `${w}%` }} />)}
               <p style={{ color: "var(--faint)", fontSize: "0.65rem", letterSpacing: "0.12em", fontFamily: "var(--font-body)" }}>AI 正在生成复盘内容…</p>
             </div>
+          ) : postError ? (
+            <ErrorBanner message="观后复盘生成失败，请刷新页面重试" />
           ) : postContent ? (
             <>
               {/* Plot Summary */}

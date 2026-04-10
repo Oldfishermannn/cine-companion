@@ -12,6 +12,23 @@ import { PreMovie } from "./components/PreMovie";
 import { DuringMovie } from "./components/DuringMovie";
 import { PostMovie } from "./components/PostMovie";
 
+/** Fetch with 60s timeout + 1 retry for AI endpoints */
+async function fetchRetry(url: string, { timeout = 60_000, retries = 1 } = {}): Promise<Response> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      if (res.ok || attempt === retries) return res;
+    } catch (err) {
+      clearTimeout(timer);
+      if (attempt === retries) throw err;
+    }
+  }
+  throw new Error("fetchRetry exhausted");
+}
+
 function MoviePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -36,6 +53,10 @@ function MoviePageContent() {
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiFromCache, setAiFromCache] = useState(false);
+  const [aiError, setAiError] = useState(false);
+  const [factsError, setFactsError] = useState(false);
+  const [breaksError, setBreaksError] = useState(false);
+  const [postError, setPostError] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -54,16 +75,17 @@ function MoviePageContent() {
         setData({ ...d, zhTitle: zhFromUrl || TITLE_ZH[d.title] || d.zhTitle || d.title });
         setLoading(false);
 
-        // Stage 2: AI content
+        // Stage 2: AI content (timeout 60s + 1 retry)
         setAiLoading(true);
+        setAiError(false);
         const params = new URLSearchParams({
           id: d.id || "", title: d.title,
           year: d.year || "", genre: d.genre || "", plot: d.plot || "",
         });
-        fetch(`/api/movie-ai?${params}`)
+        fetchRetry(`/api/movie-ai?${params}`)
           .then(r => r.json())
-          .then(ai => { if (!ai.error) { setAiContent(ai); setAiFromCache(!!ai.cached); } })
-          .catch(() => {})
+          .then(ai => { if (!ai.error) { setAiContent(ai); setAiFromCache(!!ai.cached); } else { setAiError(true); } })
+          .catch(() => setAiError(true))
           .finally(() => setAiLoading(false));
 
         saveHistory({ id: d.id, title: d.title, poster: d.poster, year: d.year });
@@ -76,39 +98,42 @@ function MoviePageContent() {
           .then(r => setLiveRatings(r))
           .catch(() => {});
 
-        // Stage 4: Fun Facts
+        // Stage 4: Fun Facts (timeout 60s + 1 retry)
         setFactsLoading(true);
+        setFactsError(false);
         const factsParams = new URLSearchParams({ id: d.id || "", title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "" });
-        fetch(`/api/movie-funfacts?${factsParams}`)
+        fetchRetry(`/api/movie-funfacts?${factsParams}`)
           .then(r => r.json())
-          .then(f => { if (!f.error) { setFunFacts(f); setFactsFromCache(!!f.cached); } })
-          .catch(() => {})
+          .then(f => { if (!f.error) { setFunFacts(f); setFactsFromCache(!!f.cached); } else { setFactsError(true); } })
+          .catch(() => setFactsError(true))
           .finally(() => setFactsLoading(false));
       })
       .catch(() => { setError("网络错误，请重试"); setLoading(false); });
   }, [query]);
 
-  // Load breaks when switching to during mode
+  // Load breaks when switching to during mode (timeout 60s + 1 retry)
   useEffect(() => {
     if (mode !== "during" || !data || breaksContent || breaksLoading) return;
     setBreaksLoading(true);
+    setBreaksError(false);
     const params = new URLSearchParams({ id: data.id, title: data.title, year: data.year || "", runtime: data.runtime || "", plot: data.plot || "" });
-    fetch(`/api/movie-breaks?${params}`)
+    fetchRetry(`/api/movie-breaks?${params}`)
       .then(r => r.json())
-      .then(b => { if (!b.error) setBreaksContent(b); })
-      .catch(() => {})
+      .then(b => { if (!b.error) setBreaksContent(b); else setBreaksError(true); })
+      .catch(() => setBreaksError(true))
       .finally(() => setBreaksLoading(false));
   }, [mode, data, breaksContent, breaksLoading]);
 
-  // Load post content when unlocking post mode
+  // Load post content when unlocking post mode (timeout 60s + 1 retry)
   useEffect(() => {
     if (mode !== "post" || !postUnlocked || !data || postContent || postLoading) return;
     setPostLoading(true);
+    setPostError(false);
     const params = new URLSearchParams({ id: data.id, title: data.title, year: data.year || "", genre: data.genre || "", plot: data.plot || "" });
-    fetch(`/api/movie-post?${params}`)
+    fetchRetry(`/api/movie-post?${params}`)
       .then(r => r.json())
-      .then(p => { if (!p.error) { setPostContent(p); setPostFromCache(!!p.cached); } })
-      .catch(() => {})
+      .then(p => { if (!p.error) { setPostContent(p); setPostFromCache(!!p.cached); } else { setPostError(true); } })
+      .catch(() => setPostError(true))
       .finally(() => setPostLoading(false));
   }, [mode, postUnlocked, data, postContent, postLoading]);
 
@@ -235,10 +260,12 @@ function MoviePageContent() {
                   aiContent={aiContent}
                   aiLoading={aiLoading}
                   aiFromCache={aiFromCache}
+                  aiError={aiError}
                   liveRatings={liveRatings}
                   funFacts={funFacts}
                   factsLoading={factsLoading}
                   factsFromCache={factsFromCache}
+                  factsError={factsError}
                 />
               )}
 
@@ -248,6 +275,7 @@ function MoviePageContent() {
                   aiContent={aiContent}
                   breaksContent={breaksContent}
                   breaksLoading={breaksLoading}
+                  breaksError={breaksError}
                   movieStartTime={movieStartTime}
                   setMovieStartTime={setMovieStartTime}
                   includeTrailers={includeTrailers}
@@ -261,6 +289,7 @@ function MoviePageContent() {
                   postContent={postContent}
                   postLoading={postLoading}
                   postFromCache={postFromCache}
+                  postError={postError}
                   postUnlocked={postUnlocked}
                   setPostUnlocked={setPostUnlocked}
                   personalScores={personalScores}

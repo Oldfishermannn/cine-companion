@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { MovieData, AiContent, BreaksContent } from "../types";
-import { SectionLabel } from "./shared";
+import { SectionLabel, ErrorBanner } from "./shared";
 import { InlineWordLookup } from "./InlineWordLookup";
 
 interface DuringMovieProps {
@@ -10,6 +10,7 @@ interface DuringMovieProps {
   aiContent: AiContent | null;
   breaksContent: BreaksContent | null;
   breaksLoading: boolean;
+  breaksError: boolean;
   movieStartTime: string;
   setMovieStartTime: (v: string) => void;
   includeTrailers: boolean;
@@ -17,7 +18,7 @@ interface DuringMovieProps {
 }
 
 export function DuringMovie({
-  data, aiContent, breaksContent, breaksLoading,
+  data, aiContent, breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
 }: DuringMovieProps) {
   return (
@@ -67,6 +68,8 @@ export function DuringMovie({
             {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />)}
             <p style={{ color: "var(--faint)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 分析中…</p>
           </div>
+        ) : breaksError ? (
+          <ErrorBanner message="厕所时间分析失败，请刷新页面重试" />
         ) : breaksContent ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {breaksContent.breaks.map((b, i) => {
