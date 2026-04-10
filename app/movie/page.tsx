@@ -909,7 +909,13 @@ function MoviePageContent() {
                   </p>
                 )}
                 <p style={{ color: "#ADA8BC", fontSize: "0.82rem", marginTop: 12, lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520 }}>
-                  {aiContent?.background?.summary || data.zhPlot || data.plot}
+                  {(() => {
+                    const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
+                    // Take up to the first sentence (first "。"), cap at 80 chars
+                    const firstSentence = full.split("。")[0];
+                    const preview = firstSentence.length <= 80 ? firstSentence : firstSentence.slice(0, 80);
+                    return preview + (full.length > preview.length ? "。" : "");
+                  })()}
                 </p>
               </div>
             </div>
