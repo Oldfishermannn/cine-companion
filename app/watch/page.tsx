@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface BreakWindow {
@@ -141,10 +141,10 @@ function WatchPageContent() {
     setStartTime(Date.now());
   };
 
-  const handleLookup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const w = wordInput.trim();
-    if (!w) return;
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const doLookup = useCallback(async (w: string) => {
+    if (!w) { setLookupResult(null); setLookupError(""); return; }
     setLookupLoading(true);
     setLookupError("");
     setLookupResult(null);
@@ -154,13 +154,20 @@ function WatchPageContent() {
       const data = await res.json();
       if (data.error) { setLookupError("查询失败"); return; }
       setLookupResult(data);
-      setWordInput("");
     } catch {
       setLookupError("网络错误");
     } finally {
       setLookupLoading(false);
-      inputRef.current?.focus();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title]);
+
+  const handleInputChange = (val: string) => {
+    setWordInput(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!val.trim()) { setLookupResult(null); setLookupError(""); setLookupLoading(false); return; }
+    setLookupLoading(true); // show spinner immediately
+    debounceRef.current = setTimeout(() => doLookup(val.trim()), 600);
   };
 
   // Vocabulary suggestions while typing (terms that include the typed word)
@@ -366,59 +373,42 @@ function WatchPageContent() {
             快速查词
           </div>
 
-          <form onSubmit={handleLookup}>
-            <div style={{
-              display: "flex",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 12,
-              overflow: "hidden",
-              transition: "border-color 0.15s",
-            }}
-            onFocus={() => {}}
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                value={wordInput}
-                onChange={e => setWordInput(e.target.value)}
-                placeholder="输入听到的单词或短语…"
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  padding: "13px 16px",
-                  color: "rgba(255,255,255,0.8)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "0.95rem",
-                  letterSpacing: "0.01em",
-                }}
-              />
-              <button
-                type="submit"
-                disabled={!wordInput.trim() || lookupLoading}
-                style={{
-                  padding: "0 18px",
-                  background: wordInput.trim() ? "rgba(255,255,255,0.12)" : "transparent",
-                  color: wordInput.trim() ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.15)",
-                  border: "none",
-                  cursor: wordInput.trim() ? "pointer" : "default",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "0.8rem",
-                  letterSpacing: "0.06em",
-                  transition: "background 0.15s, color 0.15s",
-                  flexShrink: 0,
-                }}
-              >
-                {lookupLoading ? "…" : "查"}
-              </button>
-            </div>
-          </form>
+          <div style={{
+            display: "flex",
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 12,
+            overflow: "hidden",
+            transition: "border-color 0.15s",
+          }}>
+            <input
+              ref={inputRef}
+              type="text"
+              value={wordInput}
+              onChange={e => handleInputChange(e.target.value)}
+              placeholder="输入听到的单词或短语…"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              style={{
+                flex: 1,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                padding: "13px 16px",
+                color: "rgba(255,255,255,0.8)",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.95rem",
+                letterSpacing: "0.01em",
+              }}
+            />
+            {lookupLoading && (
+              <div style={{ display: "flex", alignItems: "center", paddingRight: 14 }}>
+                <div style={{ width: 14, height: 14, border: "1.5px solid rgba(255,255,255,0.15)", borderTopColor: "rgba(255,255,255,0.5)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+              </div>
+            )}
+          </div>
 
           {/* Live vocab suggestions while typing */}
           {vocabSuggestions.length > 0 && !lookupResult && !lookupLoading && (
@@ -426,18 +416,9 @@ function WatchPageContent() {
               {vocabSuggestions.map((v, i) => (
                 <button
                   key={i}
-                  onClick={async () => {
+                  onClick={() => {
                     setWordInput(v.word);
-                    setLookupLoading(true);
-                    setLookupError("");
-                    setLookupResult(null);
-                    setSelectedOption(0);
-                    try {
-                      const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(v.word)}&context=${encodeURIComponent(title)}`);
-                      const d = await res.json();
-                      if (!d.error) setLookupResult(d);
-                    } catch { setLookupError("网络错误"); }
-                    finally { setLookupLoading(false); inputRef.current?.focus(); }
+                    doLookup(v.word);
                   }}
                   style={{
                     padding: "4px 12px",
@@ -461,13 +442,7 @@ function WatchPageContent() {
             <p style={{ marginTop: 8, fontSize: "0.72rem", color: "rgba(255,100,100,0.6)", letterSpacing: "0.04em" }}>{lookupError}</p>
           )}
 
-          {lookupLoading && (
-            <div style={{ marginTop: 14, background: "rgba(255,255,255,0.02)", borderRadius: 10, padding: "16px", display: "flex", gap: 10, alignItems: "center" }}>
-              <div style={{ width: 18, height: 18, border: "1.5px solid rgba(255,255,255,0.2)", borderTopColor: "rgba(255,255,255,0.6)", borderRadius: "50%", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.2)", letterSpacing: "0.08em" }}>查询中…</span>
-            </div>
-          )}
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
           {lookupResult && !lookupLoading && (
             <div style={{ marginTop: 14 }}>
