@@ -262,8 +262,8 @@ body::before {
 .hero-backdrop {
   position: absolute; inset: 0;
   background-size: cover; background-position: center top;
-  filter: blur(12px) brightness(0.32) saturate(1.1);
-  transform: scale(1.05);
+  filter: blur(40px) brightness(0.25) saturate(1.4);
+  transform: scale(1.2);
   z-index: 1;
 }
 

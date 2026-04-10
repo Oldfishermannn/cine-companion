@@ -223,6 +223,8 @@ function MoviePageContent() {
             {!data.poster && (
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 30% 50%, rgba(200,151,58,0.06) 0%, transparent 70%)" }} />
             )}
+            {/* Gradient overlay — same style as homepage featured hero */}
+            <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(135deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.5) 50%, rgba(10,10,15,0.8) 100%)" }} />
             <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, background: "linear-gradient(to bottom, transparent, var(--bg))", zIndex: 2 }} />
 
             <div className="movie-hero-inner">
