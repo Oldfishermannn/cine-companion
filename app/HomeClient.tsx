@@ -51,57 +51,71 @@ function saveWatchlist(set: Set<string>) {
   try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify([...set])); } catch {}
 }
 
-/* ── Horizontal scroll with mouse drag ── */
+/* ── Horizontal scroll with arrow buttons ── */
 function HScrollRow({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const moved = useRef(false);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
 
-  const onDown = (e: React.MouseEvent) => {
+  const check = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-    dragging.current = true;
-    moved.current = false;
-    startX.current = e.pageX - el.offsetLeft;
-    scrollLeft.current = el.scrollLeft;
-    el.style.cursor = "grabbing";
-    el.style.userSelect = "none";
-  };
-  const onMove = (e: React.MouseEvent) => {
-    if (!dragging.current) return;
-    const el = ref.current!;
-    const x = e.pageX - el.offsetLeft;
-    const walk = x - startX.current;
-    if (Math.abs(walk) > 4) moved.current = true;
-    el.scrollLeft = scrollLeft.current - walk;
-  };
-  const onUp = () => {
-    if (!ref.current) return;
-    dragging.current = false;
-    ref.current.style.cursor = "grab";
-    ref.current.style.userSelect = "";
-    // Block click if we dragged
-    if (moved.current) {
-      const blocker = (e: MouseEvent) => { e.stopPropagation(); e.preventDefault(); };
-      ref.current.addEventListener("click", blocker, { capture: true, once: true });
-    }
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 4);
+  }, []);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", check); ro.disconnect(); };
+  }, [check]);
+
+  const scroll = (dir: number) => {
+    ref.current?.scrollBy({ left: dir * 220, behavior: "smooth" });
   };
 
+  const arrowStyle = (visible: boolean): React.CSSProperties => ({
+    position: "absolute", top: "50%", transform: "translateY(-50%)",
+    width: 32, height: 32, borderRadius: "50%",
+    background: "rgba(17,17,23,0.85)", border: "1px solid var(--border)",
+    color: "var(--parchment)", fontSize: "0.8rem",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    cursor: "pointer", zIndex: 5, backdropFilter: "blur(8px)",
+    opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none",
+    transition: "opacity 0.2s, background 0.2s",
+  });
+
   return (
-    <div
-      ref={ref}
-      onMouseDown={onDown}
-      onMouseMove={onMove}
-      onMouseUp={onUp}
-      onMouseLeave={onUp}
-      style={{
-        display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8,
-        scrollbarWidth: "none", cursor: "grab",
-      }}
-    >
-      {children}
+    <div style={{ position: "relative" }}>
+      <button
+        onClick={() => scroll(-1)}
+        style={{ ...arrowStyle(canLeft), left: -6 }}
+        onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.2)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "rgba(17,17,23,0.85)"; }}
+      >
+        ‹
+      </button>
+      <div
+        ref={ref}
+        style={{
+          display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8,
+          scrollbarWidth: "none",
+        }}
+      >
+        {children}
+      </div>
+      <button
+        onClick={() => scroll(1)}
+        style={{ ...arrowStyle(canRight), right: -6 }}
+        onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.2)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "rgba(17,17,23,0.85)"; }}
+      >
+        ›
+      </button>
     </div>
   );
 }
@@ -175,14 +189,14 @@ export function HomeClient({ catalog, genres }: {
     return list;
   }, [genreFilter, sortMode, catalog]);
 
-  // Recent releases: movies released within the last 7 days (本周新片)
+  // Recent releases: movies released within the last 14 days (本周新片)
   const now = Date.now();
-  const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+  const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
   const recentReleases = useMemo(() => {
     return catalog
       .filter(m => {
         const t = parseReleaseDate(m.released);
-        return t > 0 && now - t < SEVEN_DAYS && now - t >= 0;
+        return t > 0 && now - t < FOURTEEN_DAYS && now - t >= 0;
       })
       .sort((a, b) => parseReleaseDate(b.released) - parseReleaseDate(a.released));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -306,7 +320,7 @@ export function HomeClient({ catalog, genres }: {
         <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 28, marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>本周新片</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>近期上映</span>
           </div>
           <HScrollRow>
             {recentReleases.map(m => {
