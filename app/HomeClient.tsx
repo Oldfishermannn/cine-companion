@@ -133,9 +133,9 @@ export function HomeClient({ catalog, genres }: {
     ? catalog.filter(m => m.genre === genreFilter).length
     : catalog.length;
 
-  // Featured movie = first in current sort (skip for non-rating sorts to keep grid clean)
+  // Featured movie = top-rated, shown as separate hero (also stays in grid)
   const featured = sortMode === "rating" && !genreFilter && indexedMovies.length > 0 ? indexedMovies[0] : null;
-  const gridMovies = featured ? indexedMovies.slice(1) : indexedMovies;
+  const gridMovies = indexedMovies;
 
   return (
     <>
