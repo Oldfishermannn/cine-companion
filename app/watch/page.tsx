@@ -17,12 +17,16 @@ interface BreaksData {
   cached?:     boolean;
 }
 
-interface LookupResult {
-  word:        string;
-  phonetic:    string | null;
+interface LookupOption {
   translation: string;
   brief:       string;
   example?:    string | null;
+}
+
+interface LookupResult {
+  word:     string;
+  phonetic: string | null;
+  options:  LookupOption[];
 }
 
 // Format mm:ss from total seconds
@@ -59,10 +63,11 @@ function WatchPageContent() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Word lookup state ──────────────────────────────────────────────────────
-  const [wordInput,     setWordInput]    = useState("");
-  const [lookupResult,  setLookupResult] = useState<LookupResult | null>(null);
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [lookupError,   setLookupError]  = useState("");
+  const [wordInput,      setWordInput]     = useState("");
+  const [lookupResult,   setLookupResult]  = useState<LookupResult | null>(null);
+  const [selectedOption, setSelectedOption] = useState<number>(0);
+  const [lookupLoading,  setLookupLoading] = useState(false);
+  const [lookupError,    setLookupError]   = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fetch break suggestions
@@ -122,6 +127,7 @@ function WatchPageContent() {
     setLookupLoading(true);
     setLookupError("");
     setLookupResult(null);
+    setSelectedOption(0);
     try {
       const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(w)}&context=${encodeURIComponent(title)}`);
       const data = await res.json();
@@ -387,8 +393,9 @@ function WatchPageContent() {
           )}
 
           {lookupResult && !lookupLoading && (
-            <div style={{ marginTop: 14, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 18px" }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+            <div style={{ marginTop: 14 }}>
+              {/* Word + phonetic header */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10, paddingLeft: 2 }}>
                 <span style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", fontWeight: 500, color: "rgba(255,255,255,0.85)", letterSpacing: "0.02em" }}>
                   {lookupResult.word}
                 </span>
@@ -397,20 +404,55 @@ function WatchPageContent() {
                     {lookupResult.phonetic}
                   </span>
                 )}
-                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--gold)", fontWeight: 400 }}>
-                  {lookupResult.translation}
-                </span>
               </div>
-              {lookupResult.brief && (
-                <p style={{ marginTop: 8, fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.6, letterSpacing: "0.01em" }}>
-                  {lookupResult.brief}
-                </p>
+
+              {/* Option chips — only show if >1 option */}
+              {lookupResult.options.length > 1 && (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+                  {lookupResult.options.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedOption(idx)}
+                      style={{
+                        padding: "5px 14px",
+                        borderRadius: 20,
+                        border: `1px solid ${selectedOption === idx ? "rgba(200,151,58,0.5)" : "rgba(255,255,255,0.1)"}`,
+                        background: selectedOption === idx ? "rgba(200,151,58,0.12)" : "rgba(255,255,255,0.04)",
+                        color: selectedOption === idx ? "var(--gold)" : "rgba(255,255,255,0.4)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                        letterSpacing: "0.02em",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      {opt.translation}
+                    </button>
+                  ))}
+                </div>
               )}
-              {lookupResult.example && (
-                <p style={{ marginTop: 6, fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", fontStyle: "italic", lineHeight: 1.6 }}>
-                  {lookupResult.example}
-                </p>
-              )}
+
+              {/* Detail card for selected option */}
+              {(() => {
+                const opt = lookupResult.options[selectedOption] ?? lookupResult.options[0];
+                return (
+                  <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "14px 16px" }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--gold)", fontWeight: 400 }}>
+                      {opt.translation}
+                    </span>
+                    {opt.brief && (
+                      <p style={{ marginTop: 7, fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.6, letterSpacing: "0.01em" }}>
+                        {opt.brief}
+                      </p>
+                    )}
+                    {opt.example && (
+                      <p style={{ marginTop: 6, fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", fontStyle: "italic", lineHeight: 1.6 }}>
+                        {opt.example}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
         </section>

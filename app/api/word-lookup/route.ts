@@ -20,23 +20,27 @@ export async function GET(req: NextRequest) {
     }
   } catch { /* ignore */ }
 
-  // Claude for Chinese translation + context
+  // Claude for Chinese translation + multiple options
   try {
     const msg = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 256,
+      max_tokens: 400,
       messages: [
         {
           role: "user",
-          content: `快速翻译英文单词/短语，面向北美华人观众。
+          content: `翻译英文单词/短语，面向北美华人观影观众。
 单词：${word}${context ? `\n电影语境：${context}` : ""}
+
+列出该词 1-3 种最常见的释义（若只有一个意思就只写一个），每条包含：
+- 简短中文翻译（1-4字）
+- 一句使用场景说明（10-20字，贴近电影/日常用语）
+- 该释义下的例句（可选，简短）
 
 请用以下JSON格式回复（只返回JSON，不要其他文字）：
 {
-  "translation": "中文翻译（1-4字）",
-  "pinyin": "拼音（可选）",
-  "brief": "一句话解释（10-20字，结合电影语境）",
-  "example": "电影中可能的用法示例（可选）"
+  "options": [
+    { "translation": "中文译法", "brief": "场景说明", "example": "例句（可选）" }
+  ]
 }`,
         },
       ],
@@ -45,14 +49,12 @@ export async function GET(req: NextRequest) {
     const text = msg.content[0]?.type === "text" ? msg.content[0].text.trim() : "{}";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+    const options: Array<{ translation: string; brief: string; example?: string }> =
+      Array.isArray(parsed.options) && parsed.options.length > 0
+        ? parsed.options
+        : [{ translation: parsed.translation ?? word, brief: parsed.brief ?? "" }];
 
-    return NextResponse.json({
-      word,
-      phonetic,
-      translation: parsed.translation ?? "",
-      brief:       parsed.brief ?? "",
-      example:     parsed.example ?? null,
-    });
+    return NextResponse.json({ word, phonetic, options });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Lookup failed" }, { status: 500 });
