@@ -29,6 +29,13 @@ interface LookupResult {
   options:  LookupOption[];
 }
 
+interface VocabItem {
+  word:        string;
+  translation: string;
+  context?:    string;
+  category?:   string;
+}
+
 // Format mm:ss from total seconds
 function fmt(sec: number): string {
   if (sec <= 0) return "00:00";
@@ -68,6 +75,7 @@ function WatchPageContent() {
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [lookupLoading,  setLookupLoading] = useState(false);
   const [lookupError,    setLookupError]   = useState("");
+  const [vocab,          setVocab]         = useState<VocabItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fetch break suggestions
@@ -81,6 +89,19 @@ function WatchPageContent() {
       .catch(() => {})
       .finally(() => setBreaksLoading(false));
   }, [id, title, year, runtime, plot]);
+
+  // Fetch movie vocabulary (from cache — instant if pre-warmed)
+  useEffect(() => {
+    if (!id && !title) return;
+    const params = new URLSearchParams({ id, title, year });
+    fetch(`/api/movie-ai?${params}`)
+      .then(r => r.json())
+      .then(d => {
+        if (Array.isArray(d.vocabulary)) setVocab(d.vocabulary);
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // Tick timer
   useEffect(() => {
@@ -141,6 +162,25 @@ function WatchPageContent() {
       inputRef.current?.focus();
     }
   };
+
+  // Vocabulary suggestions while typing (terms that include the typed word)
+  const vocabSuggestions: VocabItem[] = wordInput.trim().length >= 2
+    ? vocab.filter(v => {
+        const q = wordInput.trim().toLowerCase();
+        const w = v.word.toLowerCase();
+        // show multi-word terms that contain the typed token (not exact match — exact = the lookup itself)
+        return w.includes(q) && w !== q && w.split(" ").length > 1;
+      }).slice(0, 4)
+    : [];
+
+  // After lookup: movie vocab terms related to the searched word (but not the word itself)
+  const relatedVocab: VocabItem[] = lookupResult
+    ? vocab.filter(v => {
+        const q = lookupResult.word.toLowerCase();
+        const w = v.word.toLowerCase();
+        return w.includes(q) && w !== q;
+      }).slice(0, 3)
+    : [];
 
   if (!title) {
     return (
@@ -380,6 +420,43 @@ function WatchPageContent() {
             </div>
           </form>
 
+          {/* Live vocab suggestions while typing */}
+          {vocabSuggestions.length > 0 && !lookupResult && !lookupLoading && (
+            <div style={{ marginTop: 8, display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {vocabSuggestions.map((v, i) => (
+                <button
+                  key={i}
+                  onClick={async () => {
+                    setWordInput(v.word);
+                    setLookupLoading(true);
+                    setLookupError("");
+                    setLookupResult(null);
+                    setSelectedOption(0);
+                    try {
+                      const res = await fetch(`/api/word-lookup?word=${encodeURIComponent(v.word)}&context=${encodeURIComponent(title)}`);
+                      const d = await res.json();
+                      if (!d.error) setLookupResult(d);
+                    } catch { setLookupError("网络错误"); }
+                    finally { setLookupLoading(false); inputRef.current?.focus(); }
+                  }}
+                  style={{
+                    padding: "4px 12px",
+                    borderRadius: 20,
+                    border: "1px solid rgba(200,151,58,0.3)",
+                    background: "rgba(200,151,58,0.07)",
+                    color: "var(--gold)",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.75rem",
+                    cursor: "pointer",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  {v.word}
+                </button>
+              ))}
+            </div>
+          )}
+
           {lookupError && (
             <p style={{ marginTop: 8, fontSize: "0.72rem", color: "rgba(255,100,100,0.6)", letterSpacing: "0.04em" }}>{lookupError}</p>
           )}
@@ -453,6 +530,32 @@ function WatchPageContent() {
                   </div>
                 );
               })()}
+
+              {/* Related movie vocab terms */}
+              {relatedVocab.length > 0 && (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontSize: "0.58rem", letterSpacing: "0.18em", color: "rgba(255,255,255,0.15)", textTransform: "uppercase", marginBottom: 8 }}>
+                    影片相关词汇
+                  </div>
+                  {relatedVocab.map((v, i) => (
+                    <div key={i} style={{ background: "rgba(200,151,58,0.05)", border: "1px solid rgba(200,151,58,0.15)", borderRadius: 10, padding: "10px 14px", marginBottom: 6 }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                        <span style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
+                          {v.word}
+                        </span>
+                        <span style={{ fontSize: "0.78rem", color: "var(--gold)", fontWeight: 400 }}>
+                          {v.translation}
+                        </span>
+                      </div>
+                      {v.context && (
+                        <p style={{ marginTop: 4, fontSize: "0.72rem", color: "rgba(255,255,255,0.25)", lineHeight: 1.5 }}>
+                          {v.context}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </section>
