@@ -9,7 +9,6 @@ import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
 import { Divider } from "./components/shared";
 import { PreMovie } from "./components/PreMovie";
-import { DuringMovie } from "./components/DuringMovie";
 import { PostMovie } from "./components/PostMovie";
 
 /** Fetch with 60s timeout + 1 retry for AI endpoints */
@@ -40,7 +39,7 @@ function MoviePageContent() {
   const [funFacts, setFunFacts] = useState<FunFacts | null>(null);
   const [factsLoading, setFactsLoading] = useState(false);
   const [factsFromCache, setFactsFromCache] = useState(false);
-  const [mode, setMode] = useState<"pre" | "during" | "post">("pre");
+  const [mode, setMode] = useState<"pre" | "post">("pre");
   const [breaksContent, setBreaksContent] = useState<BreaksContent | null>(null);
   const [breaksLoading, setBreaksLoading] = useState(false);
   const [movieStartTime, setMovieStartTime] = useState("");
@@ -107,22 +106,19 @@ function MoviePageContent() {
           .then(f => { if (!f.error) { setFunFacts(f); setFactsFromCache(!!f.cached); } else { setFactsError(true); } })
           .catch(() => setFactsError(true))
           .finally(() => setFactsLoading(false));
+
+        // Stage 5: Break times (load eagerly)
+        setBreaksLoading(true);
+        setBreaksError(false);
+        const breaksParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", runtime: d.runtime || "", plot: d.plot || "" });
+        fetchRetry(`/api/movie-breaks?${breaksParams}`)
+          .then(r => r.json())
+          .then(b => { if (!b.error) setBreaksContent(b); else setBreaksError(true); })
+          .catch(() => setBreaksError(true))
+          .finally(() => setBreaksLoading(false));
       })
       .catch(() => { setError("网络错误，请重试"); setLoading(false); });
   }, [query]);
-
-  // Load breaks when switching to during mode (timeout 60s + 1 retry)
-  useEffect(() => {
-    if (mode !== "during" || !data || breaksContent || breaksLoading) return;
-    setBreaksLoading(true);
-    setBreaksError(false);
-    const params = new URLSearchParams({ id: data.id, title: data.title, year: data.year || "", runtime: data.runtime || "", plot: data.plot || "" });
-    fetchRetry(`/api/movie-breaks?${params}`)
-      .then(r => r.json())
-      .then(b => { if (!b.error) setBreaksContent(b); else setBreaksError(true); })
-      .catch(() => setBreaksError(true))
-      .finally(() => setBreaksLoading(false));
-  }, [mode, data, breaksContent, breaksLoading]);
 
   // Load post content when unlocking post mode (timeout 60s + 1 retry)
   useEffect(() => {
@@ -241,12 +237,12 @@ function MoviePageContent() {
             </div>
           </div>
 
-          {/* Mode toggle + content */}
+          {/* Tab toggle + content */}
           <div className="content-area">
             <div className="tab-strip">
-              {(["pre", "during", "post"] as const).map(m => (
+              {(["pre", "post"] as const).map(m => (
                 <button key={m} onClick={() => setMode(m)} style={{ background: mode === m ? "rgba(200,151,58,0.06)" : "none", border: "none", borderBottom: `2px solid ${mode === m ? "var(--gold)" : "transparent"}`, color: mode === m ? "var(--parchment)" : "var(--faint)", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: mode === m ? 500 : 400, transition: "all 0.15s", marginBottom: -1 }}>
-                  {m === "pre" ? "观 前" : m === "during" ? "厕所时间" : "观 后"}
+                  {m === "pre" ? "观 前" : "观 后"}
                 </button>
               ))}
             </div>
@@ -266,12 +262,6 @@ function MoviePageContent() {
                   factsLoading={factsLoading}
                   factsFromCache={factsFromCache}
                   factsError={factsError}
-                />
-              )}
-
-              {mode === "during" && (
-                <DuringMovie
-                  data={data}
                   breaksContent={breaksContent}
                   breaksLoading={breaksLoading}
                   breaksError={breaksError}
