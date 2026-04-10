@@ -908,7 +908,7 @@ function MoviePageContent() {
                     {data.actors.split(", ").slice(0, 4).join("  ·  ")}
                   </p>
                 )}
-                <p style={{ color: "#ADA8BC", fontSize: "0.82rem", marginTop: 12, lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                <p style={{ color: "#ADA8BC", fontSize: "0.82rem", marginTop: 12, lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520 }}>
                   {aiContent?.background?.summary || data.zhPlot || data.plot}
                 </p>
               </div>
