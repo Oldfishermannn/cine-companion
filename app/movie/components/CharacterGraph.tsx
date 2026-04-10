@@ -31,27 +31,15 @@ export function CharacterGraph({
   // Sort: protagonist (importance 1) first, then 2, then 3
   const sorted = [...characters].sort((a, b) => (a.importance ?? 3) - (b.importance ?? 3));
 
-  // Build relationship map: for each character, list their relationships
+  // Build relationship map
   const relMap = new Map<string, Array<{ target: string; targetZh: string; label: string; direction: "to" | "from" }>>();
   const nameToZh = new Map(characters.map(c => [c.name, c.zh_name]));
 
   for (const r of rels) {
-    // from → to
     if (!relMap.has(r.from)) relMap.set(r.from, []);
-    relMap.get(r.from)!.push({
-      target: r.to,
-      targetZh: nameToZh.get(r.to) ?? r.to,
-      label: r.label,
-      direction: "to",
-    });
-    // reverse: to ← from
+    relMap.get(r.from)!.push({ target: r.to, targetZh: nameToZh.get(r.to) ?? r.to, label: r.label, direction: "to" });
     if (!relMap.has(r.to)) relMap.set(r.to, []);
-    relMap.get(r.to)!.push({
-      target: r.from,
-      targetZh: nameToZh.get(r.from) ?? r.from,
-      label: r.label,
-      direction: "from",
-    });
+    relMap.get(r.to)!.push({ target: r.from, targetZh: nameToZh.get(r.from) ?? r.from, label: r.label, direction: "from" });
   }
 
   const importanceLabel = (imp: number | undefined) => {
@@ -61,10 +49,11 @@ export function CharacterGraph({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       {sorted.map((c, i) => {
         const imp = c.importance ?? 3;
         const isProtagonist = imp === 1;
+        const isImportant = imp <= 2;
         const charRels = relMap.get(c.name) ?? [];
         const badge = importanceLabel(imp);
 
@@ -76,36 +65,41 @@ export function CharacterGraph({
               "--r": "0deg",
               animationDelay: `${i * 50}ms`,
               background: isProtagonist
-                ? "linear-gradient(135deg, rgba(200,151,58,0.08) 0%, rgba(22,19,30,1) 100%)"
+                ? "linear-gradient(135deg, rgba(200,151,58,0.06) 0%, var(--bg-card) 100%)"
                 : "var(--bg-card)",
-              border: `1px solid ${isProtagonist ? "rgba(200,151,58,0.3)" : "var(--border)"}`,
+              border: `1px solid ${isProtagonist ? "rgba(200,151,58,0.25)" : "var(--border)"}`,
               borderRadius: 14,
-              padding: "16px 18px",
+              padding: isImportant ? "18px 20px" : "14px 18px",
+              transition: "border-color 0.2s",
             } as React.CSSProperties}
           >
-            {/* Header: name + actor + badge */}
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+            {/* Header row */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 10,
+              marginBottom: 4, flexWrap: "wrap",
+            }}>
+              {/* Chinese name — primary */}
               <span style={{
-                fontFamily: "var(--font-display)", fontStyle: "italic",
-                fontSize: isProtagonist ? "1.05rem" : "0.95rem",
-                color: isProtagonist ? "var(--parchment)" : "#C8BCA8",
-                letterSpacing: "0.02em",
-              }}>
-                {c.name}
-              </span>
-              <span style={{
-                fontFamily: "var(--font-body)", fontSize: "0.78rem",
-                color: isProtagonist ? "var(--gold-dim)" : "var(--muted)",
-                fontWeight: 500,
+                fontFamily: "var(--font-display)",
+                fontSize: isProtagonist ? "1.15rem" : "1.02rem",
+                color: isProtagonist ? "var(--parchment)" : "#D4D0DE",
+                letterSpacing: "0.04em", fontWeight: 500,
               }}>
                 {c.zh_name}
               </span>
+              {/* English name — secondary */}
+              <span style={{
+                fontFamily: "var(--font-body)", fontSize: "0.82rem",
+                color: "var(--muted)", fontStyle: "italic",
+              }}>
+                {c.name}
+              </span>
               {badge && (
                 <span style={{
-                  fontSize: "0.6rem", padding: "1px 8px", borderRadius: 10,
+                  fontSize: "0.65rem", padding: "2px 10px", borderRadius: 10,
                   background: isProtagonist ? "rgba(200,151,58,0.15)" : "rgba(200,151,58,0.08)",
-                  color: "var(--gold-dim)",
-                  fontFamily: "var(--font-body)", letterSpacing: "0.04em",
+                  color: "var(--gold)",
+                  fontFamily: "var(--font-body)", letterSpacing: "0.04em", fontWeight: 500,
                 }}>
                   {badge}
                 </span>
@@ -114,38 +108,41 @@ export function CharacterGraph({
 
             {/* Actor */}
             <div style={{
-              fontFamily: "var(--font-body)", fontSize: "0.72rem",
-              color: "var(--faint)", marginBottom: 8, letterSpacing: "0.02em",
+              fontFamily: "var(--font-body)", fontSize: "0.78rem",
+              color: "var(--muted)", marginBottom: 10, letterSpacing: "0.02em",
             }}>
-              饰演者 {c.actor}
+              饰演者 <span style={{ color: "#A8A2B8" }}>{c.actor}</span>
             </div>
 
             {/* Description */}
             <p style={{
-              fontFamily: "var(--font-body)", fontSize: "0.82rem",
-              color: "#9890A8", lineHeight: 1.65, margin: 0,
-              marginBottom: charRels.length > 0 ? 12 : 0,
+              fontFamily: "var(--font-body)", fontSize: "0.88rem",
+              color: "#C0BACA", lineHeight: 1.75, margin: 0,
+              marginBottom: charRels.length > 0 ? 14 : 0,
             }}>
               {c.description}
             </p>
 
             {/* Relationships */}
             {charRels.length > 0 && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <div style={{
+                display: "flex", flexWrap: "wrap", gap: 8,
+                paddingTop: 12, borderTop: "1px solid var(--border)",
+              }}>
                 {charRels.map((r, j) => (
                   <span
                     key={j}
                     style={{
-                      display: "inline-flex", alignItems: "center", gap: 4,
-                      fontSize: "0.7rem", fontFamily: "var(--font-body)",
-                      padding: "3px 10px", borderRadius: 20,
+                      display: "inline-flex", alignItems: "center", gap: 5,
+                      fontSize: "0.78rem", fontFamily: "var(--font-body)",
+                      padding: "4px 12px", borderRadius: 20,
                       background: "rgba(200,151,58,0.06)",
-                      border: "1px solid rgba(200,151,58,0.15)",
-                      color: "var(--muted)", letterSpacing: "0.02em",
+                      border: "1px solid rgba(200,151,58,0.12)",
+                      color: "#B0ACBA", letterSpacing: "0.02em",
                     }}
                   >
-                    <span style={{ color: "var(--gold-dim)" }}>{r.label}</span>
-                    <span style={{ color: "var(--faint)" }}>→</span>
+                    <span style={{ color: "var(--gold)", fontWeight: 500 }}>{r.label}</span>
+                    <span style={{ color: "var(--muted)", fontSize: "0.7rem" }}>→</span>
                     <span>{r.targetZh}</span>
                   </span>
                 ))}
