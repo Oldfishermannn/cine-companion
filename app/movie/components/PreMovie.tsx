@@ -53,28 +53,6 @@ export function PreMovie({
 
   return (
     <>
-      {/* AMC Tickets */}
-      {amcUrl && (
-        <div style={{ textAlign: "center", marginBottom: 4 }}>
-          <a
-            href={amcUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontFamily: "var(--font-body)", fontSize: "0.72rem", letterSpacing: "0.08em",
-              color: "var(--gold-dim)", textDecoration: "none", textTransform: "uppercase",
-              borderBottom: "1px solid rgba(200,151,58,0.25)",
-              paddingBottom: 2,
-              transition: "color 0.15s, border-color 0.15s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--gold)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.5)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--gold-dim)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.25)"; }}
-          >
-            AMC 购票 →
-          </a>
-        </div>
-      )}
-
       {/* Ratings */}
       <section>
         <SectionLabel>评分</SectionLabel>
@@ -347,7 +325,7 @@ export function PreMovie({
           </SectionLabel>
         </div>
         <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          零剧透 · 点击展开
+          零剧透 · 点击收起
         </p>
 
         {factsLoading ? (
@@ -366,6 +344,30 @@ export function PreMovie({
           </div>
         ) : null}
       </section>
+
+      {/* AMC Tickets */}
+      {amcUrl && (
+        <div style={{ textAlign: "center", marginTop: 8 }}>
+          <a
+            href={amcUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "10px 28px",
+              fontFamily: "var(--font-body)", fontSize: "0.78rem", letterSpacing: "0.06em",
+              color: "var(--gold)", textDecoration: "none",
+              border: "1px solid rgba(200,151,58,0.35)",
+              borderRadius: 8,
+              transition: "background 0.15s, border-color 0.15s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.08)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.55)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.35)"; }}
+          >
+            🎟 AMC 购票 <span style={{ fontSize: "0.7rem", opacity: 0.6 }}>→</span>
+          </a>
+        </div>
+      )}
     </>
   );
 }

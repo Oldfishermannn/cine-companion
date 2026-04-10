@@ -106,7 +106,7 @@ export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
 }
 
 export function FactCard({ item, index }: { item: FunFactItem; index: number }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const icon = FACT_CATEGORY_ICON[item.category] ?? "🎬";
 
   return (
