@@ -48,10 +48,9 @@ type SortMode = "newest" | "oldest" | "rating";
 
 const PAGE_SIZE = 20;
 
-export function HomeClient({ catalog, genres, referenceDate }: {
+export function HomeClient({ catalog, genres }: {
   catalog: CatalogMovie[];
   genres: string[];
-  referenceDate: string;
 }) {
   const [posters, setPosters] = useState<PosterInfo[]>(
     catalog.map(() => ({ poster: null, fetched: false }))
@@ -101,28 +100,6 @@ export function HomeClient({ catalog, genres, referenceDate }: {
     });
     return list;
   }, [genreFilter, sortMode, catalog]);
-
-  const { newThisWeek, nowShowing } = useMemo(() => {
-    // Parse ISO date as local time (not UTC) to match release date parsing
-    const [ry, rm, rd] = referenceDate.split("-").map(Number);
-    const ref = new Date(ry, rm - 1, rd, 23, 59, 59);
-    const now = ref.getTime();
-    // Monday of this week (getDay: 0=Sun, 1=Mon, ...)
-    const day = ref.getDay();
-    const diffToMonday = day === 0 ? 6 : day - 1; // Sunday → 6 days back
-    const monday = new Date(ref);
-    monday.setDate(ref.getDate() - diffToMonday);
-    monday.setHours(0, 0, 0, 0);
-    const mondayTs = monday.getTime();
-    const nw: typeof indexedMovies = [];
-    const ns: typeof indexedMovies = [];
-    for (const item of indexedMovies) {
-      const t = parseReleaseDate(item.movie.released);
-      if (t >= mondayTs && t <= now) nw.push(item);
-      else ns.push(item);
-    }
-    return { newThisWeek: nw, nowShowing: ns };
-  }, [indexedMovies, referenceDate]);
 
   const filterCount = genreFilter
     ? catalog.filter(m => m.genre === genreFilter).length
@@ -179,63 +156,22 @@ export function HomeClient({ catalog, genres, referenceDate }: {
         </div>
       </div>
 
-      {/* Movie Sections */}
+      {/* Movie Grid */}
       <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "200ms" }}>
-        {newThisWeek.length > 0 && (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-              <div style={{ width: 3, height: 18, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 400, letterSpacing: "0.08em", color: "var(--parchment)" }}>本周新片</span>
-              <span style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase" }}>NEW THIS WEEK</span>
-            </div>
-
-            <div className="movie-grid">
-              {newThisWeek.map(({ movie, origIdx }) => (
-                <PosterCard
-                  key={movie.title}
-                  movie={movie}
-                  posterInfo={posters[origIdx]}
-                  index={origIdx}
-                  catalogReleased={movie.released}
-                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
-                />
-              ))}
-            </div>
-
-            {nowShowing.length > 0 && (
-              <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent)", margin: "36px 0" }} />
-            )}
-          </>
-        )}
-
-        {nowShowing.length > 0 && (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-              <div style={{ width: 3, height: 18, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 400, letterSpacing: "0.08em", color: "var(--parchment)" }}>
-                {newThisWeek.length > 0 ? "正在热映" : "院线热映"}
-              </span>
-              <span style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase" }}>
-                {newThisWeek.length > 0 ? "NOW SHOWING" : "RECENT \u00b7 RATED"}
-              </span>
-            </div>
-
-            <div className="movie-grid">
-              {nowShowing.map(({ movie, origIdx }) => (
-                <PosterCard
-                  key={movie.title}
-                  movie={movie}
-                  posterInfo={posters[origIdx]}
-                  index={origIdx}
-                  catalogReleased={movie.released}
-                  onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        {indexedMovies.length === 0 && (
+        {indexedMovies.length > 0 ? (
+          <div className="movie-grid">
+            {indexedMovies.map(({ movie, origIdx }) => (
+              <PosterCard
+                key={movie.title}
+                movie={movie}
+                posterInfo={posters[origIdx]}
+                index={origIdx}
+                catalogReleased={movie.released}
+                onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}&amc=${encodeURIComponent(movie.amc)}`)}
+              />
+            ))}
+          </div>
+        ) : (
           <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
             没有符合筛选条件的电影
           </p>

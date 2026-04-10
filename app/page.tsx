@@ -29,14 +29,13 @@ const MOVIE_CATALOG: CatalogMovie[] = [
 
 const ALL_GENRES = [...new Set(MOVIE_CATALOG.map(m => m.genre))].sort();
 
-const REFERENCE_DATE = "2026-04-10";
 
 export const metadata: Metadata = {
   title: "伴影 CineCompanion — 北美华人院线观影助手",
-  description: `北美正在热映 ${MOVIE_CATALOG.length} 部院线电影。词汇预习、背景知识、幕后花絮、厕所时间、观后复盘——中文语义全流程观影陪伴。`,
+  description: `北美正在热映 ${MOVIE_CATALOG.length} 部院线电影。词汇预习、背景知识、幕后花絮、厕所时间、观后复盘——北美院线全流程观影陪伴。`,
   openGraph: {
     title: "伴影 CineCompanion",
-    description: "北美华人中文语义院线观影助手：词汇预习 · 背景知识 · 幕后花絮 · 厕所时间 · 观后复盘",
+    description: "北美华人院线观影助手：词汇预习 · 背景知识 · 幕后花絮 · 厕所时间 · 观后复盘",
     type: "website",
     locale: "zh_CN",
   },
@@ -57,7 +56,7 @@ export default function Home() {
           </h1>
           <div style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", letterSpacing: "0.45em", color: "var(--gold-dim)", textTransform: "uppercase", marginTop: "0.6rem", fontWeight: 400 }}>CineCompanion</div>
           <div style={{ width: 40, height: 1, background: "var(--gold-dim)", margin: "1.2rem auto 0", opacity: 0.5 }} />
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase", marginTop: "0.8rem" }}>中文语义观影助手</p>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase", marginTop: "0.8rem" }}>北美院线观影助手</p>
         </div>
 
         {/* SEO: server-rendered movie list for crawlers (hidden visually, readable by bots) */}
@@ -76,7 +75,7 @@ export default function Home() {
         </noscript>
 
         {/* Interactive client components */}
-        <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} referenceDate={REFERENCE_DATE} />
+        <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} />
 
         <p style={{ marginTop: 48, fontSize: "0.62rem", letterSpacing: "0.25em", color: "var(--faint)", textTransform: "uppercase" }}>
           Powered by Claude AI &middot; OMDb

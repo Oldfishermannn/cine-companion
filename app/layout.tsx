@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "伴影 CineCompanion",
-  description: "中文语义观影助手",
+  description: "北美院线观影助手",
 };
 
 export default function RootLayout({
