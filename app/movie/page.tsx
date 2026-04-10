@@ -911,10 +911,11 @@ function MoviePageContent() {
                 <p style={{ color: "#ADA8BC", fontSize: "0.82rem", marginTop: 12, lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520 }}>
                   {(() => {
                     const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
-                    // Take up to the first sentence (first "。"), cap at 80 chars
-                    const firstSentence = full.split("。")[0];
-                    const preview = firstSentence.length <= 80 ? firstSentence : firstSentence.slice(0, 80);
-                    return preview + (full.length > preview.length ? "。" : "");
+                    if (full.length <= 120) return full;
+                    // Find the last sentence-ending punctuation within 120 chars
+                    const cap = full.slice(0, 120);
+                    const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
+                    return lastBreak > 40 ? full.slice(0, lastBreak + 1) : cap + "…";
                   })()}
                 </p>
               </div>
