@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import fs from "fs";
-import path from "path";
+import { readCache, writeCache } from "@/lib/cache";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const CACHE_DIR  = path.join(process.cwd(), "cache");
-
-function readCache(id: string) {
-  try {
-    const file = path.join(CACHE_DIR, `${id}_breaks.json`);
-    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf-8"));
-  } catch { /* ignore */ }
-  return null;
-}
-
-function writeCache(id: string, data: unknown) {
-  try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-    fs.writeFileSync(path.join(CACHE_DIR, `${id}_breaks.json`), JSON.stringify(data));
-  } catch { /* ignore */ }
-}
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -32,8 +15,8 @@ export async function GET(req: NextRequest) {
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
   if (id) {
-    const cached = readCache(id);
-    if (cached) return NextResponse.json({ ...cached, cached: true });
+    const cached = await readCache(`${id}_breaks`);
+    if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
   // Parse runtime to minutes
@@ -99,7 +82,7 @@ export async function GET(req: NextRequest) {
       runtime_min: runtimeMin,
     };
 
-    if (id) writeCache(id, result);
+    if (id) await writeCache(`${id}_breaks`, result);
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);

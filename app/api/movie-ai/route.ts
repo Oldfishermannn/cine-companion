@@ -1,27 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { jsonrepair } from "jsonrepair";
-import fs from "fs";
-import path from "path";
+import { readCache, writeCache } from "@/lib/cache";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const CACHE_DIR = path.join(process.cwd(), "cache");
-
-function readCache(id: string) {
-  try {
-    const file = path.join(CACHE_DIR, `${id}.json`);
-    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf-8"));
-  } catch { /* ignore */ }
-  return null;
-}
-
-function writeCache(id: string, data: unknown) {
-  try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-    fs.writeFileSync(path.join(CACHE_DIR, `${id}.json`), JSON.stringify(data));
-  } catch { /* ignore */ }
-}
 
 async function fetchWikipedia(title: string) {
   const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
@@ -48,8 +30,8 @@ export async function GET(req: NextRequest) {
 
   // Cache hit → instant return
   if (id) {
-    const cached = readCache(id);
-    if (cached) return NextResponse.json({ ...cached, cached: true });
+    const cached = await readCache(id);
+    if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
   const isComplex = /sci-fi|fantasy|history|mystery|thriller|horror/i.test(genre);
@@ -128,7 +110,7 @@ export async function GET(req: NextRequest) {
     };
 
     // Save to cache
-    if (id) writeCache(id, result);
+    if (id) await writeCache(id, result);
 
     return NextResponse.json(result);
   } catch (err) {
