@@ -37,27 +37,63 @@ export function zhReleased(released: string): string {
   return released;
 }
 
-// TTS: Google Translate audio (stable quality, supports words & phrases)
-const audioCache = new Map<string, HTMLAudioElement>();
+// TTS: real human audio from dictionary APIs, premium browser voice fallback
+const audioCache = new Map<string, string>();
+
+async function fetchDictAudio(word: string): Promise<string | null> {
+  const cached = audioCache.get(word);
+  if (cached) return cached;
+  try {
+    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const url = data?.[0]?.phonetics?.find((p: { audio?: string }) => p.audio)?.audio;
+    if (url) {
+      const full = url.startsWith("//") ? "https:" + url : url;
+      audioCache.set(word, full);
+      return full;
+    }
+  } catch { /* fall through */ }
+  return null;
+}
+
+let cachedVoice: SpeechSynthesisVoice | null = null;
+
+function pickVoice(): SpeechSynthesisVoice | null {
+  if (cachedVoice) return cachedVoice;
+  const voices = window.speechSynthesis.getVoices();
+  // Prefer premium/enhanced voices
+  const premium = voices.find(v => v.lang === "en-US" && /Samantha|Ava|Allison|Zoe|Susan|Natural|Enhanced|Premium/i.test(v.name));
+  const google = voices.find(v => v.lang === "en-US" && /Google/i.test(v.name));
+  const enUS = voices.find(v => v.lang === "en-US");
+  const en = voices.find(v => v.lang.startsWith("en"));
+  cachedVoice = premium || google || enUS || en || null;
+  return cachedVoice;
+}
 
 export async function speak(word: string) {
   if (typeof window === "undefined" || !word) return;
-  const key = word.toLowerCase().trim();
-  let audio = audioCache.get(key);
-  if (!audio) {
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(key)}`;
-    audio = new Audio(url);
-    audioCache.set(key, audio);
+
+  // Try real human recording first (single words)
+  const clean = word.trim().split(/\s+/);
+  if (clean.length <= 2) {
+    const audioUrl = await fetchDictAudio(clean.join(" "));
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audio.play().catch(() => {});
+      return;
+    }
   }
-  audio.currentTime = 0;
-  audio.play().catch(() => {
-    // Fallback to Web Speech API if Google TTS blocked
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    utterance.rate = 0.85;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  });
+
+  // Fallback: browser speech with best available voice
+  const voice = pickVoice();
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
+  if (voice) utterance.voice = voice;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
 }
 
 export function capitalize(s: string) {
