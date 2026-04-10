@@ -224,6 +224,37 @@ export function PreMovie({
         ) : null}
       </section>
 
+      {/* Fun Facts */}
+      <section>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
+          <SectionLabel>
+            你知道吗
+            {factsFromCache && (
+              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
+            )}
+          </SectionLabel>
+        </div>
+        <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
+          零剧透
+        </p>
+
+        {factsLoading ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
+            ))}
+          </div>
+        ) : factsError ? (
+          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
+        ) : funFacts ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {funFacts.fun_facts.map((item, i) => (
+              <FactCard key={i} item={item} index={i} />
+            ))}
+          </div>
+        ) : null}
+      </section>
+
       {/* Break Calculator */}
       <section>
         <SectionLabel>厕所时间</SectionLabel>
@@ -312,62 +343,27 @@ export function PreMovie({
             })}
           </div>
         ) : null}
+
+        {/* AMC link — contextually placed after break times */}
+        {amcUrl && (
+          <p style={{ textAlign: "center", marginTop: 20, marginBottom: 0 }}>
+            <a
+              href={amcUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-body)", fontSize: "0.75rem", letterSpacing: "0.04em",
+                color: "var(--muted)", textDecoration: "none",
+                transition: "color 0.15s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = "var(--gold)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
+            >
+              去看这场？ <span style={{ color: "var(--gold-dim)" }}>AMC 购票 →</span>
+            </a>
+          </p>
+        )}
       </section>
-
-      {/* Fun Facts */}
-      <section>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 0 }}>
-          <SectionLabel>
-            你知道吗
-            {factsFromCache && (
-              <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
-            )}
-          </SectionLabel>
-        </div>
-        <p style={{ color: "var(--faint)", fontSize: "0.75rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          零剧透
-        </p>
-
-        {factsLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 48, borderRadius: 12 }} />
-            ))}
-          </div>
-        ) : factsError ? (
-          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
-        ) : funFacts ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {funFacts.fun_facts.map((item, i) => (
-              <FactCard key={i} item={item} index={i} />
-            ))}
-          </div>
-        ) : null}
-      </section>
-
-      {/* AMC Tickets */}
-      {amcUrl && (
-        <div style={{ textAlign: "center", marginTop: 8 }}>
-          <a
-            href={amcUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "10px 28px",
-              fontFamily: "var(--font-body)", fontSize: "0.78rem", letterSpacing: "0.06em",
-              color: "var(--gold)", textDecoration: "none",
-              border: "1px solid rgba(200,151,58,0.35)",
-              borderRadius: 8,
-              transition: "background 0.15s, border-color 0.15s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.08)"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.55)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(200,151,58,0.35)"; }}
-          >
-            🎟 AMC 购票 <span style={{ fontSize: "0.7rem", opacity: 0.6 }}>→</span>
-          </a>
-        </div>
-      )}
     </>
   );
 }
