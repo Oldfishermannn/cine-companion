@@ -97,22 +97,27 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const allFetched = posters.every(p => p.fetched);
+
   const indexedMovies = useMemo(() => {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        const ra = posters[a.origIdx]?.ratingScore ?? -1;
-        const rb = posters[b.origIdx]?.ratingScore ?? -1;
-        if (ra !== rb) return rb - ra; // high to low
-        return a.movie.rank - b.movie.rank; // fallback: editorial rank
+        // Use real ratings only after ALL fetches complete (prevents progressive re-sorting)
+        if (allFetched) {
+          const ra = posters[a.origIdx]?.ratingScore ?? -1;
+          const rb = posters[b.origIdx]?.ratingScore ?? -1;
+          if (ra !== rb) return rb - ra;
+        }
+        return a.movie.rank - b.movie.rank; // static rank while loading
       }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog, posters]);
+  }, [genreFilter, sortMode, catalog, posters, allFetched]);
 
   const filterCount = genreFilter
     ? catalog.filter(m => m.genre === genreFilter).length
