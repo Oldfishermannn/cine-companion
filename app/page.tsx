@@ -68,7 +68,7 @@ function fmtReleaseDate(s: string | undefined): string {
 }
 
 export default function Home() {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [visibleCount, setVisibleCount] = useState(Math.min(PAGE_SIZE, MOVIE_CATALOG.length));
   const [posters,      setPosters]      = useState<PosterInfo[]>(
     MOVIE_CATALOG.map(() => ({ poster: null, fetched: false }))
   );
@@ -272,6 +272,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, onClick }: {
               src={posterInfo.poster}
               alt={movie.zh}
               fill
+              loading={index < 8 ? "eager" : "lazy"}
               style={{ objectFit: "cover" }}
               sizes="(max-width: 768px) 45vw, 22vw"
             />

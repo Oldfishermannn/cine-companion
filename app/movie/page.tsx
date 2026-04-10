@@ -20,6 +20,29 @@ const GENRE_ZH: Record<string, string> = {
   "War": "战争", "Western": "西部",
 };
 
+// 英中片名映射：直链缺少 zh 参数时用作 fallback，避免 AI 误译
+const TITLE_ZH: Record<string, string> = {
+  "The Super Mario Galaxy Movie": "超级马里奥银河电影版",
+  "Project Hail Mary": "挽救计划",
+  "You, Me & Tuscany": "你、我与托斯卡纳",
+  "Faces of Death": "死亡之脸",
+  "The Drama": "The Drama",
+  "Hoppers": "狸想世界",
+  "Newborn": "新生",
+  "Beast": "猛兽",
+  "Hunting Matthew Nichols": "追捕马修·尼科尔斯",
+  "A Great Awakening": "大觉醒",
+  "They Will Kill You": "他们会杀了你",
+  "Reminders of Him": "念你之名",
+  "Exit 8": "8号出口",
+  "Ready or Not 2: Here I Come": "准备好了没2：我来了",
+  "Hamlet": "哈姆雷特",
+  "Dacoit: A Love Story": "Dacoit：爱情故事",
+  "ChaO": "ChaO",
+  "Scream 7": "惊声尖叫7",
+  "Goat": "传奇山羊",
+};
+
 function zhGenre(genre: string): string {
   if (!genre) return "";
   return genre.split(", ").map(g => GENRE_ZH[g.trim()] ?? g.trim()).join(" / ");
@@ -777,8 +800,8 @@ function MoviePageContent() {
       .then(r => r.json())
       .then(d => {
         if (d.error) { setError(d.error); setLoading(false); return; }
-        // 优先使用主页目录里的人工审核中文片名（URL zh 参数），避免 AI 翻译错误
-        setData({ ...d, zhTitle: zhFromUrl || d.zhTitle || d.title });
+        // 优先使用主页目录里的人工审核中文片名（URL zh 参数），其次查映射表，最后 fallback AI
+        setData({ ...d, zhTitle: zhFromUrl || TITLE_ZH[d.title] || d.zhTitle || d.title });
         setLoading(false);
 
         // Stage 2: AI content
@@ -958,7 +981,7 @@ function MoviePageContent() {
             {data && (
               <div className="tab-strip">
                 {(["pre", "during", "post"] as const).map(m => (
-                  <button key={m} onClick={() => setMode(m)} style={{ background: "none", border: "none", borderBottom: `2px solid ${mode === m ? "var(--gold)" : "transparent"}`, color: mode === m ? "var(--parchment)" : "var(--faint)", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: 400, transition: "all 0.15s", marginBottom: -1 }}>
+                  <button key={m} onClick={() => setMode(m)} style={{ background: mode === m ? "rgba(200,151,58,0.06)" : "none", border: "none", borderBottom: `2px solid ${mode === m ? "var(--gold)" : "transparent"}`, color: mode === m ? "var(--parchment)" : "var(--faint)", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: mode === m ? 500 : 400, transition: "all 0.15s", marginBottom: -1 }}>
                     {m === "pre" ? "观 前" : m === "during" ? "观影中" : "观 后"}
                   </button>
                 ))}
@@ -1052,7 +1075,14 @@ function MoviePageContent() {
               ) : aiContent ? (
                 <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
                   <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-                    {aiContent.background.context.map((point, i) => (
+                    {aiContent.background.context.filter((point, i) => {
+                      // 去重：如果第一条和 hero 简介高度重叠，跳过
+                      if (i !== 0) return true;
+                      const summary = aiContent.background.summary || "";
+                      if (!summary) return true;
+                      const overlap = point.slice(0, 30);
+                      return !summary.includes(overlap.slice(0, 20));
+                    }).map((point, i) => (
                       <li key={i} style={{ display: "flex", gap: 10, color: "#A09AB0", fontSize: "0.83rem", lineHeight: 1.7, fontFamily: "var(--font-body)" }}>
                         <span style={{ color: "var(--gold-dim)", flexShrink: 0, marginTop: 2 }}>▸</span>
                         <span>{point}</span>
@@ -1188,7 +1218,7 @@ function MoviePageContent() {
 
             {/* ══ DURING MODE ══ */}
             {mode === "during" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
 
                 {/* ── 实时查词 ── */}
                 {data && (
