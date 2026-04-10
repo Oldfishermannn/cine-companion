@@ -112,6 +112,24 @@ body::before {
   position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.5) 50%, rgba(10,10,15,0.8) 100%);
 }
+.featured-hero .featured-inner {
+  position: relative; z-index: 2;
+  display: flex; gap: 28px; align-items: center;
+  padding: 32px;
+  min-height: 220px;
+}
+@media (max-width: 600px) {
+  .featured-hero .featured-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 16px;
+    min-height: auto;
+  }
+  .featured-hero .featured-poster {
+    width: 100px !important;
+  }
+}
 
 /* Movie grid: 4col → 3col → 2col */
 .movie-grid {

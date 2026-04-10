@@ -107,9 +107,9 @@ export function PreMovie({
       </section>
 
       {/* Trailer */}
-      {trailerUrl && (
-        <section>
-          <SectionLabel>预告片</SectionLabel>
+      <section>
+        <SectionLabel>预告片</SectionLabel>
+        {trailerUrl ? (
           <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden", background: "#000" }}>
             <iframe
               src={trailerUrl}
@@ -119,8 +119,17 @@ export function PreMovie({
               style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
             />
           </div>
-        </section>
-      )}
+        ) : (
+          <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden" }}>
+            <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: "1.2rem", marginLeft: 3, opacity: 0.3 }}>▶</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
 
       {/* Cast — poster-style cards with scroll fade */}
       {castMembers.length > 0 && (

@@ -138,9 +138,9 @@ function MoviePageContent() {
       .catch(() => { setError("网络错误，请重试"); setLoading(false); });
   }, [query]);
 
-  // Load post content when unlocking
+  // Background prefetch: start loading post content after AI content is ready
   useEffect(() => {
-    if (mode !== "post" || !postUnlocked || !data || postContent || postLoading) return;
+    if (!data || !aiContent || postContent || postLoading) return;
     setPostLoading(true);
     setPostError(false);
     const params = new URLSearchParams({ id: data.id, title: data.title, year: data.year || "", genre: data.genre || "", plot: data.plot || "" });
@@ -149,7 +149,8 @@ function MoviePageContent() {
       .then(p => { if (!p.error) { setPostContent(p); setPostFromCache(!!p.cached); } else { setPostError(true); } })
       .catch(() => setPostError(true))
       .finally(() => setPostLoading(false));
-  }, [mode, postUnlocked, data, postContent, postLoading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, aiContent]);
 
   if (!query) { router.push("/"); return null; }
 

@@ -120,8 +120,20 @@ export function HomeClient({ catalog, genres }: {
     return list;
   }, [genreFilter, sortMode, catalog]);
 
-  // Coming soon movies
+  // Recent releases: movies released within the last 7 days (本周新片)
   const now = Date.now();
+  const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+  const recentReleases = useMemo(() => {
+    return catalog
+      .filter(m => {
+        const t = parseReleaseDate(m.released);
+        return t > 0 && now - t < SEVEN_DAYS && now - t >= 0;
+      })
+      .sort((a, b) => parseReleaseDate(b.released) - parseReleaseDate(a.released));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog]);
+
+  // Coming soon: movies with future release dates
   const comingSoon = useMemo(() => {
     return catalog
       .filter(m => parseReleaseDate(m.released) > now)
@@ -153,14 +165,9 @@ export function HomeClient({ catalog, genres }: {
             />
           )}
           <div className="featured-gradient" />
-          <div style={{
-            position: "relative", zIndex: 2,
-            display: "flex", gap: 28, alignItems: "center",
-            padding: "32px 32px",
-            minHeight: 220,
-          }}>
+          <div className="featured-inner">
             {/* Featured poster */}
-            <div style={{
+            <div className="featured-poster" style={{
               flexShrink: 0, width: 130, aspectRatio: "2/3",
               borderRadius: 10, overflow: "hidden",
               boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
@@ -239,9 +246,36 @@ export function HomeClient({ catalog, genres }: {
         </div>
       )}
 
-      {/* ── Coming Soon ── */}
-      {comingSoon.length > 0 && (
+      {/* ── Recent Releases 本周新片 ── */}
+      {recentReleases.length > 0 && (
         <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 28, marginBottom: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>本周新片</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+            {recentReleases.map(m => (
+              <div
+                key={m.title}
+                className="coming-soon-card"
+                onClick={() => router.push(movieUrl(m))}
+              >
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 400 }}>
+                  {m.zh}
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "#4ADE80", margin: "5px 0 0", letterSpacing: "0.03em", fontWeight: 300 }}>
+                  {fmtReleaseDate(m.released)} 上映
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.62rem", color: "var(--faint)", margin: "2px 0 0", fontWeight: 300 }}>{m.genre}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Coming Soon 即将上映 ── */}
+      {comingSoon.length > 0 && (
+        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "120ms", marginTop: 20, marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>即将上映</span>
