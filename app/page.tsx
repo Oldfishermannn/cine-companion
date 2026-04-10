@@ -17,20 +17,55 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--bg)" }}>
+      {/* Ambient background glow */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
-        <div style={{ position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)", width: 700, height: 400, background: "radial-gradient(ellipse, rgba(200,151,58,0.06) 0%, transparent 70%)", filter: "blur(40px)" }} />
+        <div className="ambient-glow" style={{ top: "8%", left: "40%", width: 800, height: 500, background: "radial-gradient(ellipse, rgba(212,168,83,0.08) 0%, transparent 70%)" }} />
+        <div className="ambient-glow" style={{ top: "60%", right: "20%", width: 500, height: 400, background: "radial-gradient(ellipse, rgba(107,44,62,0.06) 0%, transparent 70%)" }} />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-16">
-        {/* Logo — server-rendered for SEO */}
-        <div className="text-center mb-2 fade-up" style={{ animationDelay: "0ms" }}>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(3.5rem, 8vw, 6rem)", fontWeight: 300, letterSpacing: "0.12em", color: "var(--parchment)", lineHeight: 1 }}>
-            伴影
-          </h1>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", letterSpacing: "0.45em", color: "var(--gold-dim)", textTransform: "uppercase", marginTop: "0.6rem", fontWeight: 400 }}>CineCompanion</div>
-          <div style={{ width: 40, height: 1, background: "var(--gold-dim)", margin: "1.2rem auto 0", opacity: 0.5 }} />
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase", marginTop: "0.8rem" }}>北美院线观影助手</p>
-        </div>
+      <div className="relative z-10 flex flex-col items-center px-6 pt-16 pb-16" style={{ maxWidth: 1040, margin: "0 auto" }}>
+        {/* Branding — editorial, left-aligned on wide, centered on narrow */}
+        <header className="w-full fade-up" style={{ animationDelay: "0ms", maxWidth: 960 }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginBottom: 8 }}>
+            <h1 style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(3rem, 7vw, 4.8rem)",
+              fontWeight: 300,
+              letterSpacing: "0.1em",
+              color: "var(--parchment)",
+              lineHeight: 1,
+              margin: 0,
+            }}>
+              伴影
+            </h1>
+            <div style={{ paddingBottom: "0.3em" }}>
+              <span style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "0.78rem",
+                letterSpacing: "0.4em",
+                color: "var(--gold-dim)",
+                textTransform: "uppercase",
+                fontWeight: 400,
+              }}>
+                CineCompanion
+              </span>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 0 }}>
+            <div className="gold-rule" />
+            <p style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "0.68rem",
+              letterSpacing: "0.18em",
+              color: "var(--muted)",
+              textTransform: "uppercase",
+              margin: 0,
+              fontWeight: 300,
+            }}>
+              北美院线观影助手 &middot; {MOVIE_CATALOG.length} 部在映
+            </p>
+          </div>
+        </header>
 
         {/* SEO: server-rendered movie list for crawlers (hidden visually, readable by bots) */}
         <noscript>
@@ -50,9 +85,12 @@ export default function Home() {
         {/* Interactive client components */}
         <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} />
 
-        <p style={{ marginTop: 48, fontSize: "0.62rem", letterSpacing: "0.25em", color: "var(--faint)", textTransform: "uppercase" }}>
-          Powered by Claude AI &middot; OMDb
-        </p>
+        <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 56, textAlign: "center" }}>
+          <div className="gold-rule" style={{ margin: "0 auto 16px", width: 32 }} />
+          <p style={{ fontSize: "0.6rem", letterSpacing: "0.25em", color: "var(--faint)", textTransform: "uppercase", fontWeight: 300 }}>
+            Powered by Claude AI &middot; OMDb
+          </p>
+        </footer>
       </div>
     </main>
   );

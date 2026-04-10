@@ -19,6 +19,7 @@ interface PreMovieProps {
   amcSlug: string;
   castMembers: CastMember[];
   trailerUrl: string | null;
+  trailerType?: string;
   aiContent: AiContent | null;
   aiLoading: boolean;
   aiFromCache: boolean;
@@ -38,7 +39,7 @@ interface PreMovieProps {
 }
 
 export function PreMovie({
-  data, amcSlug, castMembers, trailerUrl, aiContent, aiLoading, aiFromCache, aiError,
+  data, amcSlug, castMembers, trailerUrl, trailerType, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
@@ -105,7 +106,7 @@ export function PreMovie({
         )}
       </section>
 
-      {/* Feature 5: Trailer */}
+      {/* Trailer */}
       {trailerUrl && (
         <section>
           <SectionLabel>预告片</SectionLabel>
