@@ -1,57 +1,58 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-// 数据来源：amctheatres.com/movies 直接抓取，2026-04-10
-// 中文片名：优先官方译名，无官方译名则标注(暂译)
 // 数据来源：amctheatres.com/movies 直接抓取，2026-04-10（CDP 实时验证）
+// 中文片名：优先官方译名，无官方译名则标注(暂译)
+// genre: 主类型标签，用于首页筛选
 const MOVIE_CATALOG = [
-  { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026", released: "April 1, 2026"    },
-  { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026", released: "March 20, 2026"   },
-  { title: "You, Me & Tuscany",             zh: "你、我与托斯卡纳",         year: "2026", released: "April 10, 2026"   },
-  { title: "Faces of Death",               zh: "死亡之脸",                year: "2026", released: "April 10, 2026"   },
-  { title: "The Drama",                    zh: "The Drama",               year: "2026", released: "April 3, 2026"    },
-  { title: "Hoppers",                      zh: "狸想世界",                 year: "2026", released: "March 6, 2026"    },
-  { title: "Newborn",                      zh: "新生",                    year: "2026", released: "April 10, 2026"   },
-  { title: "Beast",                        zh: "猛兽",                    year: "2026", released: "April 10, 2026"   },
-  { title: "Hunting Matthew Nichols",      zh: "追捕马修·尼科尔斯",        year: "2026", released: "April 10, 2026"   },
-  { title: "A Great Awakening",            zh: "大觉醒",                  year: "2026", released: "April 3, 2026"    },
-  { title: "They Will Kill You",           zh: "他们会杀了你",              year: "2026", released: "March 27, 2026"  },
-  { title: "Reminders of Him",             zh: "念你之名",                 year: "2026", released: "March 13, 2026"  },
-  { title: "Exit 8",                       zh: "8号出口",                  year: "2026", released: "April 10, 2026"  },
-  { title: "Ready or Not 2: Here I Come",  zh: "准备好了没2：我来了",       year: "2026", released: "March 20, 2026"  },
-  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026"  },
-  { title: "Dacoit: A Love Story",         zh: "Dacoit：爱情故事",          year: "2026", released: "April 10, 2026"  },
-  { title: "ChaO",                         zh: "ChaO",                    year: "2026", released: "April 10, 2026"  },
-  { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026", released: "February 27, 2026"},
-  { title: "Goat",                         zh: "传奇山羊",                 year: "2026", released: "February 13, 2026"},
+  { title: "The Super Mario Galaxy Movie",  zh: "超级马里奥银河电影版",    year: "2026", released: "April 1, 2026",     genre: "动画" },
+  { title: "Project Hail Mary",             zh: "挽救计划",               year: "2026", released: "March 20, 2026",    genre: "科幻" },
+  { title: "You, Me & Tuscany",             zh: "你、我与托斯卡纳",         year: "2026", released: "April 10, 2026",    genre: "爱情" },
+  { title: "Faces of Death",               zh: "死亡之脸",                year: "2026", released: "April 10, 2026",    genre: "恐怖" },
+  { title: "The Drama",                    zh: "The Drama",               year: "2026", released: "April 3, 2026",     genre: "喜剧" },
+  { title: "Hoppers",                      zh: "狸想世界",                 year: "2026", released: "March 6, 2026",     genre: "动画" },
+  { title: "Newborn",                      zh: "新生",                    year: "2026", released: "April 10, 2026",    genre: "恐怖" },
+  { title: "Beast",                        zh: "猛兽",                    year: "2026", released: "April 10, 2026",    genre: "动作" },
+  { title: "Hunting Matthew Nichols",      zh: "追捕马修·尼科尔斯",        year: "2026", released: "April 10, 2026",    genre: "惊悚" },
+  { title: "A Great Awakening",            zh: "大觉醒",                  year: "2026", released: "April 3, 2026",     genre: "剧情" },
+  { title: "They Will Kill You",           zh: "他们会杀了你",              year: "2026", released: "March 27, 2026",   genre: "恐怖" },
+  { title: "Reminders of Him",             zh: "念你之名",                 year: "2026", released: "March 13, 2026",   genre: "爱情" },
+  { title: "Exit 8",                       zh: "8号出口",                  year: "2026", released: "April 10, 2026",   genre: "恐怖" },
+  { title: "Ready or Not 2: Here I Come",  zh: "准备好了没2：我来了",       year: "2026", released: "March 20, 2026",   genre: "惊悚" },
+  { title: "Hamlet",                       zh: "哈姆雷特",                 year: "2026", released: "April 10, 2026",   genre: "剧情" },
+  { title: "Dacoit: A Love Story",         zh: "Dacoit：爱情故事",          year: "2026", released: "April 10, 2026",   genre: "动作" },
+  { title: "ChaO",                         zh: "ChaO",                    year: "2026", released: "April 10, 2026",   genre: "动画" },
+  { title: "Scream 7",                     zh: "惊声尖叫7",                year: "2026", released: "February 27, 2026", genre: "恐怖" },
+  { title: "Goat",                         zh: "传奇山羊",                 year: "2026", released: "February 13, 2026", genre: "剧情" },
 ];
 
-const PAGE_SIZE = 20; // 首屏20，超出时显示加载更多
+type CatalogEntry = typeof MOVIE_CATALOG[number];
 
-// 判断 OMDb 返回的电影是否是我们要找的
-// 问题：OMDb 对 2026 新片无数据，会返回同名旧片（如搜"The Drama"→"Kim Possible: So the Drama" 2005）
-// 双重卡关：① 年份差 > 3 年直接拒绝  ② 标题需要高度重叠（防短词被长片名吞掉）
-function isPosterMatch(movie: { title: string; year: string }, d: { title?: string; year?: string }): boolean {
+// Extract unique genres for filter chips
+const ALL_GENRES = [...new Set(MOVIE_CATALOG.map(m => m.genre))].sort();
+
+// Parse release date to timestamp for sorting/sectioning
+function parseReleaseDate(s: string): number {
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+
+const PAGE_SIZE = 20;
+
+function isPosterMatch(movie: CatalogEntry, d: { title?: string; year?: string }): boolean {
   const normalize = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
   const expected = normalize(movie.title);
   const got      = normalize(d.title || "");
-
-  // 年份卡关：OMDb year 字段可能是 "2005" 或 "2005–2007"，取前4位
   const gotYear = parseInt((d.year || "").slice(0, 4), 10);
   const expYear = parseInt(movie.year, 10);
   if (!isNaN(gotYear) && !isNaN(expYear) && Math.abs(gotYear - expYear) > 3) return false;
-
-  // 标题匹配：精确 > 双向包含（要求占比 ≥ 70%，防止 "the drama" ⊂ "kim possible so the drama"）
   if (got === expected) return true;
-  // 包含检查：只在返回标题不比期望长太多时接受（避免短词被长片名吞掉）
-  // 2.0x 比 1.5x 宽松，允许冠词差异（"The Exit 8" vs "Exit 8"）
   if (got.includes(expected) && got.length <= expected.length * 2.0) return true;
   if (expected.includes(got) && expected.length <= got.length * 2.0) return true;
-  // 关键词重叠：≥70% 的有效词匹配
   const words = expected.split(" ").filter(w => w.length > 2);
   if (words.length >= 2 && words.filter(w => got.includes(w)).length >= Math.ceil(words.length * 0.7)) return true;
   return false;
@@ -59,7 +60,6 @@ function isPosterMatch(movie: { title: string; year: string }, d: { title?: stri
 
 interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
 
-// "20 Mar 2026" or "March 20, 2026" → "3/20"
 function fmtReleaseDate(s: string | undefined): string {
   if (!s) return "";
   const d = new Date(s);
@@ -67,21 +67,22 @@ function fmtReleaseDate(s: string | undefined): string {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
+type SortMode = "newest" | "oldest";
+
 export default function Home() {
-  const [visibleCount, setVisibleCount] = useState(Math.min(PAGE_SIZE, MOVIE_CATALOG.length));
-  const [posters,      setPosters]      = useState<PosterInfo[]>(
+  const [posters, setPosters] = useState<PosterInfo[]>(
     MOVIE_CATALOG.map(() => ({ poster: null, fetched: false }))
   );
-  const [loadingMore,  setLoadingMore]  = useState(false);
+  const [genreFilter, setGenreFilter] = useState<string | null>(null);
+  const [sortMode, setSortMode] = useState<SortMode>("newest");
   const router = useRouter();
 
-  const fetchPoster = useCallback((movie: typeof MOVIE_CATALOG[number], i: number) => {
+  const fetchPoster = useCallback((movie: CatalogEntry, i: number) => {
     if (posters[i].fetched) return;
     fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
       .then(r => r.json())
       .then(d => {
         const matched = isPosterMatch(movie, d);
-        // Only use released date if its year matches expected year (avoid OMDb returning old films)
         const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
         const expectedYear = parseInt(movie.year, 10);
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
@@ -99,38 +100,40 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch posters for visible slice
   useEffect(() => {
-    MOVIE_CATALOG.slice(0, visibleCount).forEach((movie, i) => fetchPoster(movie, i));
+    MOVIE_CATALOG.forEach((movie, i) => fetchPoster(movie, i));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLoadMore = () => {
-    const next = Math.min(visibleCount + PAGE_SIZE, MOVIE_CATALOG.length);
-    setLoadingMore(true);
-    // Fetch newly revealed posters
-    MOVIE_CATALOG.slice(visibleCount, next).forEach((movie, i) => {
-      const idx = visibleCount + i;
-      fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
-        .then(r => r.json())
-        .then(d => {
-          const matched = isPosterMatch(movie, d);
-          const relY = d.released ? new Date(d.released).getFullYear() : NaN;
-          const expY = parseInt(movie.year, 10);
-          const useRel = matched && !isNaN(relY) && relY === expY;
-          setPosters(prev => {
-            const n = [...prev]; n[idx] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useRel ? d.released : undefined }; return n;
-          });
-        })
-        .catch(() => setPosters(prev => {
-          const n = [...prev]; n[idx] = { poster: null, fetched: true }; return n;
-        }));
+  // Filter + sort movies, keeping original index for poster lookup
+  const indexedMovies = useMemo(() => {
+    let list = MOVIE_CATALOG.map((m, i) => ({ movie: m, origIdx: i }));
+    if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
+    list.sort((a, b) => {
+      const ta = parseReleaseDate(a.movie.released);
+      const tb = parseReleaseDate(b.movie.released);
+      return sortMode === "newest" ? tb - ta : ta - tb;
     });
-    setVisibleCount(next);
-    setLoadingMore(false);
-  };
+    return list;
+  }, [genreFilter, sortMode]);
 
-  const visibleMovies = MOVIE_CATALOG.slice(0, visibleCount);
+  // Section split: "本周新片" (last 7 days) vs "正在热映"
+  const { newThisWeek, nowShowing } = useMemo(() => {
+    const now = new Date("2026-04-10").getTime(); // reference date
+    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const nw: typeof indexedMovies = [];
+    const ns: typeof indexedMovies = [];
+    for (const item of indexedMovies) {
+      const t = parseReleaseDate(item.movie.released);
+      if (t >= weekAgo && t <= now) nw.push(item);
+      else ns.push(item);
+    }
+    return { newThisWeek: nw, nowShowing: ns };
+  }, [indexedMovies]);
+
+  const filterCount = genreFilter
+    ? MOVIE_CATALOG.filter(m => m.genre === genreFilter).length
+    : MOVIE_CATALOG.length;
 
   return (
     <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--bg)" }}>
@@ -140,7 +143,7 @@ export default function Home() {
 
       <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-16">
 
-        {/* ── Logo ── */}
+        {/* Logo */}
         <div className="text-center mb-2 fade-up" style={{ animationDelay: "0ms" }}>
           <h1
             onClick={() => window.location.reload()}
@@ -151,73 +154,126 @@ export default function Home() {
           <p style={{ fontFamily: "var(--font-body)", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase", marginTop: "0.8rem" }}>中文语境观影助手</p>
         </div>
 
-        {/* ── Movie Grid ── */}
-        <div className="w-full mt-3 fade-up" style={{ maxWidth: 960, animationDelay: "200ms" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-            <div style={{ width: 3, height: 18, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 400, letterSpacing: "0.08em", color: "var(--parchment)" }}>院线热映</span>
-            <span style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase" }}>RECENT · RATED</span>
-            <span style={{ marginLeft: "auto", fontSize: "0.62rem", color: "var(--faint)", letterSpacing: "0.08em", fontFamily: "var(--font-body)" }}>
-              显示 {visibleCount} / {MOVIE_CATALOG.length}
-            </span>
-          </div>
-
-          <div className="movie-grid">
-            {visibleMovies.map((movie, i) => (
-              <PosterCard
-                key={movie.title}
-                movie={movie}
-                posterInfo={posters[i]}
-                index={i}
-                catalogReleased={movie.released}
-                onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
-              />
+        {/* Filter + Sort Controls */}
+        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 16, marginBottom: 8 }}>
+          {/* Genre chips */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 12 }}>
+            <button
+              onClick={() => setGenreFilter(null)}
+              style={{
+                padding: "5px 16px", borderRadius: 20, fontSize: "0.75rem", fontFamily: "var(--font-body)",
+                border: `1px solid ${!genreFilter ? "rgba(200,151,58,0.5)" : "var(--border)"}`,
+                background: !genreFilter ? "rgba(200,151,58,0.12)" : "transparent",
+                color: !genreFilter ? "var(--gold)" : "var(--muted)",
+                cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
+              }}
+            >
+              全部
+            </button>
+            {ALL_GENRES.map(g => (
+              <button
+                key={g}
+                onClick={() => setGenreFilter(genreFilter === g ? null : g)}
+                style={{
+                  padding: "5px 16px", borderRadius: 20, fontSize: "0.75rem", fontFamily: "var(--font-body)",
+                  border: `1px solid ${genreFilter === g ? "rgba(200,151,58,0.5)" : "var(--border)"}`,
+                  background: genreFilter === g ? "rgba(200,151,58,0.12)" : "transparent",
+                  color: genreFilter === g ? "var(--gold)" : "var(--muted)",
+                  cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
+                }}
+              >
+                {g}
+              </button>
             ))}
           </div>
 
-          {/* Load More */}
-          {visibleCount < MOVIE_CATALOG.length && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
-              <button
-                onClick={handleLoadMore}
-                disabled={loadingMore}
-                style={{
-                  padding: "11px 36px",
-                  background: "transparent",
-                  color: "var(--muted)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 10,
-                  fontFamily: "var(--font-body)",
-                  fontSize: "0.8rem",
-                  cursor: "pointer",
-                  letterSpacing: "0.08em",
-                  transition: "border-color 0.15s, color 0.15s, background 0.15s",
-                }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "rgba(200,151,58,0.4)";
-                  el.style.color = "var(--parchment)";
-                  el.style.background = "rgba(200,151,58,0.04)";
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "var(--border)";
-                  el.style.color = "var(--muted)";
-                  el.style.background = "transparent";
-                }}
-              >
-                加载更多
-              </button>
-            </div>
-          )}
-
-          {visibleCount >= MOVIE_CATALOG.length && (
-            <p style={{ textAlign: "center", marginTop: 24, fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--faint)", textTransform: "uppercase" }}>
-              已显示全部 {MOVIE_CATALOG.length} 部
-            </p>
-          )}
+          {/* Sort toggle */}
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <span style={{ fontSize: "0.65rem", color: "var(--faint)", letterSpacing: "0.06em", fontFamily: "var(--font-body)" }}>
+              {filterCount} 部
+            </span>
+            <button
+              onClick={() => setSortMode(s => s === "newest" ? "oldest" : "newest")}
+              style={{
+                padding: "4px 12px", borderRadius: 6, fontSize: "0.68rem", fontFamily: "var(--font-body)",
+                border: "1px solid var(--border)", background: "transparent", color: "var(--muted)",
+                cursor: "pointer", transition: "all 0.15s", letterSpacing: "0.04em",
+              }}
+            >
+              {sortMode === "newest" ? "最新上映 ↓" : "最早上映 ↑"}
+            </button>
+          </div>
         </div>
 
+        {/* Movie Sections */}
+        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "200ms" }}>
+
+          {/* Section: 本周新片 */}
+          {newThisWeek.length > 0 && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                <div style={{ width: 3, height: 18, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 400, letterSpacing: "0.08em", color: "var(--parchment)" }}>本周新片</span>
+                <span style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase" }}>NEW THIS WEEK</span>
+              </div>
+
+              <div className="movie-grid">
+                {newThisWeek.map(({ movie, origIdx }) => (
+                  <PosterCard
+                    key={movie.title}
+                    movie={movie}
+                    posterInfo={posters[origIdx]}
+                    index={origIdx}
+                    catalogReleased={movie.released}
+                    onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
+                  />
+                ))}
+              </div>
+
+              {nowShowing.length > 0 && (
+                <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent)", margin: "36px 0" }} />
+              )}
+            </>
+          )}
+
+          {/* Section: 正在热映 */}
+          {nowShowing.length > 0 && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+                <div style={{ width: 3, height: 18, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 400, letterSpacing: "0.08em", color: "var(--parchment)" }}>
+                  {newThisWeek.length > 0 ? "正在热映" : "院线热映"}
+                </span>
+                <span style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--muted)", textTransform: "uppercase" }}>
+                  {newThisWeek.length > 0 ? "NOW SHOWING" : "RECENT · RATED"}
+                </span>
+              </div>
+
+              <div className="movie-grid">
+                {nowShowing.map(({ movie, origIdx }) => (
+                  <PosterCard
+                    key={movie.title}
+                    movie={movie}
+                    posterInfo={posters[origIdx]}
+                    index={origIdx}
+                    catalogReleased={movie.released}
+                    onClick={() => router.push(`/movie?q=${encodeURIComponent(movie.title)}&zh=${encodeURIComponent(movie.zh)}`)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {indexedMovies.length === 0 && (
+            <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+              没有符合筛选条件的电影
+            </p>
+          )}
+
+          <p style={{ textAlign: "center", marginTop: 24, fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--faint)", textTransform: "uppercase" }}>
+            已显示全部 {filterCount} 部
+          </p>
+        </div>
 
         <p style={{ marginTop: 48, fontSize: "0.62rem", letterSpacing: "0.25em", color: "var(--faint)", textTransform: "uppercase" }}>
           Powered by Claude AI · OMDb
@@ -228,7 +284,7 @@ export default function Home() {
 }
 
 function PosterCard({ movie, posterInfo, index, catalogReleased, onClick }: {
-  movie: typeof MOVIE_CATALOG[number];
+  movie: CatalogEntry;
   posterInfo: PosterInfo;
   index: number;
   catalogReleased?: string;
