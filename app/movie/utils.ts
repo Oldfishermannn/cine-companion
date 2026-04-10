@@ -37,54 +37,27 @@ export function zhReleased(released: string): string {
   return released;
 }
 
-// TTS voice cache
-let cachedVoice: SpeechSynthesisVoice | null = null;
-
-function getPreferredVoice(): Promise<SpeechSynthesisVoice | null> {
-  return new Promise(resolve => {
-    const pick = () => {
-      const voices = window.speechSynthesis.getVoices();
-      if (!voices.length) return null;
-      return voices.find(v => v.name.includes("Google") && v.lang === "en-US")
-        || voices.find(v => v.lang.startsWith("en-US"))
-        || voices.find(v => v.lang.startsWith("en"))
-        || null;
-    };
-    if (cachedVoice) { resolve(cachedVoice); return; }
-    const v = pick();
-    if (v) { cachedVoice = v; resolve(v); return; }
-    const handler = () => {
-      cachedVoice = pick();
-      window.speechSynthesis.removeEventListener("voiceschanged", handler);
-      resolve(cachedVoice);
-    };
-    window.speechSynthesis.addEventListener("voiceschanged", handler);
-    setTimeout(() => { window.speechSynthesis.removeEventListener("voiceschanged", handler); resolve(pick()); }, 2000);
-  });
-}
+// TTS: Google Translate audio (stable quality, supports words & phrases)
+const audioCache = new Map<string, HTMLAudioElement>();
 
 export async function speak(word: string) {
-  if (typeof window === "undefined") return;
-  if (!word.includes(" ")) {
-    try {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-      if (res.ok) {
-        const data = await res.json();
-        const audioUrl = data?.[0]?.phonetics?.find((p: { audio?: string }) => p.audio)?.audio;
-        if (audioUrl) {
-          new Audio(audioUrl.startsWith("//") ? "https:" + audioUrl : audioUrl).play();
-          return;
-        }
-      }
-    } catch { /* fall through */ }
+  if (typeof window === "undefined" || !word) return;
+  const key = word.toLowerCase().trim();
+  let audio = audioCache.get(key);
+  if (!audio) {
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(key)}`;
+    audio = new Audio(url);
+    audioCache.set(key, audio);
   }
-  const voice = await getPreferredVoice();
-  const utterance = new SpeechSynthesisUtterance(word);
-  utterance.lang = "en-US";
-  utterance.rate = 0.85;
-  if (voice) utterance.voice = voice;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+  audio.currentTime = 0;
+  audio.play().catch(() => {
+    // Fallback to Web Speech API if Google TTS blocked
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = "en-US";
+    utterance.rate = 0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  });
 }
 
 export function capitalize(s: string) {
