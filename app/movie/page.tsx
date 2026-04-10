@@ -909,7 +909,7 @@ function MoviePageContent() {
                   </p>
                 )}
                 <p style={{ color: "#ADA8BC", fontSize: "0.82rem", marginTop: 12, lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                  {data.zhPlot || data.plot}
+                  {aiContent?.background?.summary || data.zhPlot || data.plot}
                 </p>
               </div>
             </div>
@@ -947,9 +947,9 @@ function MoviePageContent() {
                 const rtScore = data.ratings.rt
                   ?? liveRatings?.rt?.tomatometer
                   ?? null;
-                const mcScore = data.ratings.metacritic
-                  ? `${data.ratings.metacritic}/100`
-                  : (liveRatings?.mc?.metascore ? `${liveRatings.mc.metascore}/100` : null);
+                const mcRaw = data.ratings.metacritic ?? liveRatings?.mc?.metascore;
+                const mcNum = mcRaw !== undefined && mcRaw !== null ? parseInt(String(mcRaw), 10) : NaN;
+                const mcScore = !isNaN(mcNum) && mcNum >= 1 && mcNum <= 100 ? `${mcNum}/100` : null;
                 const rtUrl  = liveRatings?.rt?.url ?? `https://www.rottentomatoes.com/search?search=${encodeURIComponent(data.title)}`;
                 const mcUrl  = liveRatings?.mc?.url ?? `https://www.metacritic.com/search/${encodeURIComponent(data.title)}/`;
                 const loading = liveRatings === null;
@@ -971,18 +971,19 @@ function MoviePageContent() {
                         ))
                       ) : (
                         <>
-                          <RatingBlock value={imdbScore} label="IMDb"
-                            href={`https://www.imdb.com/title/${data.id}/`} />
-                          <div style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
-                          <RatingBlock value={rtScore} label="烂番茄" href={rtUrl} />
-                          <div style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
-                          <RatingBlock value={mcScore} label="Metacritic" href={mcUrl} />
-                          <div style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
-                          <RatingBlock
-                            value={liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null}
-                            label="豆瓣"
-                            href={liveRatings?.douban?.url ?? undefined}
-                          />
+                          {[
+                            { value: imdbScore,  label: "IMDb",       href: `https://www.imdb.com/title/${data.id}/` },
+                            { value: rtScore,    label: "烂番茄",      href: rtUrl },
+                            { value: mcScore,    label: "Metacritic", href: mcUrl },
+                            { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: "豆瓣", href: liveRatings?.douban?.url ?? undefined },
+                          ].filter(r => r.value).map((r, idx, arr) => (
+                            <React.Fragment key={r.label}>
+                              <RatingBlock value={r.value} label={r.label} href={r.href} />
+                              {idx < arr.length - 1 && (
+                                <div style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
+                              )}
+                            </React.Fragment>
+                          ))}
                         </>
                       )}
                     </div>
