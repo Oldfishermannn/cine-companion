@@ -427,7 +427,7 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
 
   return (
     <section>
-      <SectionLabel>卡司</SectionLabel>
+      <SectionLabel>演职表</SectionLabel>
       <div style={{ position: "relative" }}>
         <div ref={scrollRef} style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
           {castMembers.map((m, i) => (
