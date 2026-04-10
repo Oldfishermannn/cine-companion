@@ -1,4 +1,4 @@
-# 伴影 CineUsher
+# 伴影 CineCompanion
 
 **北美华人观影全程助手** — 观前预习 · 观中辅助 · 观后复盘
 
