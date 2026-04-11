@@ -72,6 +72,47 @@ async function fetchOMDb(params: Record<string, string>) {
   return res.json();
 }
 
+// ── IMDb rating scrape by ID ─────────────────────────────────────────────────
+// Used to supplement OMDb responses that return imdbRating: "N/A" for
+// recent/upcoming films (OMDb mirrors update with a lag; IMDb has ratings first).
+// Iterates all ld+json blocks on the title page since the Movie entity with
+// aggregateRating isn't always the first script.
+async function scrapeImdbRatingById(
+  imdbId: string
+): Promise<{ imdb: string | null; imdbVotes: string | null }> {
+  try {
+    const res = await fetch(`https://www.imdb.com/title/${imdbId}/`, {
+      headers: {
+        "User-Agent": GOOGLEBOT_UA,
+        "Accept": "text/html,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    if (!res.ok) return { imdb: null, imdbVotes: null };
+    const html = await res.text();
+    const ldScripts = html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g
+    );
+    for (const m of ldScripts) {
+      try {
+        const ld = JSON.parse(m[1]);
+        const rv = ld?.aggregateRating?.ratingValue;
+        if (rv !== undefined && rv !== null && !isNaN(Number(rv))) {
+          return {
+            imdb: String(rv),
+            imdbVotes: ld.aggregateRating.ratingCount
+              ? String(ld.aggregateRating.ratingCount)
+              : null,
+          };
+        }
+      } catch { /* try next */ }
+    }
+    return { imdb: null, imdbVotes: null };
+  } catch {
+    return { imdb: null, imdbVotes: null };
+  }
+}
+
 // ── IMDb fallback ─────────────────────────────────────────────────────────────
 // 1. Search IMDb __NEXT_DATA__ for title ID + basic info
 // 2. Fetch title page JSON-LD for director / actors
@@ -160,20 +201,35 @@ async function searchIMDb(query: string, zhOverride = ""): Promise<{
       });
       if (pageRes.ok) {
         const pageHtml = await pageRes.text();
-        const ldMatch = pageHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
-        if (ldMatch) {
+        // Iterate all ld+json blocks — the Movie entity with aggregateRating
+        // isn't always the first one on IMDb title pages.
+        const ldScripts = pageHtml.matchAll(
+          /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g
+        );
+        for (const m of ldScripts) {
           try {
-            const ld = JSON.parse(ldMatch[1]);
-            const dirs: Array<{ name?: string }> = ld.director ?? [];
-            director = dirs.map(d => d.name).filter(Boolean).join(", ") || "N/A";
-            const acts: Array<{ name?: string }> = ld.actor ?? [];
-            actors = acts.map(a => a.name).filter(Boolean).slice(0, 5).join(", ") || "N/A";
-            if (ld.aggregateRating?.ratingValue) {
-              imdbScore = String(ld.aggregateRating.ratingValue);
-              imdbVotes = ld.aggregateRating.ratingCount ? String(ld.aggregateRating.ratingCount) : null;
+            const ld = JSON.parse(m[1]);
+            if (director === "N/A") {
+              const dirs: Array<{ name?: string }> = ld.director ?? [];
+              const d = dirs.map(x => x.name).filter(Boolean).join(", ");
+              if (d) director = d;
             }
-            if (ld.datePublished) released = ld.datePublished; // "YYYY-MM-DD"
-          } catch { /* ignore */ }
+            if (actors === "N/A") {
+              const acts: Array<{ name?: string }> = ld.actor ?? [];
+              const a = acts.map(x => x.name).filter(Boolean).slice(0, 5).join(", ");
+              if (a) actors = a;
+            }
+            if (!imdbScore) {
+              const rv = ld?.aggregateRating?.ratingValue;
+              if (rv !== undefined && rv !== null && !isNaN(Number(rv))) {
+                imdbScore = String(rv);
+                imdbVotes = ld.aggregateRating.ratingCount
+                  ? String(ld.aggregateRating.ratingCount)
+                  : null;
+              }
+            }
+            if (!released && ld.datePublished) released = ld.datePublished;
+          } catch { /* try next */ }
         }
       }
     }
@@ -263,6 +319,18 @@ export async function GET(req: NextRequest) {
           const rtRating = detail.Ratings?.find(
             (r: { Source: string; Value: string }) => r.Source === "Rotten Tomatoes"
           );
+          // OMDb's rating mirror lags IMDb by weeks for new releases.
+          // When OMDb says N/A but IMDb has the film, scrape it live so
+          // catalog sorting by score works for upcoming/recent titles.
+          let imdbScore: string | null = detail.imdbRating !== "N/A" ? detail.imdbRating : null;
+          let imdbVotes: string | null = detail.imdbVotes !== "N/A" ? detail.imdbVotes : null;
+          if (!imdbScore && detail.imdbID) {
+            const live = await scrapeImdbRatingById(detail.imdbID);
+            if (live.imdb) {
+              imdbScore = live.imdb;
+              imdbVotes = imdbVotes ?? live.imdbVotes;
+            }
+          }
           // 优先用客户端传来的人工审核中文名；否则 AI 翻译
           const [zhTitle, zhPlot] = await Promise.all([
             zhFromClient ? Promise.resolve(zhFromClient)
@@ -286,8 +354,8 @@ export async function GET(req: NextRequest) {
             plot: detail.Plot,
             zhPlot,
             ratings: {
-              imdb: detail.imdbRating !== "N/A" ? detail.imdbRating : null,
-              imdbVotes: detail.imdbVotes !== "N/A" ? detail.imdbVotes : null,
+              imdb: imdbScore,
+              imdbVotes,
               rt: rtRating ? rtRating.Value : null,
               metacritic: detail.Metascore !== "N/A" ? detail.Metascore : null,
             },
