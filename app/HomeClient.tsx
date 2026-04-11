@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { CatalogMovie } from "./catalog";
-import { FEATURED_FILMS, type FeaturedFilm } from "./data/featured";
 import { useLang } from "./i18n/LangProvider";
 export type { CatalogMovie };
 
@@ -131,54 +130,22 @@ function movieUrl(m: CatalogMovie): string {
 }
 
 /* ═══════════════════════════════════════════════
-   ② SEARCH SLATE
-   ═══════════════════════════════════════════════ */
-
-function SearchSlate() {
-  const router = useRouter();
-  const [q, setQ] = useState("");
-
-  const submit = () => {
-    const trimmed = q.trim();
-    if (!trimmed) return;
-    router.push(`/movie?q=${encodeURIComponent(trimmed)}`);
-  };
-
-  return (
-    <div className="search-slate fade-up" style={{ animationDelay: "80ms" }}>
-      <span className="search-slate-label">
-        <span className="sec">§</span> Scene ▸
-      </span>
-      <input
-        className="search-slate-input"
-        value={q}
-        onChange={e => setQ(e.target.value)}
-        onKeyDown={e => { if (e.key === "Enter") submit(); }}
-        placeholder="搜索电影  /  Search any film…"
-        spellCheck={false}
-      />
-      <button className="search-slate-enter" onClick={submit}>[ENTER]</button>
-      <span className="search-slate-ping" aria-hidden>▸</span>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════
-   ③ THE EDITOR'S SLATE — 4 featured films
+   ② THE EDITOR'S SLATE — top 4 from AMC catalog
    ═══════════════════════════════════════════════ */
 
 interface FeaturedPoster { poster: string | null; fetched: boolean; }
 
-function FeaturedSlate() {
+function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
   const router = useRouter();
+  const { genre: tGenre } = useLang();
   const [posters, setPosters] = useState<FeaturedPoster[]>(
-    FEATURED_FILMS.map(() => ({ poster: null, fetched: false }))
+    films.map(() => ({ poster: null, fetched: false }))
   );
 
   // Parallel poster prefetch on mount
   useEffect(() => {
-    FEATURED_FILMS.forEach((film, i) => {
-      fetch(`/api/movie?q=${encodeURIComponent(film.title)}`)
+    films.forEach((film, i) => {
+      fetch(`/api/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}`)
         .then(r => r.json())
         .then(d => {
           const matched = isPosterMatch({ title: film.title, year: film.year }, d);
@@ -196,14 +163,16 @@ function FeaturedSlate() {
           });
         });
     });
-  }, []);
+  }, [films]);
 
-  const go = (film: FeaturedFilm) => {
-    router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}`);
+  const go = (film: CatalogMovie) => {
+    router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}&amc=${encodeURIComponent(film.amc)}`);
   };
 
-  const [lead, ...rest] = FEATURED_FILMS;
+  if (films.length === 0) return null;
+  const [lead, ...rest] = films;
   const leadPoster = posters[0];
+  const noteFor = (f: CatalogMovie) => `${tGenre(f.genre)} · ${f.released}`;
 
   return (
     <section className="editor-slate fade-up" style={{ animationDelay: "140ms" }}>
@@ -242,7 +211,7 @@ function FeaturedSlate() {
             <h2 className="label-zh">{lead.zh}</h2>
             <p className="label-title">{lead.title}</p>
             <div className="label-meta">
-              {lead.year}<span className="dot">·</span>{lead.note}
+              {lead.year}<span className="dot">·</span>{noteFor(lead)}
             </div>
           </div>
         </div>
@@ -280,7 +249,7 @@ function FeaturedSlate() {
                 <div className="mini-meta">
                   <h3 className="mini-zh">{film.zh}</h3>
                   <p className="mini-title">{film.title}</p>
-                  <span className="mini-dim">{film.year} · {film.note}</span>
+                  <span className="mini-dim">{film.year} · {noteFor(film)}</span>
                 </div>
               </div>
             );
@@ -389,15 +358,16 @@ export function HomeClient({ catalog, genres }: {
 
   const gridMovies = indexedMovies;
 
+  // Top 4 AMC films become the Editor's Slate — scope is strictly
+  // theater-playing, so the slate is derived, not hand-picked.
+  const editorsSlate = catalog.slice(0, 4);
+
   return (
     <>
-      {/* ── ② SEARCH SLATE ── */}
-      <SearchSlate />
+      {/* ── ① EDITOR'S SLATE (TOP 4 AMC) ── */}
+      <FeaturedSlate films={editorsSlate} />
 
-      {/* ── ③ EDITOR'S SLATE ── */}
-      <FeaturedSlate />
-
-      {/* ── ④ NOW SHOWING (AMC GRID) ── */}
+      {/* ── ② NOW SHOWING (AMC GRID) ── */}
       <section className="fade-up" style={{ animationDelay: "180ms", marginTop: 12 }}>
         <div className="section-mark">
           <span className="sec">§</span>
