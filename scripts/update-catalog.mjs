@@ -58,11 +58,16 @@ function parseCatalog(content) {
   const body = bodyMatch[1];
 
   const items = [];
-  const lineRe =
-    /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*zh:\s*"((?:[^"\\]|\\.)*)",\s*year:\s*"([^"]+)",\s*released:\s*"([^"]+)",\s*genre:\s*"([^"]+)",\s*amc:\s*"([^"]+)",\s*rank:\s*(\d+)\s*\}/g;
+  // imdbScore trailing field is optional (either `number` or `null`) so old
+  // or manually-edited entries without a score still parse correctly.
+  const linePattern =
+    /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*zh:\s*"((?:[^"\\]|\\.)*)",\s*year:\s*"([^"]+)",\s*released:\s*"([^"]+)",\s*genre:\s*"([^"]+)",\s*amc:\s*"([^"]+)",\s*rank:\s*(\d+)(?:,\s*imdbScore:\s*(null|-?\d+(?:\.\d+)?))?\s*\}/g;
 
-  let m;
-  while ((m = lineRe.exec(body)) !== null) {
+  for (const m of body.matchAll(linePattern)) {
+    const imdbRaw = m[8];
+    const imdbScore = imdbRaw === undefined || imdbRaw === "null"
+      ? null
+      : parseFloat(imdbRaw);
     items.push({
       title: m[1].replace(/\\"/g, '"'),
       zh: m[2].replace(/\\"/g, '"'),
@@ -71,12 +76,102 @@ function parseCatalog(content) {
       genre: m[5],
       amc: m[6],
       rank: parseInt(m[7], 10),
+      imdbScore,
     });
   }
   if (items.length === 0) {
     throw new Error("Parsed 0 movies from catalog.ts — regex broken?");
   }
   return items;
+}
+
+// ── IMDb rating lookup for new movies ──────────────────────────────────────
+// OMDb mirror lags IMDb for recent titles, so try OMDb first, then fall back
+// to scraping the IMDb title page (Googlebot UA). Mirrors the logic in
+// app/api/movie/route.ts — iterating every ld+json block since the Movie
+// entity with aggregateRating isn't always the first one.
+const GOOGLEBOT_UA = "Googlebot/2.1 (+http://www.google.com/bot.html)";
+
+async function fetchOmdbImdbScore(title) {
+  const key = process.env.OMDB_API_KEY;
+  if (!key) return { score: null, id: null };
+  try {
+    const url = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${key}`;
+    const r = await fetch(url);
+    if (!r.ok) return { score: null, id: null };
+    const data = await r.json();
+    if (data.Response !== "True") return { score: null, id: null };
+    const raw = data.imdbRating;
+    const id = data.imdbID || null;
+    if (!raw || raw === "N/A") return { score: null, id };
+    const parsed = parseFloat(raw);
+    return { score: isNaN(parsed) ? null : parsed, id };
+  } catch {
+    return { score: null, id: null };
+  }
+}
+
+async function scrapeImdbScoreById(imdbId) {
+  if (!imdbId) return null;
+  try {
+    const r = await fetch(`https://www.imdb.com/title/${imdbId}/`, {
+      headers: {
+        "User-Agent": GOOGLEBOT_UA,
+        "Accept": "text/html,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    if (!r.ok) return null;
+    const html = await r.text();
+    for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      try {
+        const ld = JSON.parse(m[1]);
+        const rv = ld?.aggregateRating?.ratingValue;
+        if (rv !== undefined && rv !== null && !isNaN(Number(rv))) {
+          return Number(rv);
+        }
+      } catch { /* try next */ }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function searchImdbIdByTitle(title) {
+  try {
+    const r = await fetch(
+      `https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=ft`,
+      {
+        headers: {
+          "User-Agent": GOOGLEBOT_UA,
+          "Accept": "text/html,*/*",
+          "Accept-Language": "en-US,en;q=0.9",
+        },
+      }
+    );
+    if (!r.ok) return null;
+    const html = await r.text();
+    const ndMatch = html.match(
+      /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/
+    );
+    if (!ndMatch) return null;
+    const nd = JSON.parse(ndMatch[1]);
+    const results = nd?.props?.pageProps?.titleResults?.results ?? [];
+    const first = results[0];
+    return first?.titleId || null;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveImdbScore(title) {
+  const omdb = await fetchOmdbImdbScore(title);
+  if (omdb.score !== null) return omdb.score;
+  // OMDb miss or N/A — scrape IMDb live
+  const id = omdb.id || (await searchImdbIdByTitle(title));
+  if (!id) return null;
+  return await scrapeImdbScoreById(id);
 }
 
 // ── Fetch OMDb genre for a movie title ─────────────────────────────────────
@@ -155,8 +250,16 @@ function writeCatalog(movies, scrapedAt) {
   const maxRel = Math.max(...movies.map((m) => JSON.stringify(m.released).length));
   const maxGenre = Math.max(...movies.map((m) => JSON.stringify(m.genre).length));
   const maxAmc = Math.max(...movies.map((m) => JSON.stringify(m.amc).length));
+  const maxRank = Math.max(...movies.map((m) => String(m.rank).length));
 
   const pad = (s, n) => s + " ".repeat(Math.max(0, n - s.length));
+  const padLeft = (s, n) => " ".repeat(Math.max(0, n - s.length)) + s;
+
+  const fmtScore = (s) => {
+    if (s === null || s === undefined) return "null";
+    // Keep at most one decimal — matches IMDb display format
+    return Number.isInteger(s) ? `${s}.0` : String(s);
+  };
 
   const lines = movies.map((m) => {
     const t = pad(JSON.stringify(m.title) + ",", maxTitle + 1);
@@ -165,7 +268,8 @@ function writeCatalog(movies, scrapedAt) {
     const r = pad(JSON.stringify(m.released) + ",", maxRel + 1);
     const g = pad(JSON.stringify(m.genre) + ",", maxGenre + 1);
     const a = pad(JSON.stringify(m.amc) + ",", maxAmc + 1);
-    return `  { title: ${t} zh: ${z} year: ${y} released: ${r} genre: ${g} amc: ${a} rank: ${m.rank} },`;
+    const rk = padLeft(String(m.rank), maxRank) + ",";
+    return `  { title: ${t} zh: ${z} year: ${y} released: ${r} genre: ${g} amc: ${a} rank: ${rk} imdbScore: ${fmtScore(m.imdbScore)} },`;
   });
 
   const content = `export interface CatalogMovie {
@@ -176,10 +280,15 @@ function writeCatalog(movies, scrapedAt) {
   genre: string;
   amc: string;
   rank: number;
+  /** Baked IMDb rating — precomputed so homepage sorts with zero network cost.
+   *  Refresh via /update-amc (runs IMDb scrape for every title and rewrites this field). */
+  imdbScore: number | null;
 }
 
 // 数据来源：amctheatres.com/movies CDP 实时抓取，${scrapedAt}
+// IMDb 分数：刻入本文件，首页直接按 imdbScore 本地排序，不再 mount 时并发 fetch。
 // 自动更新：launchd 每日拉取 AMC 官网，新片 zh 译名由 Claude Haiku 生成；
+//          新片的 imdbScore 从 OMDb/IMDb 实时抓取；老片 imdbScore 保持继承。
 //          rank 保持既有顺序，新片追加末尾；运行 /update-amc 可手动重排评分
 export const MOVIE_CATALOG: CatalogMovie[] = [
 ${lines.join("\n")}
@@ -264,6 +373,7 @@ async function main() {
       const zh = await generateZhName(client, s.title);
       let genre = await fetchOmdbGenre(s.title);
       if (!genre) genre = await inferGenreFromTitle(client, s.title);
+      const imdbScore = await resolveImdbScore(s.title);
       const year = (s.date.match(/(\d{4})/) || ["2026"])[1];
       merged.push({
         title: s.title,
@@ -273,8 +383,9 @@ async function main() {
         genre,
         amc: s.slug,
         rank: 0, // filled below
+        imdbScore,
       });
-      console.error(`  → zh="${zh}" genre="${genre}"`);
+      console.error(`  → zh="${zh}" genre="${genre}" imdbScore=${imdbScore ?? "null"}`);
     }
   }
 

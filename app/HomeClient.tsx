@@ -271,9 +271,6 @@ export function HomeClient({ catalog, genres }: {
   const [posters, setPosters] = useState<PosterInfo[]>(
     catalog.map(() => ({ poster: null, fetched: false }))
   );
-  // IMDb scores fetched independently from poster lazy-loading so rating sort
-  // has complete data for ALL catalog movies, not just the first 8.
-  const [imdbScores, setImdbScores] = useState<Record<string, number | null>>({});
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
@@ -324,32 +321,16 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch IMDb scores for ALL catalog movies in parallel on mount.
-  // Separate from poster lazy-loading so rating sort has complete data.
-  // /api/movie is 3-level cached — repeat calls for cached films are instant.
-  useEffect(() => {
-    catalog.forEach(movie => {
-      fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
-        .then(r => r.json())
-        .then(d => {
-          const score = d.ratings?.imdb ? parseFloat(d.ratings.imdb) : null;
-          const val = score !== null && !isNaN(score) ? score : null;
-          setImdbScores(prev => ({ ...prev, [movie.title]: val }));
-        })
-        .catch(() => {
-          setImdbScores(prev => ({ ...prev, [movie.title]: null }));
-        });
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // IMDb sort reads `movie.imdbScore` baked into catalog.ts at build time.
+  // No mount-time fetch — the 19 parallel /api/movie calls used to stall
+  // initial rendering and waste API quota. Refresh via /update-amc.
   const indexedMovies = useMemo(() => {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        const sa = imdbScores[a.movie.title] ?? null;
-        const sb = imdbScores[b.movie.title] ?? null;
+        const sa = a.movie.imdbScore;
+        const sb = b.movie.imdbScore;
         if (sa !== null && sb !== null) return sb - sa;
         if (sa !== null) return -1;
         if (sb !== null) return 1;
@@ -360,7 +341,7 @@ export function HomeClient({ catalog, genres }: {
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog, imdbScores]);
+  }, [genreFilter, sortMode, catalog]);
 
   const now = Date.now();
   const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
