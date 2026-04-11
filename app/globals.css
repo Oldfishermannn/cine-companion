@@ -189,6 +189,7 @@ body::after {
 .masthead-title .accent {
   color: var(--vermilion);
   font-style: normal;
+  font-weight: 400;
   font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
 }
 
@@ -1898,6 +1899,7 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+
 
 
 
