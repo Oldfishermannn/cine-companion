@@ -67,12 +67,35 @@ function MoviePageContent() {
 
   useEffect(() => {
     if (!query) return;
-    setLoading(true);
     setError("");
-    setData(null);
     setAiContent(null);
     setLiveRatings(null);
     setFunFacts(null);
+
+    // [05] Instant first-paint: synthesize a stub from catalog so the hero
+    // renders immediately with zh title / year / genre / release date.
+    // The full /api/movie response then merges on top.
+    const stub = MOVIE_CATALOG.find(m => m.title === query);
+    if (stub) {
+      setData({
+        id: "",
+        title: stub.title,
+        zhTitle: zhFromUrl || stub.zh,
+        year: stub.year,
+        released: stub.released,
+        genre: stub.genre,
+        director: "",
+        actors: "",
+        runtime: "",
+        poster: null,
+        plot: "",
+        ratings: { imdb: null, imdbVotes: null, rt: null, metacritic: null },
+      });
+      setLoading(false);
+    } else {
+      setData(null);
+      setLoading(true);
+    }
 
     fetch(`/api/movie?q=${encodeURIComponent(query)}`)
       .then(r => r.json())
