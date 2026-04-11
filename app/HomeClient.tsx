@@ -133,7 +133,7 @@ function movieUrl(m: CatalogMovie): string {
    ② THE EDITOR'S SLATE — top 4 from AMC catalog
    ═══════════════════════════════════════════════ */
 
-interface FeaturedPoster { poster: string | null; fetched: boolean; }
+interface FeaturedPoster { poster: string | null; fetched: boolean; loaded?: boolean; }
 
 function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
   const router = useRouter();
@@ -197,7 +197,8 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
                 priority
                 loading="eager"
                 sizes="(max-width: 900px) 100vw, 560px"
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: "cover", opacity: leadPoster.loaded ? 1 : 0, transition: "opacity 0.5s ease" }}
+                onLoad={() => setPosters(prev => { const n = [...prev]; n[0] = { ...n[0], loaded: true }; return n; })}
               />
             ) : !leadPoster?.fetched ? (
               <div className="skeleton" style={{ position: "absolute", inset: 8 }} />
@@ -236,7 +237,8 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
                       priority
                       loading="eager"
                       sizes="120px"
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: "cover", opacity: p.loaded ? 1 : 0, transition: `opacity 0.5s ease ${i * 80}ms` }}
+                      onLoad={() => setPosters(prev => { const n = [...prev]; n[i + 1] = { ...n[i + 1], loaded: true }; return n; })}
                     />
                   ) : !p?.fetched ? (
                     <div className="skeleton" style={{ position: "absolute", inset: 5 }} />

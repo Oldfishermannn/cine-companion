@@ -99,6 +99,7 @@ function MoviePageContent() {
     setAiContent(null);
     setLiveRatings(null);
     setFunFacts(null);
+    setSynopsisExpanded(false);
 
     // [05] Instant first-paint: synthesize a stub from catalog so the hero
     // renders immediately with zh title / year / genre / release date.
