@@ -1176,6 +1176,46 @@ body::after {
   .film-stack > .block { padding: 16px 16px; }
 }
 
+/* ── background section flow: tight, no full-width wrapper ── */
+.bg-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.bg-flow .bg-lead {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.94rem;
+  color: rgba(235,227,208,0.88);
+  line-height: 1.85;
+  margin: 0;
+  padding: 14px 20px;
+  border-left: 2px solid var(--amber);
+  background: rgba(232,182,97,0.04);
+}
+.bg-flow .bg-director {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-left: 2px solid var(--amber-dim);
+  background: rgba(232,182,97,0.03);
+  width: fit-content;
+  max-width: 100%;
+}
+.bg-flow .bg-director p {
+  color: rgba(235,227,208,0.78);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  font-family: var(--font-body), sans-serif;
+  margin: 0;
+}
+.bg-flow .bg-spoiler {
+  padding-top: 4px;
+}
+
 /* ── mono editorial tag (square, no border-radius) ── */
 .ed-tag {
   display: inline-block;

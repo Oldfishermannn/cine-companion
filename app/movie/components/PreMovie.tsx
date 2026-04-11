@@ -152,56 +152,36 @@ export function PreMovie({
         ) : aiError ? (
           <ErrorBanner message={t("pre.aiError")} />
         ) : aiContent ? (
-          <div className="film-stack">
+          <div className="bg-flow">
             {/* Summary lead */}
             {aiContent.background.summary && (
-              <div className="block">
-                <p style={{
-                  fontFamily: "var(--font-body), sans-serif",
-                  fontSize: "0.94rem",
-                  color: "rgba(235,227,208,0.88)",
-                  lineHeight: 1.85,
-                  margin: 0,
-                }}>
-                  {aiContent.background.summary}
-                </p>
-              </div>
+              <p className="bg-lead">
+                {aiContent.background.summary}
+              </p>
             )}
             {/* Context points */}
             {aiContent.background.context.length > 0 && (
-              <div className="block">
-                <ul className="ed-bullets">
-                  {aiContent.background.context.filter((point, i) => {
-                    if (i !== 0) return true;
-                    const summary = aiContent.background.summary || "";
-                    if (!summary) return true;
-                    const overlap = point.slice(0, 30);
-                    return !summary.includes(overlap.slice(0, 20));
-                  }).map((point, i) => (
-                    <li key={i}><span>{point}</span></li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="ed-bullets">
+                {aiContent.background.context.filter((point, i) => {
+                  if (i !== 0) return true;
+                  const summary = aiContent.background.summary || "";
+                  if (!summary) return true;
+                  const overlap = point.slice(0, 30);
+                  return !summary.includes(overlap.slice(0, 20));
+                }).map((point, i) => (
+                  <li key={i}><span>{point}</span></li>
+                ))}
+              </ul>
             )}
             {/* Director note */}
             {aiContent.background.director_note && (
-              <div className="block accent">
-                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                  <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
-                  <p style={{
-                    color: "rgba(235,227,208,0.78)",
-                    fontSize: "0.88rem",
-                    lineHeight: 1.8,
-                    fontFamily: "var(--font-body), sans-serif",
-                    margin: 0,
-                  }}>
-                    {aiContent.background.director_note}
-                  </p>
-                </div>
+              <div className="bg-director">
+                <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
+                <p>{aiContent.background.director_note}</p>
               </div>
             )}
             {/* Spoiler unlock */}
-            <div className="block">
+            <div className="bg-spoiler">
               {!spoilerUnlocked ? (
                 <button
                   className="ed-btn ghost"
