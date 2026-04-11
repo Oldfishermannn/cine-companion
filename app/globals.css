@@ -178,17 +178,18 @@ body::after {
   font-family: var(--font-display), 'Fraunces', Georgia, serif;
   font-size: clamp(3.6rem, 9vw, 7.2rem);
   font-weight: 300;
-  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
+  font-variation-settings: "SOFT" 60, "WONK" 0, "opsz" 144;
   letter-spacing: 0.005em;
-  line-height: 0.85;
+  line-height: 0.95;
   color: var(--cream);
   margin: 0;
+  padding-bottom: 0.12em; /* clear Fraunces "g" descender so it doesn't collide with the issue line */
 }
-/* The é is the only touchmark that matters — editorial vermilion signature */
+/* The O is the whole trick — vermilion signature, upright & refined (no WONK/italic on a capital) */
 .masthead-title .accent {
   color: var(--vermilion);
-  font-style: italic;
-  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+  font-style: normal;
+  font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
 }
 
 .masthead-issue {
@@ -1897,6 +1898,7 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+
 
 
 
