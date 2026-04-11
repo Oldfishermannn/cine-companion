@@ -137,7 +137,7 @@ export function HomeClient({ catalog, genres }: {
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
-  const { t, title: tTitle, genre: tGenre, lang, toggle: toggleLang } = useLang();
+  const { t, title: tTitle, genre: tGenre, lang } = useLang();
 
   useEffect(() => { setWatchlist(loadWatchlist()); }, []);
 
@@ -515,45 +515,6 @@ export function HomeClient({ catalog, genres }: {
           {t("home.showingAll", { n: filterCount })}
         </p>
       </div>
-
-      {/* ── Lang toggle (floating bottom-right, unobtrusive) ── */}
-      <button
-        onClick={toggleLang}
-        aria-label={t("brand.toggleLangLabel")}
-        title={t("brand.toggleLangLabel")}
-        style={{
-          position: "fixed",
-          right: "clamp(16px, 3vw, 32px)",
-          bottom: "clamp(16px, 3vw, 32px)",
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          background: "rgba(17,17,23,0.92)",
-          border: "1px solid rgba(212,168,83,0.35)",
-          color: "var(--gold)",
-          fontFamily: "var(--font-body)",
-          fontSize: "0.78rem",
-          fontWeight: 500,
-          letterSpacing: "0.04em",
-          cursor: "pointer",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
-          transition: "transform 0.2s, background 0.2s, border-color 0.2s",
-          zIndex: 50,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(212,168,83,0.15)";
-          e.currentTarget.style.borderColor = "rgba(212,168,83,0.6)";
-          e.currentTarget.style.transform = "scale(1.06)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(17,17,23,0.92)";
-          e.currentTarget.style.borderColor = "rgba(212,168,83,0.35)";
-          e.currentTarget.style.transform = "scale(1)";
-        }}
-      >
-        {t("brand.toggleLang")}
-      </button>
     </>
   );
 }
