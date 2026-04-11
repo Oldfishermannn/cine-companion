@@ -1,16 +1,25 @@
 /**
- * Tiered cache: in-memory LRU → file system (local dev only)
+ * Tiered cache: baked JSON (shipped in build) → in-memory LRU → KV → file system
  *
- * On Vercel, the file system is ephemeral — writes succeed but are lost on cold start.
- * The in-memory Map persists across requests within the same serverless instance,
- * giving warm-instance cache hits without any external dependency.
+ * Tier 0 — BAKED: `app/generated/baked.json`, committed to the repo, bundled at
+ *   build time. Read-only. Populated by `scripts/warm-catalog.mjs`. This is the
+ *   primary defense against cold starts on Vercel where `cache/` is ephemeral.
  *
- * For production persistence, set KV_REST_API_URL + KV_REST_API_TOKEN env vars
- * to enable Vercel KV (Upstash Redis) as a third tier.
+ * Tier 1 — MEMORY: Map LRU, survives across requests within the same serverless
+ *   instance. Fast but lost on cold start.
+ *
+ * Tier 2 — KV: Vercel KV / Upstash Redis, opt-in via env vars KV_REST_API_URL +
+ *   KV_REST_API_TOKEN. Survives cold starts across all instances.
+ *
+ * Tier 3 — FS: Works on local dev. Ephemeral on Vercel (writes succeed but are
+ *   lost on next cold start).
  */
 
 import fs from "fs";
 import path from "path";
+import bakedJson from "@/app/generated/baked.json";
+
+const BAKED: Record<string, unknown> = bakedJson as Record<string, unknown>;
 
 const CACHE_DIR = path.join(process.cwd(), "cache");
 
@@ -88,9 +97,18 @@ function fsSet(key: string, data: unknown) {
 }
 
 /**
- * Read from cache — tries memory → KV → file system
+ * Read from cache — tries baked → memory → KV → file system
  */
 export async function readCache(key: string): Promise<unknown | null> {
+  // Tier 0: baked (shipped in build, read-only)
+  if (Object.prototype.hasOwnProperty.call(BAKED, key)) {
+    const baked = BAKED[key];
+    if (baked !== null && baked !== undefined) {
+      memSet(key, baked); // backfill memory for subsequent reads in same instance
+      return baked;
+    }
+  }
+
   // Tier 1: in-memory
   const mem = memGet(key);
   if (mem !== null) return mem;

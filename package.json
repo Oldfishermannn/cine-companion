@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "update-amc": "node scripts/scrape-amc.mjs > /tmp/amc-movies.json && node scripts/update-catalog.mjs",
-    "update-amc:daily": "bash scripts/daily-amc-update.sh"
+    "update-amc:daily": "bash scripts/daily-amc-update.sh",
+    "warm-catalog": "node scripts/warm-catalog.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.87.0",
