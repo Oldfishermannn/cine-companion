@@ -37,7 +37,7 @@ function isPosterMatch(movie: { title: string; year?: string }, d: { title?: str
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; imdb?: number | null; }
 
 type SortMode = "newest" | "oldest" | "rating";
 
@@ -302,9 +302,10 @@ export function HomeClient({ catalog, genres }: {
         const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
         const expectedYear = parseInt(movie.year, 10);
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
+        const imdbScore = d.ratings?.imdb ? parseFloat(d.ratings.imdb) : null;
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined, imdb: isNaN(imdbScore ?? NaN) ? null : imdbScore };
           return n;
         });
       })
@@ -325,13 +326,23 @@ export function HomeClient({ catalog, genres }: {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
-      if (sortMode === "rating") return a.movie.rank - b.movie.rank;
+      if (sortMode === "rating") {
+        const sa = posters[a.origIdx]?.imdb ?? null;
+        const sb = posters[b.origIdx]?.imdb ?? null;
+        // Both have IMDb scores: higher first
+        if (sa !== null && sb !== null) return sb - sa;
+        // Only one has a score: scored first
+        if (sa !== null) return -1;
+        if (sb !== null) return 1;
+        // Neither fetched yet: keep catalog rank order
+        return a.movie.rank - b.movie.rank;
+      }
       const ta = parseReleaseDate(a.movie.released);
       const tb = parseReleaseDate(b.movie.released);
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog]);
+  }, [genreFilter, sortMode, catalog, posters]);
 
   const now = Date.now();
   const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
