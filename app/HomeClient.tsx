@@ -178,7 +178,7 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
     <section className="editor-slate fade-up" style={{ animationDelay: "140ms" }}>
       <div className="editor-slate-header">
         <span className="sec">§</span>
-        <span>01 · The Editor&rsquo;s Slate</span>
+        <span>Editor&rsquo;s Choice</span>
         <span className="rule" />
       </div>
 

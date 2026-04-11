@@ -245,7 +245,7 @@ body::after {
    serial number overlapping its top-left corner. */
 
 .editor-slate {
-  margin: 56px 0 72px;
+  margin: 28px 0 72px;
 }
 .editor-slate-header {
   font-family: var(--font-mono), monospace;
