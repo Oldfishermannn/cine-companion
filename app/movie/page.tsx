@@ -53,6 +53,7 @@ function MoviePageContent() {
   const [postFromCache, setPostFromCache] = useState(false);
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [similarPosters, setSimilarPosters] = useState<Record<string, string>>({});
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [trailerType, setTrailerType] = useState<string>("youtube");
@@ -64,6 +65,32 @@ function MoviePageContent() {
   const [breaksError, setBreaksError] = useState(false);
   const [postError, setPostError] = useState(false);
   const [error, setError] = useState("");
+
+  // Prefetch posters for the "Also In This Issue" rail so each ticket row
+  // shows a real OMDb thumbnail instead of a placeholder glyph. Runs once
+  // per film — when `data.title` changes we re-resolve the similar list.
+  useEffect(() => {
+    if (!data) return;
+    const currentGenre = MOVIE_CATALOG.find(c => c.title === query)?.genre;
+    if (!currentGenre) return;
+    const similar = MOVIE_CATALOG
+      .filter(m => m.title !== data.title && m.genre === currentGenre)
+      .sort((a, b) => a.rank - b.rank)
+      .slice(0, 4);
+    let cancelled = false;
+    Promise.all(similar.map(m =>
+      fetch(`/api/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}`)
+        .then(r => r.json())
+        .then(d => ({ title: m.title, poster: d?.poster ?? null }))
+        .catch(() => ({ title: m.title, poster: null }))
+    )).then(results => {
+      if (cancelled) return;
+      const map: Record<string, string> = {};
+      for (const r of results) if (r.poster) map[r.title] = r.poster;
+      setSimilarPosters(map);
+    });
+    return () => { cancelled = true; };
+  }, [data, query]);
 
   useEffect(() => {
     if (!query) return;
@@ -422,24 +449,34 @@ function MoviePageContent() {
                     <span className="title">Also In This Issue</span>
                     <span className="rule-long" />
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    {similar.map(m => (
-                      <div
-                        key={m.title}
-                        className="similar-card"
-                        onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
-                      >
-                        <div className="similar-poster">
-                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", opacity: 0.25 }}>🎬</div>
+                  <div className="similar-stack">
+                    {similar.map((m, i) => {
+                      const poster = similarPosters[m.title];
+                      return (
+                        <div
+                          key={m.title}
+                          className="similar-card"
+                          onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
+                        >
+                          <span className="similar-index">{String(i + 1).padStart(2, "0")}</span>
+                          <div className="similar-poster">
+                            {poster ? (
+                              <Image src={poster} alt={m.title} fill style={{ objectFit: "cover" }} sizes="56px" />
+                            ) : (
+                              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", opacity: 0.25 }}>🎬</div>
+                            )}
+                          </div>
+                          <div className="similar-body">
+                            <p className="similar-title">{lang === "en" ? m.title : m.zh}</p>
+                            <p className="similar-subtitle">{lang === "en" ? m.zh : m.title}</p>
+                            <span className="similar-meta">
+                              {tGenre(m.genre)} · #{String(m.rank).padStart(2, "0")} · {m.year}
+                            </span>
+                          </div>
+                          <span className="similar-arrow">→</span>
                         </div>
-                        <div className="similar-body">
-                          <p className="similar-title">{lang === "en" ? m.title : m.zh}</p>
-                          <span className="similar-meta">
-                            {tGenre(m.genre)} · #{String(m.rank).padStart(2, "0")} · {m.year}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </section>
               );

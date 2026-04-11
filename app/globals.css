@@ -1045,43 +1045,67 @@ body::after {
 .editorial-divider .rule-long  { flex: 1;      height: 1px; background: var(--rule); }
 .editorial-divider .title { color: var(--cream); }
 
-/* Similar movie → 『ALSO IN THIS ISSUE』 — square ticket row */
+/* Similar movie → 『ALSO IN THIS ISSUE』 — square ticket row, full-width stacked */
+.similar-stack { display: flex; flex-direction: column; }
 .similar-card {
-  flex-shrink: 0;
-  width: 200px;
+  width: 100%;
   cursor: pointer;
   background: transparent;
   border-top: 1px dashed var(--amber-dim);
-  border-bottom: 1px dashed var(--amber-dim);
-  border-left: none; border-right: none;
+  border-left: none; border-right: none; border-bottom: none;
   border-radius: 0;
-  padding: 18px 14px;
-  transition: all 0.25s ease;
+  padding: 18px 4px 18px 4px;
+  transition: background 0.25s ease, transform 0.25s ease, padding-left 0.25s ease;
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: center;
 }
+.similar-card:last-child { border-bottom: 1px dashed var(--amber-dim); }
 .similar-card:hover {
+  background: rgba(232,182,97,0.04);
+  padding-left: 14px;
+  padding-right: 0;
+}
+.similar-card:hover .similar-poster {
   border-color: var(--amber);
-  transform: translateX(6px);
-  background: rgba(232,182,97,0.035);
+  box-shadow: 0 0 0 1px var(--amber-dim), 0 10px 26px rgba(0,0,0,0.5);
+}
+.similar-card .similar-index {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--vermilion);
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
 }
 .similar-card .similar-poster {
-  width: 52px;
+  width: 56px;
   aspect-ratio: 2/3;
   background: #1A1920;
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
   border: 1px solid var(--rule);
+  transition: all 0.25s ease;
 }
 .similar-card .similar-body { min-width: 0; flex: 1; }
 .similar-card .similar-title {
   font-family: var(--font-zh-display), 'Noto Serif SC', serif;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.98rem;
+  font-weight: 600;
   color: var(--cream);
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 3px;
+}
+.similar-card .similar-subtitle {
+  font-family: var(--font-display-alt), 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--amber-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1093,6 +1117,23 @@ body::after {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+}
+.similar-card .similar-arrow {
+  font-family: var(--font-mono), monospace;
+  color: var(--amber-dim);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.25s ease;
+}
+.similar-card:hover .similar-arrow { opacity: 1; transform: translateX(0); color: var(--amber); }
+@media (max-width: 520px) {
+  .similar-card { gap: 12px; padding: 14px 2px; }
+  .similar-card .similar-index { width: 18px; font-size: 0.52rem; }
+  .similar-card .similar-poster { width: 48px; }
+  .similar-card .similar-title { font-size: 0.92rem; }
+  .similar-card .similar-subtitle { font-size: 0.72rem; }
 }
 
 /* Page header — now a thin mono strip */
