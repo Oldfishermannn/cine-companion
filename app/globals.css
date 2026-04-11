@@ -180,7 +180,12 @@ body::after {
   color: var(--cream);
   margin: 0;
 }
-.masthead-title .accent { color: var(--cream); }
+/* The é is the only touchmark that matters — editorial vermilion signature */
+.masthead-title .accent {
+  color: var(--vermilion);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+}
 
 .masthead-issue {
   font-family: var(--font-mono), 'JetBrains Mono', monospace;
@@ -340,12 +345,13 @@ body::after {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: 36px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 @media (max-width: 900px) {
   .editor-slate-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+    align-items: flex-start;
   }
 }
 
@@ -403,23 +409,25 @@ body::after {
   flex-direction: column;
   gap: 6px;
 }
-.editor-card-lead .label-title {
-  font-family: var(--font-display), Georgia, serif;
-  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  font-weight: 500;
-  color: var(--cream);
-  line-height: 1.05;
-  letter-spacing: 0.002em;
-  margin: 0;
-}
+/* Chinese is the hero on this site — zh is the big face, en is the italic gloss */
 .editor-card-lead .label-zh {
   font-family: var(--font-zh-display), 'Noto Serif SC', serif;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--amber);
+  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
   margin: 0;
-  letter-spacing: 0.02em;
+}
+.editor-card-lead .label-title {
+  font-family: var(--font-display-alt), 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--amber);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  margin: 0;
 }
 .editor-card-lead .label-meta {
   font-family: var(--font-mono), monospace;
@@ -433,8 +441,17 @@ body::after {
 .editor-slate-side {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  justify-content: space-between;
+  gap: 20px;
   padding-top: 18px;
+  padding-bottom: 12px;
+}
+@media (max-width: 900px) {
+  .editor-slate-side {
+    justify-content: flex-start;
+    gap: 28px;
+    padding-bottom: 0;
+  }
 }
 
 /* The 3 smaller posters, stepped */
@@ -495,20 +512,22 @@ body::after {
   gap: 6px;
   min-width: 0;
 }
-.editor-card-mini .mini-title {
-  font-family: var(--font-display), Georgia, serif;
-  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
-  font-size: 1.14rem;
-  font-weight: 500;
+.editor-card-mini .mini-zh {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 1.22rem;
+  font-weight: 600;
   color: var(--cream);
   line-height: 1.1;
-  letter-spacing: 0.005em;
+  letter-spacing: 0.01em;
   margin: 0;
 }
-.editor-card-mini .mini-zh {
-  font-family: var(--font-zh-display), serif;
-  font-size: 0.86rem;
+.editor-card-mini .mini-title {
+  font-family: var(--font-display-alt), 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  font-weight: 400;
   color: var(--amber);
+  line-height: 1.2;
   margin: 0;
 }
 .editor-card-mini .mini-dim {
@@ -858,18 +877,24 @@ body::after {
   font-size: 0.66rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding-bottom: 6px;
-  border-bottom: 1px dotted rgba(235,227,208,0.14);
+  padding: 2px 0;
 }
 .stat-row .stat-label {
   color: var(--amber-dim);
   flex-shrink: 0;
 }
+/* Middot leader: radial-gradient dots spaced evenly so label ·········· value
+   reads like a table-of-contents line. No borders — crisp at any DPR. */
 .stat-row .stat-dots {
   flex: 1;
-  min-width: 12px;
-  border-bottom: 1px dotted rgba(235,227,208,0.14);
-  transform: translateY(-3px);
+  align-self: center;
+  min-width: 16px;
+  height: 0.72em;
+  background-image: radial-gradient(circle, rgba(235,227,208,0.3) 1px, transparent 1.2px);
+  background-size: 7px 100%;
+  background-position: left center;
+  background-repeat: repeat-x;
+  transform: translateY(1px);
 }
 .stat-row .stat-value {
   color: var(--cream);

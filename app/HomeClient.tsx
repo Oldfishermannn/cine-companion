@@ -239,8 +239,8 @@ function FeaturedSlate() {
             )}
           </div>
           <div className="label">
-            <h2 className="label-title">{lead.title}</h2>
-            <p className="label-zh">{lead.zh}</p>
+            <h2 className="label-zh">{lead.zh}</h2>
+            <p className="label-title">{lead.title}</p>
             <div className="label-meta">
               {lead.year}<span className="dot">·</span>{lead.note}
             </div>
@@ -278,8 +278,8 @@ function FeaturedSlate() {
                   )}
                 </div>
                 <div className="mini-meta">
-                  <h3 className="mini-title">{film.title}</h3>
-                  <p className="mini-zh">{film.zh}</p>
+                  <h3 className="mini-zh">{film.zh}</h3>
+                  <p className="mini-title">{film.title}</p>
                   <span className="mini-dim">{film.year} · {film.note}</span>
                 </div>
               </div>
