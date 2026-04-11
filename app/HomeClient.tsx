@@ -37,7 +37,7 @@ function isPosterMatch(movie: { title: string; year?: string }, d: { title?: str
   return false;
 }
 
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; imdb?: number | null; }
+interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
 
 type SortMode = "newest" | "oldest" | "rating";
 
@@ -271,6 +271,9 @@ export function HomeClient({ catalog, genres }: {
   const [posters, setPosters] = useState<PosterInfo[]>(
     catalog.map(() => ({ poster: null, fetched: false }))
   );
+  // IMDb scores fetched independently from poster lazy-loading so rating sort
+  // has complete data for ALL catalog movies, not just the first 8.
+  const [imdbScores, setImdbScores] = useState<Record<string, number | null>>({});
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
@@ -302,10 +305,9 @@ export function HomeClient({ catalog, genres }: {
         const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
         const expectedYear = parseInt(movie.year, 10);
         const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
-        const imdbScore = d.ratings?.imdb ? parseFloat(d.ratings.imdb) : null;
         setPosters(prev => {
           const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined, imdb: isNaN(imdbScore ?? NaN) ? null : imdbScore };
+          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
           return n;
         });
       })
@@ -322,19 +324,35 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Fetch IMDb scores for ALL catalog movies in parallel on mount.
+  // Separate from poster lazy-loading so rating sort has complete data.
+  // /api/movie is 3-level cached — repeat calls for cached films are instant.
+  useEffect(() => {
+    catalog.forEach(movie => {
+      fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
+        .then(r => r.json())
+        .then(d => {
+          const score = d.ratings?.imdb ? parseFloat(d.ratings.imdb) : null;
+          const val = score !== null && !isNaN(score) ? score : null;
+          setImdbScores(prev => ({ ...prev, [movie.title]: val }));
+        })
+        .catch(() => {
+          setImdbScores(prev => ({ ...prev, [movie.title]: null }));
+        });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const indexedMovies = useMemo(() => {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     list.sort((a, b) => {
       if (sortMode === "rating") {
-        const sa = posters[a.origIdx]?.imdb ?? null;
-        const sb = posters[b.origIdx]?.imdb ?? null;
-        // Both have IMDb scores: higher first
+        const sa = imdbScores[a.movie.title] ?? null;
+        const sb = imdbScores[b.movie.title] ?? null;
         if (sa !== null && sb !== null) return sb - sa;
-        // Only one has a score: scored first
         if (sa !== null) return -1;
         if (sb !== null) return 1;
-        // Neither fetched yet: keep catalog rank order
         return a.movie.rank - b.movie.rank;
       }
       const ta = parseReleaseDate(a.movie.released);
@@ -342,7 +360,7 @@ export function HomeClient({ catalog, genres }: {
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog, posters]);
+  }, [genreFilter, sortMode, catalog, imdbScores]);
 
   const now = Date.now();
   const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
