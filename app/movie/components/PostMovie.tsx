@@ -22,9 +22,10 @@ interface PostMovieProps {
 
 /* ── Radar Chart (SVG, 5-axis) ── */
 function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) {
-  const CX = 130;
-  const CY = 118;
-  const R = 82;
+  // Wider canvas so side labels never clip
+  const CX = 160;
+  const CY = 148;
+  const R = 96;
   const N = 5;
   const angle = (i: number) => (-Math.PI / 2) + (i * 2 * Math.PI) / N;
   const point = (i: number, radius: number) => {
@@ -38,6 +39,7 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
     }).join(" ");
 
   const rings = [1, 2, 3, 4, 5].map(k => polyPath(() => (R * k) / 5));
+  // Unscored axes default to 0 radius — chart only shows what was rated
   const userPoly = polyPath(i => (R * Math.max(0, Math.min(5, scores[i] ?? 0))) / 5);
   const axes = Array.from({ length: N }, (_, i) => {
     const [x, y] = point(i, R);
@@ -45,11 +47,11 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
   });
   const labelPos = Array.from({ length: N }, (_, i) => {
     const a = angle(i);
-    const lr = R + 16;
+    const lr = R + 20;
     const x = CX + lr * Math.cos(a);
     const y = CY + lr * Math.sin(a);
     let anchor: "start" | "middle" | "end" = "middle";
-    if (Math.abs(Math.cos(a)) > 0.25) anchor = Math.cos(a) > 0 ? "start" : "end";
+    if (Math.abs(Math.cos(a)) > 0.2) anchor = Math.cos(a) > 0 ? "start" : "end";
     return { x, y: y + 4, anchor, score: scores[i] ?? 0 };
   });
   const dots = Array.from({ length: N }, (_, i) => {
@@ -61,48 +63,54 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
 
   return (
     <svg
-      viewBox="0 0 260 240"
+      viewBox="0 0 320 300"
       width="100%"
-      style={{ maxWidth: 260, display: "block", margin: "0 auto" }}
+      style={{ maxWidth: 320, display: "block", margin: "0 auto" }}
       aria-hidden
     >
+      {/* Ring grid */}
       {rings.map((pts, i) => (
         <polygon
           key={i}
           points={pts}
           fill="none"
-          stroke={i === 4 ? "rgba(232,182,97,0.35)" : "rgba(235,227,208,0.06)"}
+          stroke={i === 4 ? "rgba(232,182,97,0.3)" : "rgba(235,227,208,0.05)"}
           strokeWidth={i === 4 ? 1 : 0.75}
+          strokeDasharray={i < 4 ? "3 4" : undefined}
         />
       ))}
+      {/* Axis lines */}
       {axes.map((a, i) => (
         <line
           key={i}
           x1={a.x1} y1={a.y1} x2={a.x2} y2={a.y2}
-          stroke="rgba(235,227,208,0.08)"
+          stroke="rgba(235,227,208,0.07)"
           strokeWidth={0.75}
         />
       ))}
+      {/* User polygon — filled amber */}
       <polygon
         points={userPoly}
-        fill="rgba(232,182,97,0.22)"
-        stroke="rgba(232,182,97,0.9)"
+        fill="rgba(232,182,97,0.18)"
+        stroke="rgba(232,182,97,0.85)"
         strokeWidth={1.5}
         strokeLinejoin="round"
       />
+      {/* Vertex dots */}
       {dots.map((d, i) => d && (
-        <circle key={i} cx={d.x} cy={d.y} r={3} fill="var(--amber)" />
+        <circle key={i} cx={d.x} cy={d.y} r={3.5} fill="var(--amber)" />
       ))}
+      {/* Labels + scores */}
       {labelPos.map((l, i) => (
         <g key={i}>
           <text
             x={l.x}
-            y={l.y - 4}
+            y={l.y - 6}
             textAnchor={l.anchor}
-            fontSize="10"
+            fontSize="9.5"
             fontFamily="var(--font-mono), monospace"
-            fill="var(--cream)"
-            style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
+            fill={l.score > 0 ? "var(--cream)" : "rgba(235,227,208,0.3)"}
+            style={{ letterSpacing: "0.14em", textTransform: "uppercase" }}
           >
             {labels[i]}
           </text>
@@ -110,12 +118,12 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
             x={l.x}
             y={l.y + 8}
             textAnchor={l.anchor}
-            fontSize="10"
+            fontSize="11"
             fontFamily="var(--font-mono), monospace"
-            fill={l.score > 0 ? "var(--amber)" : "var(--faint)"}
-            fontWeight={500}
+            fill={l.score > 0 ? "var(--amber)" : "rgba(235,227,208,0.15)"}
+            fontWeight={600}
           >
-            {l.score > 0 ? l.score.toFixed(0) : "–"}
+            {l.score > 0 ? `${l.score}` : "·"}
           </text>
         </g>
       ))}
@@ -126,40 +134,49 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
 /* ── Star Rating Row ── */
 function StarRow({ dim, score, onChange }: { dim: string; score: number; onChange: (v: number) => void }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 0" }}>
+    <div style={{
+      display: "flex", alignItems: "center", gap: 12, padding: "11px 0",
+      borderBottom: "1px solid var(--rule)",
+    }}>
+      {/* Dimension label — min-width auto so it never truncates */}
       <span style={{
         fontFamily: "var(--font-mono), monospace",
-        fontSize: "0.64rem",
+        fontSize: "0.62rem",
         letterSpacing: "0.14em",
         textTransform: "uppercase",
-        color: "var(--amber)",
-        width: 56,
+        color: score > 0 ? "var(--amber)" : "var(--muted)",
+        minWidth: 52,
         flexShrink: 0,
+        transition: "color 0.2s",
       }}>{dim}</span>
-      <div style={{ display: "flex", gap: 6, flex: 1 }}>
+
+      {/* Five numbered square buttons */}
+      <div style={{ display: "flex", gap: 5, flex: 1 }}>
         {[1, 2, 3, 4, 5].map(star => (
           <button
             key={star}
             onClick={() => onChange(score === star ? 0 : star)}
             className={`ed-star${score >= star ? " lit" : ""}`}
             type="button"
+            aria-label={`${dim} ${star} / 5`}
           >
             {star}
           </button>
         ))}
       </div>
-      {score > 0 && (
-        <span style={{
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: "0.72rem",
-          letterSpacing: "0.1em",
-          color: "var(--amber)",
-          minWidth: 44,
-          textAlign: "right",
-        }}>
-          {score.toFixed(0)}/5
-        </span>
-      )}
+
+      {/* Score badge */}
+      <span style={{
+        fontFamily: "var(--font-mono), monospace",
+        fontSize: "0.68rem",
+        letterSpacing: "0.1em",
+        color: score > 0 ? "var(--amber)" : "var(--faint)",
+        minWidth: 38,
+        textAlign: "right",
+        transition: "color 0.2s",
+      }}>
+        {score > 0 ? `${score}/5` : "—"}
+      </span>
     </div>
   );
 }
@@ -301,8 +318,9 @@ export function PostMovie({
           {/* ── Personal Rating ── */}
           <section>
             <SectionLabel>{t("post.personalRating")}</SectionLabel>
-            <div className="film-card">
-              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            <div className="film-card" style={{ padding: 0 }}>
+              {/* Five dimension rows */}
+              <div style={{ padding: "4px 22px 0" }}>
                 {RATING_DIMS.map((dim, di) => {
                   const dimKey = ["post.dim.plot", "post.dim.visual", "post.dim.acting", "post.dim.music", "post.dim.lasting"][di];
                   return (
@@ -320,57 +338,90 @@ export function PostMovie({
                   );
                 })}
               </div>
-              {personalScores.filter(s => s > 0).length >= 3 && (
-                <>
-                  <div className="film-card-divider" />
-                  <RadarChart
-                    scores={personalScores}
-                    labels={[
-                      t("post.dim.plot"),
-                      t("post.dim.visual"),
-                      t("post.dim.acting"),
-                      t("post.dim.music"),
-                      t("post.dim.lasting"),
-                    ]}
-                  />
-                </>
-              )}
+
+              {/* Radar — shows as soon as any dim is rated */}
               {personalScores.some(s => s > 0) && (
                 <>
-                  <div className="film-card-divider" />
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}>
-                    <span style={{
-                      fontFamily: "var(--font-mono), monospace",
-                      fontSize: "0.64rem",
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                      color: "var(--amber)",
-                    }}>§ {t("post.overallRating")}</span>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                      <span style={{
-                        fontFamily: "var(--font-display), 'Fraunces', Georgia, serif",
-                        fontVariationSettings: '"SOFT" 60, "WONK" 1, "opsz" 144',
-                        fontSize: "2.4rem",
-                        fontWeight: 500,
-                        color: "var(--amber)",
-                        lineHeight: 1,
-                      }}>
-                        {(personalScores.filter(s => s > 0).reduce((a, b) => a + b, 0) / personalScores.filter(s => s > 0).length).toFixed(1)}
-                      </span>
-                      <span style={{
-                        fontFamily: "var(--font-mono), monospace",
-                        fontSize: "0.72rem",
-                        letterSpacing: "0.1em",
-                        color: "var(--muted)",
-                      }}>/ 5</span>
-                    </div>
+                  <div className="film-card-divider" style={{ margin: "16px 0 0" }} />
+                  <div style={{ padding: "16px 22px 8px" }}>
+                    <RadarChart
+                      scores={personalScores}
+                      labels={[
+                        t("post.dim.plot"),
+                        t("post.dim.visual"),
+                        t("post.dim.acting"),
+                        t("post.dim.music"),
+                        t("post.dim.lasting"),
+                      ]}
+                    />
                   </div>
                 </>
               )}
+
+              {/* Overall score — shown once any dim rated */}
+              {personalScores.some(s => s > 0) && (() => {
+                const scored = personalScores.filter(s => s > 0);
+                const avg = scored.reduce((a, b) => a + b, 0) / scored.length;
+                // 5-star qualifier text
+                const qualifiers = ["", "一般", "尚可", "不错", "推荐", "力荐"];
+                const qualifier = qualifiers[Math.round(avg)] ?? "";
+                return (
+                  <>
+                    <div className="film-card-divider" />
+                    <div style={{
+                      padding: "18px 22px 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                        <span style={{
+                          fontFamily: "var(--font-mono), monospace",
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "var(--muted)",
+                        }}>§ {t("post.overallRating")}</span>
+                        {qualifier && (
+                          <span style={{
+                            fontFamily: "var(--font-zh-display), 'Noto Serif SC', serif",
+                            fontSize: "0.82rem",
+                            color: "var(--amber-dim)",
+                            letterSpacing: "0.04em",
+                          }}>{qualifier}</span>
+                        )}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+                        <span style={{
+                          fontFamily: "var(--font-display), 'Fraunces', Georgia, serif",
+                          fontVariationSettings: '"SOFT" 60, "WONK" 1, "opsz" 144',
+                          fontSize: "3rem",
+                          fontWeight: 500,
+                          color: "var(--amber)",
+                          lineHeight: 1,
+                          letterSpacing: "-0.02em",
+                        }}>
+                          {avg.toFixed(1)}
+                        </span>
+                        <span style={{
+                          fontFamily: "var(--font-mono), monospace",
+                          fontSize: "0.7rem",
+                          letterSpacing: "0.1em",
+                          color: "var(--muted)",
+                        }}>/ 5</span>
+                        <span style={{
+                          fontFamily: "var(--font-mono), monospace",
+                          fontSize: "0.56rem",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--muted)",
+                          marginLeft: 4,
+                        }}>({scored.length}/{RATING_DIMS.length})</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </section>
         </>
