@@ -362,8 +362,8 @@ export function PostMovie({
               {personalScores.some(s => s > 0) && (() => {
                 const scored = personalScores.filter(s => s > 0);
                 const avg = scored.reduce((a, b) => a + b, 0) / scored.length;
-                // 5-star qualifier text
-                const qualifiers = ["", "一般", "尚可", "不错", "推荐", "力荐"];
+                // 5-star qualifier text — casual, not AI-form
+                const qualifiers = ["", "还行", "凑合", "挺好", "值得看", "真香"];
                 const qualifier = qualifiers[Math.round(avg)] ?? "";
                 return (
                   <>

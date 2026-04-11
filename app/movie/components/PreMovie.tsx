@@ -304,32 +304,36 @@ export function PreMovie({
       {(breaksLoading || breaksError || breaksContent) && (
       <section>
         <SectionLabel>{t("pre.breaks")}</SectionLabel>
-        <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
+        <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: -6, fontFamily: "var(--font-body), sans-serif" }}>
           {t("pre.breaksHint")}
         </p>
 
         {breaksContent && (
-        <div className="film-card" style={{ padding: 0, marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px" }}>
-            <span className="ed-tag solid">{t("pre.showtimeLabel")}</span>
-            <input
-              type="time"
-              value={movieStartTime}
-              onChange={e => setMovieStartTime(e.target.value)}
-              style={{ background: "none", border: "none", outline: "none", color: "var(--cream)", fontFamily: "var(--font-mono), monospace", fontSize: "0.92rem", letterSpacing: "0.08em", cursor: "pointer", colorScheme: "dark", marginLeft: "auto" }}
-            />
-          </div>
-          <div
-            onClick={() => setIncludeTrailers((v: boolean) => !v)}
-            style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 18px", borderTop: "1px solid var(--rule)", cursor: "pointer", background: includeTrailers ? "rgba(232,182,97,0.035)" : "transparent", transition: "background 0.15s" }}
-          >
-            <div className={`ed-toggle${includeTrailers ? " on" : ""}`} />
-            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.64rem", letterSpacing: "0.14em", textTransform: "uppercase", color: includeTrailers ? "var(--cream)" : "var(--muted)" }}>
-              {t("pre.includeTrailers")}
-            </span>
-            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.56rem", letterSpacing: "0.14em", textTransform: "uppercase", color: includeTrailers ? "var(--amber)" : "var(--faint)", marginLeft: "auto" }}>
-              {includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}
-            </span>
+        <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
+          <label className="showtime-prompt" htmlFor="showtime-input">
+            <span className="q">{t("pre.showtimePrompt")}</span>
+            <span className="help">{t("pre.showtimeHelper")}</span>
+          </label>
+          <div className="showtime-row">
+            <div className="showtime-field">
+              <input
+                id="showtime-input"
+                type="time"
+                value={movieStartTime}
+                onChange={e => setMovieStartTime(e.target.value)}
+              />
+              {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
+            </div>
+            <button
+              type="button"
+              className={`showtime-toggle${includeTrailers ? " on" : ""}`}
+              onClick={() => setIncludeTrailers((v: boolean) => !v)}
+              aria-pressed={includeTrailers}
+            >
+              <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+              <span className="label">{t("pre.includeTrailers")}</span>
+              <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
+            </button>
           </div>
         </div>
         )}
