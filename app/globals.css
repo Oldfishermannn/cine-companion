@@ -1619,13 +1619,13 @@ body::after {
 .break-card + .break-card { margin-top: 10px; }
 
 /* ── editorial toggle (square, no radius) ── */
-/* ── Showtime prompt box (break calculator input affordance) ── */
+/* ── Showtime prompt box — mobile-first, two rows max ── */
 .showtime-box {
   background: var(--bg-card);
   border: 1px solid var(--amber-dim);
   border-left: 3px solid var(--amber);
-  padding: 18px 20px 16px;
-  margin-bottom: 18px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
   position: relative;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -1633,63 +1633,38 @@ body::after {
   border-left-color: var(--vermilion);
   background: linear-gradient(90deg, rgba(217,79,42,0.04), var(--bg-card) 50%);
 }
-.showtime-box::before {
-  content: "";
-  position: absolute;
-  left: -3px;
-  top: 50%;
-  width: 3px;
-  height: 24px;
-  background: var(--amber);
-  transform: translateY(-50%);
-  animation: showtime-pulse 2.4s ease-in-out infinite;
-}
-.showtime-box.filled::before { animation: none; background: var(--vermilion); height: 100%; top: 0; transform: none; }
-@keyframes showtime-pulse {
-  0%, 100% { opacity: 0.4; height: 24px; }
-  50% { opacity: 1; height: 100%; }
-}
-.showtime-prompt {
+.showtime-main {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 14px;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
+  margin-bottom: 10px;
 }
-.showtime-prompt .q {
+.showtime-main .q {
   font-family: var(--font-display), serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--cream);
   font-weight: 500;
-  letter-spacing: 0.01em;
-}
-.showtime-prompt .help {
-  font-family: var(--font-body), sans-serif;
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
-.showtime-row {
-  display: flex;
-  align-items: stretch;
-  gap: 14px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 .showtime-field {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   border: 1px solid var(--amber);
-  background: rgba(232,182,97,0.06);
-  padding: 12px 18px;
-  min-width: 150px;
+  background: rgba(232,182,97,0.08);
+  padding: 8px 14px;
+  min-width: 96px;
   cursor: pointer;
+  flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s;
 }
-.showtime-field:hover { background: rgba(232,182,97,0.12); border-color: var(--cream); }
+.showtime-field:hover,
+.showtime-field:active { background: rgba(232,182,97,0.16); }
 .showtime-box.filled .showtime-field {
   border-color: var(--vermilion);
-  background: rgba(217,79,42,0.06);
+  background: rgba(217,79,42,0.08);
 }
 .showtime-field input[type="time"] {
   background: none;
@@ -1697,52 +1672,53 @@ body::after {
   outline: none;
   color: var(--cream);
   font-family: var(--font-mono), monospace;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
   cursor: pointer;
   color-scheme: dark;
   width: 100%;
   padding: 0;
+  text-align: center;
 }
 .showtime-field .showtime-placeholder {
   position: absolute;
-  left: 18px;
-  top: 50%;
-  transform: translateY(-50%);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--amber);
   font-family: var(--font-mono), monospace;
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   pointer-events: none;
-  background: rgba(232,182,97,0.06);
-  padding-right: 4px;
+  background: rgba(232,182,97,0.08);
 }
 .showtime-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: transparent;
   border: 1px dashed var(--rule);
   color: var(--muted);
   font-family: var(--font-mono), monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.15s;
-  flex: 1;
-  min-width: 180px;
+  width: 100%;
 }
-.showtime-toggle:hover { border-color: var(--amber-dim); color: var(--cream); }
+.showtime-toggle:hover,
+.showtime-toggle:active { border-color: var(--amber-dim); color: var(--cream); }
 .showtime-toggle.on { color: var(--cream); border-color: var(--amber-dim); background: rgba(232,182,97,0.03); }
 .showtime-toggle .label { flex: 1; text-align: left; }
 .showtime-toggle .val { color: var(--amber); font-size: 0.56rem; }
 .showtime-toggle:not(.on) .val { color: var(--faint); }
-@media (max-width: 520px) {
-  .showtime-row { flex-direction: column; align-items: stretch; }
-  .showtime-field { min-width: 0; }
-  .showtime-toggle { min-width: 0; }
+@media (max-width: 420px) {
+  .showtime-main { flex-wrap: wrap; gap: 10px; }
+  .showtime-main .q { font-size: 0.95rem; }
+  .showtime-field { flex: 1; min-width: 88px; }
 }
 
 .ed-toggle {
@@ -1899,3 +1875,4 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+

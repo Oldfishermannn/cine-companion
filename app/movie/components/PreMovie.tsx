@@ -310,11 +310,8 @@ export function PreMovie({
 
         {breaksContent && (
         <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
-          <label className="showtime-prompt" htmlFor="showtime-input">
+          <label className="showtime-main" htmlFor="showtime-input">
             <span className="q">{t("pre.showtimePrompt")}</span>
-            <span className="help">{t("pre.showtimeHelper")}</span>
-          </label>
-          <div className="showtime-row">
             <div className="showtime-field">
               <input
                 id="showtime-input"
@@ -324,17 +321,17 @@ export function PreMovie({
               />
               {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
             </div>
-            <button
-              type="button"
-              className={`showtime-toggle${includeTrailers ? " on" : ""}`}
-              onClick={() => setIncludeTrailers((v: boolean) => !v)}
-              aria-pressed={includeTrailers}
-            >
-              <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
-              <span className="label">{t("pre.includeTrailers")}</span>
-              <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
-            </button>
-          </div>
+          </label>
+          <button
+            type="button"
+            className={`showtime-toggle${includeTrailers ? " on" : ""}`}
+            onClick={() => setIncludeTrailers((v: boolean) => !v)}
+            aria-pressed={includeTrailers}
+          >
+            <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+            <span className="label">{t("pre.includeTrailers")}</span>
+            <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
+          </button>
         </div>
         )}
 
