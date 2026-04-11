@@ -134,9 +134,11 @@ async function searchIMDb(query: string, zhOverride = ""): Promise<{
     const item = (best as ImdbItem).listItem ?? {};
     const imdbId = (best as ImdbItem).titleId ?? (best as ImdbItem).index ?? "";
     const posterBase = item.primaryImage?.url ?? null;
-    // Resize IMDb poster to ~300px wide
+    // Request ~1200px wide source so large hero displays stay sharp on retina.
+    // next/image will downsample via its optimizer for smaller consumers (mini
+    // cards, grid thumbnails) using the `sizes` prop — no bandwidth penalty.
     const poster = posterBase
-      ? posterBase.replace(/_V1_.*/, "_V1_QL75_UX300_.jpg")
+      ? posterBase.replace(/_V1_.*/, "_V1_QL90_UX1200_.jpg")
       : null;
 
     // Runtime: IMDb returns seconds
@@ -278,7 +280,9 @@ export async function GET(req: NextRequest) {
             director: detail.Director,
             actors: detail.Actors,
             runtime: detail.Runtime,
-            poster: detail.Poster !== "N/A" ? detail.Poster : null,
+            poster: detail.Poster && detail.Poster !== "N/A"
+              ? detail.Poster.replace(/_V1_.*/, "_V1_QL90_UX1200_.jpg")
+              : null,
             plot: detail.Plot,
             zhPlot,
             ratings: {
