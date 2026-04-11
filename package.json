@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update-amc": "node scripts/scrape-amc.mjs > /tmp/amc-movies.json && node scripts/update-catalog.mjs",
+    "update-amc:daily": "bash scripts/daily-amc-update.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.87.0",
