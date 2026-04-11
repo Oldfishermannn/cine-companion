@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readCache, writeCache } from "@/lib/cache";
 
 const DESKTOP_UA  = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 const GOOGLEBOT_UA = "Googlebot/2.1 (+http://www.google.com/bot.html)";
@@ -211,6 +212,17 @@ export async function GET(req: NextRequest) {
 
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
+  // Tier-0 baked cache lookup — catalog movies have ratings pre-warmed via
+  // `npm run warm-catalog` (see scripts/warm-catalog.mjs). Key shape matches
+  // the other cached routes: `${imdbId}_ratings`.
+  const cacheKey = imdbId ? `${imdbId}_ratings` : null;
+  if (cacheKey) {
+    const cached = await readCache(cacheKey);
+    if (cached) {
+      return NextResponse.json({ ...(cached as object), cached: true });
+    }
+  }
+
   // Fetch all four sources in parallel
   const [imdb, rt, mc, douban] = await Promise.all([
     imdbId ? fetchIMDb(imdbId) : Promise.resolve({ score: null, votes: null }),
@@ -219,5 +231,13 @@ export async function GET(req: NextRequest) {
     fetchDouban(title, year),
   ]);
 
-  return NextResponse.json({ imdb, rt, mc, douban });
+  const result = { imdb, rt, mc, douban };
+
+  // Only persist when we actually got something useful — don't poison the
+  // cache with all-null results from transient scraper failures.
+  if (cacheKey && (imdb.score || rt.tomatometer || mc.metascore || douban.score)) {
+    await writeCache(cacheKey, result);
+  }
+
+  return NextResponse.json(result);
 }

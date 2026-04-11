@@ -21,23 +21,9 @@ function fmtReleaseDate(s: string | undefined): string {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-function isPosterMatch(movie: { title: string; year?: string }, d: { title?: string; year?: string }): boolean {
-  const normalize = (s: string) =>
-    s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
-  const expected = normalize(movie.title);
-  const got = normalize(d.title || "");
-  const gotYear = parseInt((d.year || "").slice(0, 4), 10);
-  const expYear = parseInt(movie.year || "", 10);
-  if (!isNaN(gotYear) && !isNaN(expYear) && Math.abs(gotYear - expYear) > 3) return false;
-  if (got === expected) return true;
-  if (got.includes(expected) && got.length <= expected.length * 2.0) return true;
-  if (expected.includes(got) && expected.length <= got.length * 2.0) return true;
-  const words = expected.split(" ").filter(w => w.length > 2);
-  if (words.length >= 2 && words.filter(w => got.includes(w)).length >= Math.ceil(words.length * 0.7)) return true;
-  return false;
-}
-
-interface PosterInfo { poster: string | null; fetched: boolean; released?: string; }
+// Poster URLs are baked into catalog.ts at build time (see scripts/bake-posters.mjs).
+// Runtime fetching of /api/movie for poster discovery was removed — home page
+// now paints posters synchronously with zero network requests on first paint.
 
 type SortMode = "newest" | "oldest" | "rating";
 
@@ -131,39 +117,13 @@ function movieUrl(m: CatalogMovie): string {
 
 /* ═══════════════════════════════════════════════
    ② THE EDITOR'S SLATE — top 4 from AMC catalog
+   Posters are baked into catalog.ts at build time — this component
+   paints them synchronously with zero network requests on mount.
    ═══════════════════════════════════════════════ */
-
-interface FeaturedPoster { poster: string | null; fetched: boolean; }
 
 function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
   const router = useRouter();
   const { genre: tGenre } = useLang();
-  const [posters, setPosters] = useState<FeaturedPoster[]>(
-    films.map(() => ({ poster: null, fetched: false }))
-  );
-
-  // Parallel poster prefetch on mount
-  useEffect(() => {
-    films.forEach((film, i) => {
-      fetch(`/api/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}`)
-        .then(r => r.json())
-        .then(d => {
-          const matched = isPosterMatch({ title: film.title, year: film.year }, d);
-          setPosters(prev => {
-            const next = [...prev];
-            next[i] = { poster: matched && d.poster ? d.poster : null, fetched: true };
-            return next;
-          });
-        })
-        .catch(() => {
-          setPosters(prev => {
-            const next = [...prev];
-            next[i] = { poster: null, fetched: true };
-            return next;
-          });
-        });
-    });
-  }, [films]);
 
   const go = (film: CatalogMovie) => {
     router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}&amc=${encodeURIComponent(film.amc)}`);
@@ -171,7 +131,6 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
 
   if (films.length === 0) return null;
   const [lead, ...rest] = films;
-  const leadPoster = posters[0];
   const noteFor = (f: CatalogMovie) => `${tGenre(f.genre)} · ${f.released}`;
 
   return (
@@ -189,18 +148,16 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
         >
           <div className="frame">
             <span className="serial" aria-hidden>01</span>
-            {leadPoster?.poster ? (
+            {lead.posterUrl ? (
               <Image
-                src={leadPoster.poster}
+                src={lead.posterUrl}
                 alt={lead.title}
                 fill
                 priority
                 loading="eager"
                 sizes="(max-width: 900px) 100vw, 560px"
-                style={{ objectFit: "cover", animation: "posterFadeIn 0.5s ease forwards" }}
+                style={{ objectFit: "cover" }}
               />
-            ) : !leadPoster?.fetched ? (
-              <div className="skeleton" style={{ position: "absolute", inset: 8 }} />
             ) : (
               <div style={{ position: "absolute", inset: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "#1A1920" }}>
                 <span style={{ fontSize: "3rem", opacity: 0.2 }}>🎬</span>
@@ -219,7 +176,6 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
         {/* ── 3 side posters ── */}
         <div className="editor-slate-side">
           {rest.map((film, i) => {
-            const p = posters[i + 1];
             const serial = String(i + 2).padStart(2, "0");
             return (
               <div key={film.title} className="editor-card-mini"
@@ -228,18 +184,16 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
               >
                 <div className="mini-frame">
                   <span className="mini-serial" aria-hidden>{serial}</span>
-                  {p?.poster ? (
+                  {film.posterUrl ? (
                     <Image
-                      src={p.poster}
+                      src={film.posterUrl}
                       alt={film.title}
                       fill
                       priority
                       loading="eager"
                       sizes="120px"
-                      style={{ objectFit: "cover", animation: `posterFadeIn 0.5s ease ${i * 80}ms forwards` }}
+                      style={{ objectFit: "cover" }}
                     />
-                  ) : !p?.fetched ? (
-                    <div className="skeleton" style={{ position: "absolute", inset: 5 }} />
                   ) : (
                     <div style={{ position: "absolute", inset: 5, display: "flex", alignItems: "center", justifyContent: "center", background: "#1A1920" }}>
                       <span style={{ fontSize: "1.6rem", opacity: 0.2 }}>🎬</span>
@@ -268,9 +222,6 @@ export function HomeClient({ catalog, genres }: {
   catalog: CatalogMovie[];
   genres: string[];
 }) {
-  const [posters, setPosters] = useState<PosterInfo[]>(
-    catalog.map(() => ({ poster: null, fetched: false }))
-  );
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
@@ -290,36 +241,8 @@ export function HomeClient({ catalog, genres }: {
     });
   }, []);
 
-  const fetchPoster = useCallback((movie: CatalogMovie, i: number) => {
-    setPosters(prev => {
-      if (prev[i].fetched) return prev;
-      return prev;
-    });
-    fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
-      .then(r => r.json())
-      .then(d => {
-        const matched = isPosterMatch(movie, d);
-        const releasedYear = d.released ? new Date(d.released).getFullYear() : NaN;
-        const expectedYear = parseInt(movie.year, 10);
-        const useReleased = matched && !isNaN(releasedYear) && releasedYear === expectedYear;
-        setPosters(prev => {
-          const n = [...prev];
-          n[i] = { poster: matched && d.poster ? d.poster : null, fetched: true, released: useReleased ? d.released : undefined };
-          return n;
-        });
-      })
-      .catch(() => setPosters(prev => {
-        const n = [...prev];
-        n[i] = { poster: null, fetched: true };
-        return n;
-      }));
-  }, []);
-
-  // Eagerly load first 8 posters on mount
-  useEffect(() => {
-    catalog.slice(0, 8).forEach((movie, i) => fetchPoster(movie, i));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Posters are baked into catalog.ts — no runtime fetching needed.
+  // Previously fired 8 parallel /api/movie calls on mount; now 0.
 
   // IMDb sort reads `movie.imdbScore` baked into catalog.ts at build time.
   // No mount-time fetch — the 19 parallel /api/movie calls used to stall
@@ -439,12 +362,10 @@ export function HomeClient({ catalog, genres }: {
               <PosterCard
                 key={movie.title}
                 movie={movie}
-                posterInfo={posters[origIdx]}
                 index={origIdx}
                 catalogReleased={movie.released}
                 inWatchlist={watchlist.has(movie.title)}
                 onToggleWatchlist={toggleWatchlist}
-                onVisible={() => fetchPoster(movie, origIdx)}
                 href={movieUrl(movie)}
               />
             ))}
@@ -470,32 +391,28 @@ export function HomeClient({ catalog, genres }: {
             <span className="rule" />
           </div>
           <HScrollRow>
-            {recentReleases.map(m => {
-              const idx = catalog.findIndex(c => c.title === m.title);
-              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
-              return (
-                <div
-                  key={m.title}
-                  className="ticket-stub"
-                  onClick={() => router.push(movieUrl(m))}
-                >
-                  <div className="stub-poster">
-                    {posterSrc ? (
-                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="stub-body">
-                    <p className="stub-title">{tTitle(m)}</p>
-                    <span className="stub-rel now">REL · {fmtReleaseDate(m.released)}</span>
-                    <span className="stub-genre">{tGenre(m.genre)}</span>
-                  </div>
+            {recentReleases.map(m => (
+              <div
+                key={m.title}
+                className="ticket-stub"
+                onClick={() => router.push(movieUrl(m))}
+              >
+                <div className="stub-poster">
+                  {m.posterUrl ? (
+                    <Image src={m.posterUrl} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
+                <div className="stub-body">
+                  <p className="stub-title">{tTitle(m)}</p>
+                  <span className="stub-rel now">REL · {fmtReleaseDate(m.released)}</span>
+                  <span className="stub-genre">{tGenre(m.genre)}</span>
+                </div>
+              </div>
+            ))}
           </HScrollRow>
         </section>
       )}
@@ -509,32 +426,28 @@ export function HomeClient({ catalog, genres }: {
             <span className="rule" />
           </div>
           <HScrollRow>
-            {comingSoon.map(m => {
-              const idx = catalog.findIndex(c => c.title === m.title);
-              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
-              return (
-                <div
-                  key={m.title}
-                  className="ticket-stub"
-                  onClick={() => router.push(movieUrl(m))}
-                >
-                  <div className="stub-poster">
-                    {posterSrc ? (
-                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="stub-body">
-                    <p className="stub-title">{tTitle(m)}</p>
-                    <span className="stub-rel">REL · {fmtReleaseDate(m.released)}</span>
-                    <span className="stub-genre">{tGenre(m.genre)}</span>
-                  </div>
+            {comingSoon.map(m => (
+              <div
+                key={m.title}
+                className="ticket-stub"
+                onClick={() => router.push(movieUrl(m))}
+              >
+                <div className="stub-poster">
+                  {m.posterUrl ? (
+                    <Image src={m.posterUrl} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
+                <div className="stub-body">
+                  <p className="stub-title">{tTitle(m)}</p>
+                  <span className="stub-rel">REL · {fmtReleaseDate(m.released)}</span>
+                  <span className="stub-genre">{tGenre(m.genre)}</span>
+                </div>
+              </div>
+            ))}
           </HScrollRow>
         </section>
       )}
@@ -546,40 +459,22 @@ export function HomeClient({ catalog, genres }: {
    PosterCard — re-skinned
    ───────────────────────────────────────────────── */
 
-function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, onToggleWatchlist, onVisible, href }: {
+function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchlist, href }: {
   movie: CatalogMovie;
-  posterInfo: PosterInfo;
   index: number;
   catalogReleased?: string;
   inWatchlist: boolean;
   onToggleWatchlist: (title: string, e: React.MouseEvent) => void;
-  onVisible: () => void;
   href: string;
 }) {
-  const ref = useRef<HTMLAnchorElement>(null);
   const { t, title: tTitle } = useLang();
-
-  useEffect(() => {
-    if (posterInfo.fetched || index < 8) return;
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { onVisible(); observer.disconnect(); } },
-      { rootMargin: "200px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posterInfo.fetched, index]);
-
   const displayTitle = tTitle(movie);
 
   return (
     <Link
-      ref={ref}
       href={href}
       prefetch={true}
-      className={`poster-card ${posterInfo.fetched ? "poster-enter" : ""}`}
+      className="poster-card poster-enter"
       style={{
         "--r": "0deg",
         animationDelay: `${Math.min(index % 20, 15) * 40}ms`,
@@ -587,12 +482,10 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
       } as React.CSSProperties}
     >
       <div className="poster-frame">
-        {!posterInfo.fetched ? (
-          <div className="skeleton" style={{ width: "100%", height: "100%" }} />
-        ) : posterInfo.poster ? (
+        {movie.posterUrl ? (
           <>
             <Image
-              src={posterInfo.poster}
+              src={movie.posterUrl}
               alt={displayTitle}
               fill
               loading={index < 8 ? "eager" : "lazy"}
@@ -624,7 +517,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
       <div className="poster-footer">
         <p className="poster-title">{displayTitle}</p>
         <span className="poster-meta">
-          <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}
+          <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased) || movie.year}
         </span>
       </div>
     </Link>

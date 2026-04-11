@@ -5270,5 +5270,404 @@
     ],
     "best_break": 65,
     "runtime_min": 120
+  },
+  "tt12042730_ratings": {
+    "imdb": {
+      "score": "8.4",
+      "votes": "179117"
+    },
+    "rt": {
+      "tomatometer": "94%",
+      "audience": "96%",
+      "url": "https://www.rottentomatoes.com/m/project_hail_mary"
+    },
+    "mc": {
+      "metascore": "77",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/project-hail-mary/"
+    },
+    "douban": {
+      "score": "8.6",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/35010610/"
+    }
+  },
+  "tt7708226_ratings": {
+    "imdb": {
+      "score": "6.8",
+      "votes": "66"
+    },
+    "rt": {
+      "tomatometer": "92%",
+      "audience": "75%",
+      "url": "https://www.rottentomatoes.com/m/beast"
+    },
+    "mc": {
+      "metascore": "74",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/beast/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt26443616_ratings": {
+    "imdb": {
+      "score": "7.5",
+      "votes": "31453"
+    },
+    "rt": {
+      "tomatometer": "94%",
+      "audience": "94%",
+      "url": "https://www.rottentomatoes.com/m/hoppers"
+    },
+    "mc": {
+      "metascore": "73",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/hoppers/"
+    },
+    "douban": {
+      "score": "7.4",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/36999793/"
+    }
+  },
+  "tt28650488_ratings": {
+    "imdb": {
+      "score": "6.5",
+      "votes": "25890"
+    },
+    "rt": {
+      "tomatometer": "43%",
+      "audience": "89%",
+      "url": "https://www.rottentomatoes.com/m/the_super_mario_galaxy_movie"
+    },
+    "mc": {
+      "metascore": "37",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/the-super-mario-galaxy-movie/"
+    },
+    "douban": {
+      "score": "7.1",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/36806351/"
+    }
+  },
+  "tt35222590_ratings": {
+    "imdb": {
+      "score": "6.4",
+      "votes": "12161"
+    },
+    "rt": {
+      "tomatometer": null,
+      "audience": null,
+      "url": null
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": null,
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt36592916_ratings": {
+    "imdb": {
+      "score": "6.8",
+      "votes": "163"
+    },
+    "rt": {
+      "tomatometer": "95%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/chao"
+    },
+    "mc": {
+      "metascore": "67",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/chao/"
+    },
+    "douban": {
+      "score": "6.3",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/37226541/"
+    }
+  },
+  "tt27613895_ratings": {
+    "imdb": {
+      "score": "6.7",
+      "votes": "14032"
+    },
+    "rt": {
+      "tomatometer": "95%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/goat"
+    },
+    "mc": {
+      "metascore": "64",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/goat/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt29373684_ratings": {
+    "imdb": {
+      "score": "5.5",
+      "votes": "470"
+    },
+    "rt": {
+      "tomatometer": "91%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/hunting_matthew_nichols"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": "2928",
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt33305882_ratings": {
+    "imdb": {
+      "score": "7.6",
+      "votes": "418"
+    },
+    "rt": {
+      "tomatometer": "67%",
+      "audience": "97%",
+      "url": "https://www.rottentomatoes.com/m/a_great_awakening"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": "2873",
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt33071426_ratings": {
+    "imdb": {
+      "score": "7.5",
+      "votes": "17287"
+    },
+    "rt": {
+      "tomatometer": "77%",
+      "audience": "80%",
+      "url": "https://www.rottentomatoes.com/m/the_drama"
+    },
+    "mc": {
+      "metascore": "59",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/the-drama/"
+    },
+    "douban": {
+      "score": "7.3",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/36995126/"
+    }
+  },
+  "tt33978029_ratings": {
+    "imdb": {
+      "score": "6.9",
+      "votes": "12925"
+    },
+    "rt": {
+      "tomatometer": "74%",
+      "audience": "90%",
+      "url": "https://www.rottentomatoes.com/m/ready_or_not_2_here_i_come"
+    },
+    "mc": {
+      "metascore": "58",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/ready-or-not-2-here-i-come/"
+    },
+    "douban": {
+      "score": "6.4",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/36832900/"
+    }
+  },
+  "tt31728330_ratings": {
+    "imdb": {
+      "score": "6.5",
+      "votes": "7469"
+    },
+    "rt": {
+      "tomatometer": "63%",
+      "audience": "77%",
+      "url": "https://www.rottentomatoes.com/m/they_will_kill_you"
+    },
+    "mc": {
+      "metascore": "50",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/they-will-kill-you/"
+    },
+    "douban": {
+      "score": "7.1",
+      "votes": null,
+      "url": "https://movie.douban.com/subject/36926954/"
+    }
+  },
+  "tt36352591_ratings": {
+    "imdb": {
+      "score": "6.3",
+      "votes": "342"
+    },
+    "rt": {
+      "tomatometer": null,
+      "audience": null,
+      "url": null
+    },
+    "mc": {
+      "metascore": "53",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/you-me-tuscany/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt33714084_ratings": {
+    "imdb": {
+      "score": "6.4",
+      "votes": "4653"
+    },
+    "rt": {
+      "tomatometer": "57%",
+      "audience": "88%",
+      "url": "https://www.rottentomatoes.com/m/reminders_of_him"
+    },
+    "mc": {
+      "metascore": "49",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/reminders-of-him/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt14619456_ratings": {
+    "imdb": {
+      "score": "6.5",
+      "votes": "501"
+    },
+    "rt": {
+      "tomatometer": "25%",
+      "audience": "40%",
+      "url": "https://www.rottentomatoes.com/m/faces_of_death"
+    },
+    "mc": {
+      "metascore": "63",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/faces-of-death/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt7798632_ratings": {
+    "imdb": {
+      "score": "6.3",
+      "votes": "361"
+    },
+    "rt": {
+      "tomatometer": "100%",
+      "audience": "91%",
+      "url": "https://www.rottentomatoes.com/m/hamlet"
+    },
+    "mc": {
+      "metascore": "67",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/hamlet/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt27047903_ratings": {
+    "imdb": {
+      "score": "5.6",
+      "votes": "44415"
+    },
+    "rt": {
+      "tomatometer": "30%",
+      "audience": "75%",
+      "url": "https://www.rottentomatoes.com/m/scream_7"
+    },
+    "mc": {
+      "metascore": "35",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/scream-7/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt12308018_ratings": {
+    "imdb": {
+      "score": "6.1",
+      "votes": "19"
+    },
+    "rt": {
+      "tomatometer": "95%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/newborn"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": "2983",
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt30413898_ratings": {
+    "imdb": {
+      "score": "6.4",
+      "votes": "164"
+    },
+    "rt": {
+      "tomatometer": "95%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/dacoit_a_love_story"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": null,
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
   }
 }

@@ -53,7 +53,6 @@ function MoviePageContent() {
   const [postFromCache, setPostFromCache] = useState(false);
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
-  const [similarPosters, setSimilarPosters] = useState<Record<string, string>>({});
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
@@ -67,31 +66,7 @@ function MoviePageContent() {
   const [postError, setPostError] = useState(false);
   const [error, setError] = useState("");
 
-  // Prefetch posters for the "Also In This Issue" rail so each ticket row
-  // shows a real OMDb thumbnail instead of a placeholder glyph. Runs once
-  // per film — when `data.title` changes we re-resolve the similar list.
-  useEffect(() => {
-    if (!data) return;
-    const currentGenre = MOVIE_CATALOG.find(c => c.title === query)?.genre;
-    if (!currentGenre) return;
-    const similar = MOVIE_CATALOG
-      .filter(m => m.title !== data.title && m.genre === currentGenre)
-      .sort((a, b) => a.rank - b.rank)
-      .slice(0, 4);
-    let cancelled = false;
-    Promise.all(similar.map(m =>
-      fetch(`/api/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}`)
-        .then(r => r.json())
-        .then(d => ({ title: m.title, poster: d?.poster ?? null }))
-        .catch(() => ({ title: m.title, poster: null }))
-    )).then(results => {
-      if (cancelled) return;
-      const map: Record<string, string> = {};
-      for (const r of results) if (r.poster) map[r.title] = r.poster;
-      setSimilarPosters(map);
-    });
-    return () => { cancelled = true; };
-  }, [data, query]);
+  // Similar movies posters are baked into catalog.ts — no runtime fetch needed.
 
   useEffect(() => {
     if (!query) return;
@@ -485,7 +460,7 @@ function MoviePageContent() {
                   </div>
                   <div className="similar-stack">
                     {similar.map((m, i) => {
-                      const poster = similarPosters[m.title];
+                      const poster = m.posterUrl;
                       return (
                         <div
                           key={m.title}

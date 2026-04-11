@@ -82,7 +82,9 @@ async function warmOne({ title, zh, year }) {
   const { id, title: resolvedTitle, year: resolvedYear, genre, plot, runtime } = movie;
   log(`  ${tag} → ${id} (${resolvedTitle})`);
 
-  // Step 2 — warm 4 AI endpoints. Skip keys already present unless FORCE=1.
+  // Step 2 — warm 4 AI endpoints + 1 ratings aggregator. Skip keys already
+  // present unless FORCE=1. The ratings endpoint writes its own cache entry
+  // via `writeCache(`${id}_ratings`, …)`, so warming it pre-populates baked.json.
   const endpoints = [
     {
       key: id,
@@ -99,6 +101,10 @@ async function warmOne({ title, zh, year }) {
     {
       key: `${id}_breaks`,
       url: `/api/movie-breaks?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", runtime: runtime || "", plot: plot || "" })}`,
+    },
+    {
+      key: `${id}_ratings`,
+      url: `/api/ratings?${new URLSearchParams({ title: resolvedTitle, year: resolvedYear || "", imdbId: id })}`,
     },
   ];
 
