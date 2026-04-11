@@ -422,6 +422,8 @@ export function HomeClient({ catalog, genres }: {
         </div>
 
         {gridMovies.length > 0 ? (
+          <>
+          <div className="film-sprockets" aria-hidden />
           <div className="movie-grid">
             {gridMovies.map(({ movie, origIdx }) => (
               <PosterCard
@@ -437,6 +439,7 @@ export function HomeClient({ catalog, genres }: {
               />
             ))}
           </div>
+          </>
         ) : (
           <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.78rem", color: "var(--muted)", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase" }}>
             {t("home.noMatches")}

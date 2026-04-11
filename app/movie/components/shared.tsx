@@ -112,7 +112,17 @@ export function Divider() {
 
 export function ErrorBanner({ message }: { message: string }) {
   return (
-    <div style={{ background: "rgba(127,29,29,0.2)", border: "1px solid rgba(185,28,28,0.25)", borderRadius: 12, padding: "12px 16px", color: "#FCA5A5", fontSize: "0.82rem", fontFamily: "var(--font-body)", lineHeight: 1.6 }}>
+    <div style={{
+      background: "rgba(217,79,42,0.05)",
+      border: "1px solid rgba(217,79,42,0.2)",
+      borderLeft: "2px solid var(--vermilion)",
+      borderRadius: 0,
+      padding: "14px 18px",
+      color: "rgba(235,227,208,0.75)",
+      fontSize: "0.82rem",
+      fontFamily: "var(--font-body), sans-serif",
+      lineHeight: 1.6,
+    }}>
       {message}
     </div>
   );

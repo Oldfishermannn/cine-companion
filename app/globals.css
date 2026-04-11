@@ -157,7 +157,7 @@ body::after {
    mixed-case É is the whole trick — no uppercase, no Space Grotesk. */
 
 .masthead-bar {
-  height: 8px;
+  height: 10px;
   background: var(--amber);
   width: 100%;
 }
@@ -462,10 +462,66 @@ body::after {
   .editor-card-mini:nth-child(2),
   .editor-card-mini:nth-child(3) { padding-left: 0; }
 }
-@media (max-width: 520px) {
-  .editor-card-mini { grid-template-columns: 96px 1fr; gap: 12px; }
-  .editor-card-mini .mini-frame { width: 96px; }
-  .editor-card-mini .mini-serial { font-size: 3.6rem; top: -16px; left: -8px; }
+/* ── Mobile portrait stacking: ≤600px
+   Each mini card flips to a stacked portrait layout matching the lead:
+   big poster on top, title + meta below. Serial overlaps top-left. */
+@media (max-width: 600px) {
+  .editor-slate-side {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding-top: 0;
+  }
+  .editor-card-mini {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+    gap: 10px;
+    padding-left: 0 !important;
+  }
+  .editor-card-mini .mini-frame {
+    width: 100%;
+    aspect-ratio: 2/3;
+  }
+  .editor-card-mini .mini-meta {
+    gap: 4px;
+  }
+  .editor-card-mini .mini-serial {
+    font-size: 3.6rem;
+    top: -16px;
+    left: -8px;
+  }
+}
+@media (max-width: 420px) {
+  .editor-slate-side {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .editor-card-mini .mini-zh { font-size: 0.88rem; }
+  .editor-card-mini .mini-title { font-size: 0.7rem; }
+  .editor-card-mini .mini-dim { font-size: 0.5rem; }
+}
+
+/* ── 35mm film-strip sprocket rail ──────────────
+   A 16px horizontal band with evenly-spaced "holes"
+   (ink-colored rectangles punched into a slightly
+   lighter strip). Sits above the AMC grid. */
+.film-sprockets {
+  height: 16px;
+  margin: 0 0 20px;
+  /* Two layers: top = ink rectangles (holes), bottom = faint strip */
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 7px,
+      var(--ink) 7px,
+      var(--ink) 19px,
+      transparent 19px,
+      transparent 32px
+    ),
+    var(--faint);
+  opacity: 0.55;
 }
 
 /* ── ④ AMC GRID ── 35mm contact-sheet re-skin ──── */

@@ -54,6 +54,7 @@ function MoviePageContent() {
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
   const [similarPosters, setSimilarPosters] = useState<Record<string, string>>({});
+  const [synopsisExpanded, setSynopsisExpanded] = useState(false);
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [trailerType, setTrailerType] = useState<string>("youtube");
@@ -361,17 +362,49 @@ function MoviePageContent() {
                 </div>
               </div>
 
-              {/* 5. Synopsis paragraph */}
-              <p className="hero-synopsis">
-                {(() => {
-                  const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
-                  if (!full) return "";
-                  if (full.length <= 160) return full;
-                  const cap = full.slice(0, 160);
-                  const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
-                  return lastBreak > 50 ? full.slice(0, lastBreak + 1) : cap + "…";
-                })()}
-              </p>
+              {/* 5. Synopsis paragraph + expand */}
+              {(() => {
+                const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
+                if (!full) return null;
+                const SHORT_LIMIT = 120;
+                const needsCap = full.length > SHORT_LIMIT;
+                const cap = full.slice(0, SHORT_LIMIT);
+                const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
+                const truncated = lastBreak > 40 ? full.slice(0, lastBreak + 1) : cap + "…";
+                return (
+                  <div style={{ marginTop: 24 }}>
+                    <p className="hero-synopsis" style={{ margin: 0 }}>
+                      {synopsisExpanded || !needsCap ? full : truncated}
+                    </p>
+                    {needsCap && !synopsisExpanded && (
+                      <button
+                        onClick={() => setSynopsisExpanded(true)}
+                        style={{
+                          marginTop: 8,
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-mono), monospace",
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.16em",
+                          textTransform: "uppercase",
+                          color: "var(--amber-dim)",
+                          padding: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          transition: "color 0.15s",
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber-dim)"; }}
+                      >
+                        <span>▾</span>
+                        <span>Expand</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
 
