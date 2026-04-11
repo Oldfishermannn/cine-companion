@@ -26,6 +26,8 @@ const ROOT = path.resolve(__dirname, "..");
 const CATALOG_PATH = path.join(ROOT, "app/catalog.ts");
 const ENV_PATH = path.join(ROOT, ".env.local");
 const SKIP_EXISTING = process.argv.includes("--skip-existing");
+const ONLY_ARG = process.argv.find(a => a.startsWith("--only="));
+const ONLY_TITLE = ONLY_ARG ? ONLY_ARG.slice("--only=".length).toLowerCase() : null;
 
 // ── Load OMDB_API_KEY from .env.local (no dotenv dep) ──────────────────────
 function loadEnv() {
@@ -77,11 +79,22 @@ async function omdbSearch(title, year) {
     if (!res.ok) return null;
     const data = await res.json();
     if (data.Response !== "True" || !data.Search?.length) return null;
-    // Prefer exact year match when year given
-    const best = year
-      ? (data.Search.find(s => s.Year === year) ?? data.Search[0])
-      : data.Search[0];
-    return best;
+    // Strict year matching — reject if the best candidate is >1 year off the
+    // catalog year. Reason: OMDb often returns an unrelated old movie with the
+    // same title (e.g. "Faces of Death" 1978 vs 2026 remake), and those legacy
+    // URLs are also frequently dead on the CDN.
+    if (year) {
+      const exact = data.Search.find(s => s.Year === year);
+      if (exact) return exact;
+      // Allow ±1 year drift for release-year ambiguity (festival vs wide release)
+      const yearNum = parseInt(year, 10);
+      const close = data.Search.find(s => {
+        const n = parseInt(s.Year, 10);
+        return !isNaN(n) && Math.abs(n - yearNum) <= 1;
+      });
+      return close ?? null;   // reject anything further out — fall through to IMDb
+    }
+    return data.Search[0];
   } catch { return null; }
 }
 
@@ -96,7 +109,7 @@ async function omdbDetail(imdbId) {
 }
 
 // ── IMDb fallback: search + scrape __NEXT_DATA__ for primaryImage ──────────
-async function imdbPosterFallback(title) {
+async function imdbPosterFallback(title, year) {
   try {
     const r = await fetch(`https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=ft`, {
       headers: {
@@ -111,33 +124,60 @@ async function imdbPosterFallback(title) {
     if (!m) return null;
     const nd = JSON.parse(m[1]);
     const results = nd?.props?.pageProps?.titleResults?.results ?? [];
-    for (const r of results) {
-      const item = r.listItem ?? {};
-      if (!isTitleMatch(item.titleText ?? "", title)) continue;
-      const url = item.primaryImage?.url;
-      if (url) return upscale(url);
+
+    // Filter to title-match candidates with a poster
+    const candidates = results
+      .map(r => r.listItem ?? {})
+      .filter(item => isTitleMatch(item.titleText ?? "", title) && item.primaryImage?.url);
+
+    if (candidates.length === 0) {
+      // Last-ditch: first result regardless of title match
+      const first = results[0]?.listItem?.primaryImage?.url;
+      return first ? upscale(first) : null;
     }
-    // Fallback: first result regardless
-    const first = results[0]?.listItem?.primaryImage?.url;
-    return first ? upscale(first) : null;
+
+    // Prefer exact year match, then ±1 year, then first candidate
+    if (year) {
+      const yearNum = parseInt(year, 10);
+      const exact = candidates.find(c => String(c.releaseYear?.year) === year);
+      if (exact) return upscale(exact.primaryImage.url);
+      const close = candidates.find(c => {
+        const n = c.releaseYear?.year;
+        return typeof n === "number" && Math.abs(n - yearNum) <= 1;
+      });
+      if (close) return upscale(close.primaryImage.url);
+    }
+    return upscale(candidates[0].primaryImage.url);
   } catch { return null; }
 }
 
+// ── HEAD validation — reject dead CloudFront URLs before baking ────────────
+async function validatePosterUrl(url) {
+  if (!url) return false;
+  try {
+    const res = await fetch(url, { method: "HEAD" });
+    return res.ok;
+  } catch { return false; }
+}
+
 // ── Resolve one movie ──────────────────────────────────────────────────────
+// Both OMDb and IMDb candidates are HEAD-validated — dead CDN URLs (common on
+// very old movies) are rejected and the next strategy takes over.
 async function resolvePoster({ title, year }) {
-  // Stage 1: OMDb
+  // Stage 1: OMDb (now year-strict)
   const hit = await omdbSearch(title, year);
-  if (hit) {
-    if (isTitleMatch(hit.Title, title)) {
-      const detail = await omdbDetail(hit.imdbID);
-      if (detail?.Poster && detail.Poster !== "N/A") {
-        return { src: "omdb", poster: upscale(detail.Poster) };
-      }
+  if (hit && isTitleMatch(hit.Title, title)) {
+    const detail = await omdbDetail(hit.imdbID);
+    const url = upscale(detail?.Poster);
+    if (url && await validatePosterUrl(url)) {
+      return { src: "omdb", poster: url };
     }
   }
-  // Stage 2: IMDb scrape fallback
-  const imdb = await imdbPosterFallback(title);
-  if (imdb) return { src: "imdb", poster: imdb };
+  // Stage 2: IMDb scrape fallback (year-aware)
+  const imdb = await imdbPosterFallback(title, year);
+  if (imdb && await validatePosterUrl(imdb)) {
+    return { src: "imdb", poster: imdb };
+  }
   return { src: "none", poster: null };
 }
 
@@ -239,6 +279,10 @@ async function main() {
   let skipped = 0;
 
   for (const m of movies) {
+    if (ONLY_TITLE && !m.title.toLowerCase().includes(ONLY_TITLE)) {
+      skipped++;
+      continue;
+    }
     if (SKIP_EXISTING && m.posterUrl) {
       skipped++;
       continue;
