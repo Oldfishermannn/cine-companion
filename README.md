@@ -40,11 +40,14 @@
 
 | 功能 | 说明 |
 |------|------|
-| **推荐电影** | 评分最高的影片独立 hero 展示 |
+| **刊头 Masthead** | `CINÉ COMPANION` editorial 刊头 + 动态期号（VOL · NO · 月份） |
+| **Search Slate** | 电影拍摄板样式搜索框，支持中英文双向（「沙丘」和「Dune」等价） |
+| **Editor's Choice** | 4 部编辑精选（Project Hail Mary / Dune / Oppenheimer / Reminders of Him），非对称 contact sheet 排版 |
+| **Now Showing** | AMC 院线在映片海报网格，按真实 IMDb 分数排序（实时抓取） |
 | **近期上映** | 14 天内上映的新片横向卡片（带海报缩略图，左右箭头滚动） |
 | **即将上映** | 未来上映日期的影片 |
 | **类型筛选** | 动画 / 科幻 / 爱情 / 恐怖 / 喜剧 / 动作 / 惊悚 / 剧情 |
-| **排序切换** | 评分最高 / 最新上映 / 最早上映 |
+| **排序切换** | IMDb 评分 / 最新上映 / 最早上映 |
 | **想看标记** | 收藏按钮，localStorage 持久化 |
 
 ---
@@ -52,12 +55,14 @@
 ## 技术栈
 
 ```
-前端      Next.js 16 · React 19 · Tailwind CSS
-字体      Cormorant Garamond（衬线标题）· Outfit（正文）
-AI        Claude Sonnet 4.6（内容生成）· Claude Haiku 4.5（快速查词）
-数据      OMDb API · IMDb 实时抓取 · YouTube 搜索（预告片）
+前端      Next.js 16 · React 19 · Tailwind CSS v4 · Turbopack
+字体      Fraunces（display 衬线）· Noto Serif SC（中文衬线）
+          JetBrains Mono（metadata）· Cormorant Garamond（italic 副标）· Outfit（正文）
+AI        Claude Sonnet 4.6（内容生成）· Claude Haiku 4.5（快速查词/翻译）
+数据      OMDb API → IMDb 直接抓取 fallback（Googlebot UA，多段 ld+json 解析）
 院线      AMC Theatres 官网 CDP 实时抓取（一手上映日期）
-评分      OMDb + /api/ratings 实时补全（IMDb/RT/MC/豆瓣）
+评分      OMDb + IMDb 实时补全 + /api/ratings（RT/MC/豆瓣）
+          *新发/未上映片 OMDb 滞后时，自动回落 IMDb 实时抓取*
 发音      dictionaryapi.dev（真人）· Web Speech API（fallback）
 缓存      三级：内存 LRU（200）→ Vercel KV（可选）→ 文件系统
 部署      Vercel
@@ -163,12 +168,33 @@ lib/
 
 ---
 
-## 设计语言
+## 设计语言 — Cinéma Nocturne
 
-- 主色调 `#0A0A0F`（深黑）+ `#D4A853`（金色）+ `#F0E9D8`（羊皮纸白）
-- 胶片颗粒纹理叠加（CSS SVG filter，opacity 1.8%）
-- 电影感暗色主题，卡片圆角 + 毛玻璃效果
-- 响应式：海报网格 4→3→2 列，hero 横排压缩，tab/内容区自适应
+风格参照：Cahiers du Cinéma 法式影评刊物 × 35mm 胶片 contact sheet × 深夜放映厅光漏
+
+**调色板**
+- `--ink #08080C` 墨黑背景
+- `--cream #EBE3D0` 羊皮纸米
+- `--amber #E8B661` 琥珀金（主强调色）
+- `--vermilion #D94F2A` 朱砂红（签名点缀，全站使用 ≤ 5 处——§ 段标、active tab 下划线、搜索指示符）
+- `--wine #6B2C3E` 暗红（hover 底色）
+
+**排版**
+- 刊头用 Fraunces 300 + SOFT/WONK 光学轴
+- 中文大标题 Noto Serif SC 600
+- metadata / 段标 / 期号 / 索引一律 JetBrains Mono，字间距 `0.2–0.3em`
+- 所有 section header 带 `§ 0N ·` 编号前缀
+
+**视觉装饰**
+- 胶片颗粒 `body::before`（opacity 2.8%）+ 暗角 `body::after` radial vignette
+- 顶部固定 1px amber 扫描线（CRT 感）
+- 投影仪光斑：长椭圆金色 6% blur 100px
+- 海报卡：无圆角 editorial 风格 + amber 金线框 + vermilion inner-ring hover
+
+**布局**
+- 首页非对称：1 大海报 + 3 小错位阶梯排列（Editor's Choice 模块）
+- 响应式：`>900px` 非对称布局 / `600–900px` 降级横排 / `<600px` 垂直堆叠
+- 电影详情页 hero 垂直堆叠：mono 索引 → 大号中文标题 → 英文 italic 副标 → poster + stat grid
 
 ---
 
