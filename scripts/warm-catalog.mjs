@@ -82,6 +82,12 @@ async function warmOne({ title, zh, year }) {
   const { id, title: resolvedTitle, year: resolvedYear, genre, plot, runtime } = movie;
   log(`  ${tag} → ${id} (${resolvedTitle})`);
 
+  // Bake /api/movie response as `${id}_meta` so the server-component detail
+  // page reads base metadata (poster, plot, runtime, director, cast, ratings)
+  // straight from baked.json with zero HTTP. Always overwrite — we just
+  // fetched fresh data, no reason to skip even when --skip-existing.
+  baked[`${id}_meta`] = movie;
+
   // Step 2 — warm 4 AI endpoints + 1 ratings aggregator. Skip keys already
   // present unless FORCE=1. The ratings endpoint writes its own cache entry
   // via `writeCache(`${id}_ratings`, …)`, so warming it pre-populates baked.json.

@@ -5669,5 +5669,385 @@
       "votes": null,
       "url": null
     }
+  },
+  "tt12042730_meta": {
+    "id": "tt12042730",
+    "title": "Project Hail Mary",
+    "zhTitle": "挽救计划",
+    "year": "2026",
+    "released": "20 Mar 2026",
+    "genre": "Drama, Sci-Fi, Thriller",
+    "director": "Phil Lord, Christopher Miller",
+    "actors": "Ryan Gosling, Milana Vayntrub, Ken Leung",
+    "runtime": "156 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNTkwNzJiYTctNzI3NC00NjE1LTlhYjktY2Q5MTdmMWFmNzcxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Science teacher Ryland Grace wakes up alone on a spaceship light-years from Earth. As his memory returns, he uncovers a mission to stop a mysterious substance killing the sun, and save Earth. An unexpected friendship may be the key.",
+    "zhPlot": "科学老师莱兰·格雷斯在一艘距地球数光年的宇宙飞船上独自醒来。随着记忆逐渐恢复，他发现自己肩负着一项使命——阻止一种神秘物质摧毁太阳，拯救地球。一段意想不到的友谊可能是关键。",
+    "ratings": {
+      "imdb": "8.4",
+      "imdbVotes": "179657",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt7708226_meta": {
+    "id": "tt7708226",
+    "title": "Beast",
+    "zhTitle": "猛兽",
+    "zhPlot": "MMA传奇人物帕顿·詹姆斯如今是一名商业渔民，当他的兄弟陷入危险时，他被拉回了格斗笼。与他的老教练萨米重聚后，他承诺在ONE冠军赛中与残暴的冠军泽维尔·格劳进行最后一场比赛。",
+    "year": "2026",
+    "released": "2026-04-10",
+    "genre": "Action, Drama, Sport",
+    "director": "Tyler Atkins",
+    "actors": "Russell Crowe, Mojean Aria, Daniel MacPherson",
+    "runtime": "114 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BYjQ0OTgwZGUtNDhlYi00ZTM5LWI2NmYtNGYwYWJhNzVlYTc5XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "MMA legend Patton James, now a commercial fisherman, is pulled back into the cage when his brother is in danger. Reuniting with his old coach Sammy, he commits to one final fight in ONE Championship against its brutal champion Xavier Grau.",
+    "ratings": {
+      "imdb": "7",
+      "imdbVotes": "75",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt26443616_meta": {
+    "id": "tt26443616",
+    "title": "Hoppers",
+    "zhTitle": "狸想世界",
+    "zhPlot": "一位19岁的动物爱好者利用先进技术将意识转移到机器海狸体内，以此揭开动物世界中超乎想象的神秘事件。",
+    "year": "2026",
+    "released": "2026-03-06",
+    "genre": "Animation, Adventure, Comedy",
+    "director": "Daniel Chong",
+    "actors": "Piper Curda, Bobby Moynihan, Jon Hamm",
+    "runtime": "104 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNzRiMzZlMTMtNmU3OC00MDUwLThmNDUtMTBjZmQ3MWQ4NTljXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A 19-year-old animal lover uses technology that places her consciousness into a robotic beaver to uncover mysteries within the animal world beyond her imagination.",
+    "ratings": {
+      "imdb": "7.5",
+      "imdbVotes": "31453",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt28650488_meta": {
+    "id": "tt28650488",
+    "title": "The Super Mario Galaxy Movie",
+    "zhTitle": "超级马里奥银河电影版",
+    "year": "2026",
+    "released": "01 Apr 2026",
+    "genre": "Animation, Adventure, Comedy",
+    "director": "Aaron Horvath, Michael Jelenic",
+    "actors": "Chris Pratt, Anya Taylor-Joy, Benny Safdie",
+    "runtime": "98 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNDMyODQzZjAtNmYxYS00YjNiLWEzYTMtNzgyZWE5ODBkZDVhXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Mario ventures into space, exploring cosmic worlds and tackling galactic challenges far from the familiar Mushroom Kingdom.",
+    "zhPlot": "马里奥冒险进入太空，探索宇宙世界，应对远离蘑菇王国的银河系挑战。",
+    "ratings": {
+      "imdb": "6.5",
+      "imdbVotes": "25890",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt35222590_meta": {
+    "id": "tt35222590",
+    "title": "The Exit 8",
+    "zhTitle": "8号出口",
+    "year": "2025",
+    "released": "29 Aug 2025",
+    "genre": "Action, Adventure, Horror",
+    "director": "Genki Kawamura",
+    "actors": "Kazunari Ninomiya, Yamato Kôchi, Naru Asanuma",
+    "runtime": "95 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTkyN2ZjM2YtNTE2Yi00MzNjLWIzYzEtOWNhNzgzNjE0OTJjXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A man becomes increasingly desperate when he realizes he is trapped in a subway station, needing to complete a mission to get out.",
+    "zhPlot": "一名男子被困在地铁站中，意识到自己需要完成一项任务才能逃脱，变得越来越绝望。",
+    "ratings": {
+      "imdb": "6.5",
+      "imdbVotes": "2,561",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt36592916_meta": {
+    "id": "tt36592916",
+    "title": "ChaO",
+    "zhTitle": "ChaO",
+    "zhPlot": "在人类和美人鱼共存的世界里，朝公主与人类工程师斯蒂芬订婚了。他们的爱情将何去何从？",
+    "year": "2025",
+    "released": "2025-08-15",
+    "genre": "Animation, Comedy, Fantasy",
+    "director": "Yasuhiro Aoki",
+    "actors": "Hiromi Kawakami, Kenta Miyake, Taro Nikuguso",
+    "runtime": "90 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNzIxNDY1NzgtN2U2Yi00YmQ5LThlNDMtNmM3MzY1MGE1MzEyXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "In a world where humans and merpeople exist, Princess Chao gets engaged to human engineer Stephen. What will become of their romance?",
+    "ratings": {
+      "imdb": "6.8",
+      "imdbVotes": "164",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt27613895_meta": {
+    "id": "tt27613895",
+    "title": "GOAT",
+    "zhTitle": "传奇山羊",
+    "zhPlot": "一只怀揣大梦想的小山羊获得了一次千载难逢的机会，加入职业球队参加咆哮球——一项由世界上最快最凶悍的动物主宰的高强度、男女混合、全接触运动。",
+    "year": "2026",
+    "released": "2026-02-13",
+    "genre": "Animation, Action, Adventure",
+    "director": "Tyree Dillihay, Adam Rosette",
+    "actors": "Caleb McLaughlin, Gabrielle Union, Stephen Curry",
+    "runtime": "100 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BYzE5OTJkOGMtYWFiNi00NTlkLWE3ZWItY2ZlNjkyOWVhMjMyXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A small goat with big dreams gets a once-in-a-lifetime shot to join the pros and play roarball, a high-intensity, co-ed, full-contact sport dominated by the fastest, fiercest animals in the world.",
+    "ratings": {
+      "imdb": "6.7",
+      "imdbVotes": "14051",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt29373684_meta": {
+    "id": "tt29373684",
+    "title": "Hunting Matthew Nichols",
+    "zhTitle": "追捕马修·尼科尔斯",
+    "year": "2024",
+    "released": "19 Oct 2024",
+    "genre": "Thriller",
+    "director": "Markian Tarasiuk",
+    "actors": "Markian Tarasiuk, Miranda MacDougall, Ryan Alexander McDonald",
+    "runtime": "96 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNGNlYzgxZTMtZTVhMC00MzMwLTllYjEtMTI2MjIzYWU2MzIxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Twenty-three years after her brother vanished, a filmmaker investigates his disappearance. Uncovering evidence, she suspects he may still be alive, fueling her quest to unravel the mystery.",
+    "zhPlot": "在哥哥失踪二十三年后，一位电影制作人开始调查他的失踪案。在发现证据后，她怀疑他可能仍然活着，这激发了她解开这个谜团的决心。",
+    "ratings": {
+      "imdb": "5.5",
+      "imdbVotes": "6",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt33305882_meta": {
+    "id": "tt33305882",
+    "title": "A Great Awakening",
+    "zhTitle": "大觉醒",
+    "year": "2026",
+    "released": "03 Apr 2026",
+    "genre": "Drama, History",
+    "director": "N/A",
+    "actors": "N/A",
+    "runtime": "N/A",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZGU1MjRlZDctNmEzNy00NGVhLWE3ZjAtOGRkNTdlN2VjNTY0XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Exploring the friendship between renowned preacher George Whitefield and Benjamin Franklin, and Whitefield's impact during the pivotal Great Awakening religious movement.",
+    "zhPlot": "探讨著名传教士乔治·怀特菲尔德与本杰明·富兰克林之间的友谊，以及怀特菲尔德在重要宗教运动\"大觉醒\"期间所产生的影响。",
+    "ratings": {
+      "imdb": "7.6",
+      "imdbVotes": "419",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt33071426_meta": {
+    "id": "tt33071426",
+    "title": "The Drama",
+    "zhTitle": "The Drama",
+    "zhPlot": "一对幸福的订婚情侣在婚礼周遭遇突变考验，他们的婚礼计划完全脱轨。",
+    "year": "2026",
+    "released": "2026-04-03",
+    "genre": "Comedy, Drama, Romance",
+    "director": "Kristoffer Borgli",
+    "actors": "Zendaya, Robert Pattinson, Alana Haim",
+    "runtime": "105 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTcwOGZhYmItYTg3ZS00NjUwLWJiMmQtMjU5YjEwYWY0NmNkXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A happily engaged couple is put to the test when an unexpected turn sends their wedding week off the rails.",
+    "ratings": {
+      "imdb": "7.5",
+      "imdbVotes": "17497",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt33978029_meta": {
+    "id": "tt33978029",
+    "title": "Ready or Not 2: Here I Come",
+    "zhTitle": "准备好了没2：我来了",
+    "year": "2026",
+    "released": "20 Mar 2026",
+    "genre": "Comedy, Horror, Thriller",
+    "director": "N/A",
+    "actors": "Shawn Hatosy, Samara Weaving, Elijah Wood",
+    "runtime": "108 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BOTUxZDk2ZmQtYWRlYS00MjkxLWEzYTEtMWUzNTcyYTRjMjI5XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "After surviving one deadly game, Grace and her sister Faith must now outrun four rival families competing for a powerful throne - winner takes all.",
+    "zhPlot": "在幸存一场致命游戏后，格蕾丝和妹妹费思必须躲避四个家族的竞争，他们都在争夺一个强大的王位——胜者通吃。",
+    "ratings": {
+      "imdb": "6.9",
+      "imdbVotes": "12925",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt31728330_meta": {
+    "id": "tt31728330",
+    "title": "They Will Kill You",
+    "zhTitle": "他们会杀了你",
+    "year": "2026",
+    "released": "27 Mar 2026",
+    "genre": "Action, Comedy, Horror",
+    "director": "Kirill Sokolov",
+    "actors": "Patricia Arquette, Tom Felton, Zazie Beetz",
+    "runtime": "N/A",
+    "poster": "https://m.media-amazon.com/images/M/MV5BYjg5ZjQ0ZGQtMmY1NS00NTgyLTlkZWYtMDhlNzE3ZGY5ZDdmXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A woman takes a job as a housekeeper in a NYC high-rise, unaware of the building's history of disappearances. She soon realizes the community is shrouded in mystery.",
+    "zhPlot": "一名女性在纽约高层公寓找到了女仆的工作，却不知道这栋楼有着离奇失踪的历史。她很快意识到这个社区笼罩在神秘之中。",
+    "ratings": {
+      "imdb": "6.5",
+      "imdbVotes": "7469",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt36352591_meta": {
+    "id": "tt36352591",
+    "title": "You, Me & Tuscany",
+    "zhTitle": "你、我与托斯卡纳",
+    "zhPlot": "一位女性在一处空荡荡的意大利别墅坠机后，冒充房主的未婚妻，却意外发现了一段可能改变她人生的罗曼史。",
+    "year": "2026",
+    "released": "2026-04-10",
+    "genre": "Comedy, Romance",
+    "director": "Kat Coiro",
+    "actors": "Regé-Jean Page, Halle Bailey, Marco Calvani",
+    "runtime": "104 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZjg0MjliNDctMDE3NS00ZmMzLWE1ODUtZDcyN2I3NDE2YmUxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "When a woman crashes at an empty Italian villa, posing as the owner's fiancée, she discovers an unexpected romance that may transform her life.",
+    "ratings": {
+      "imdb": "6.3",
+      "imdbVotes": "342",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt33714084_meta": {
+    "id": "tt33714084",
+    "title": "Reminders of Him",
+    "zhTitle": "念你之名",
+    "year": "2026",
+    "released": "13 Mar 2026",
+    "genre": "Drama, Romance",
+    "director": "Vanessa Caswill",
+    "actors": "Maika Monroe, Jennifer Robertson, Bradley Whitford",
+    "runtime": "114 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNjI4OGM1NDEtYzA1NS00ZDg3LWFmZjUtMjg1MGQ4MTk3NjQzXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "After prison, a woman attempts to reconnect with her young daughter but faces resistance from everyone except a bar owner with ties to her child. As they grow closer, she must confront her past mistakes to build a hopeful future.",
+    "zhPlot": "出狱后，一名女子试图与年幼的女儿重新建立联系，但遭到所有人的反对，除了一位与她女儿有联系的酒吧老板。随着两人日益亲近，她必须面对过去的错误，才能建立充满希望的未来。",
+    "ratings": {
+      "imdb": "6.4",
+      "imdbVotes": "4659",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt14619456_meta": {
+    "id": "tt14619456",
+    "title": "Faces of Death",
+    "zhTitle": "死亡之脸",
+    "zhPlot": "一名网站内容审核员发现了一系列暴力视频，这些视频再现了一部电影中的死亡场景。",
+    "year": "2026",
+    "released": "2026-04-10",
+    "genre": "Horror",
+    "director": "Daniel Goldhaber",
+    "actors": "Dacre Montgomery, Barbie Ferreira, Josie Totah",
+    "runtime": "97 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMGJlZjY2ZGMtYjY0Ny00MTFmLTg0YTItM2MzYTQ4ZGNjMzkxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A woman, employed as a website content moderator, comes across a series of violent videos reproducing death scenes from a film.",
+    "ratings": {
+      "imdb": "6.5",
+      "imdbVotes": "541",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt7798632_meta": {
+    "id": "tt7798632",
+    "title": "Hamlet",
+    "zhTitle": "哈姆雷特",
+    "zhPlot": "哈姆雷特回家参加父亲的葬礼，却发现叔叔克劳迪斯正与他的寡母格特鲁德成婚。父亲的幽灵显灵，揭露克劳迪斯谋杀了他，这促使哈姆雷特踏上复仇之路，同时陷入深深的自我反思。",
+    "year": "2025",
+    "released": "2026-04-10",
+    "genre": "Drama",
+    "director": "Aneil Karia",
+    "actors": "Riz Ahmed, Morfydd Clark, Avijit Dutt",
+    "runtime": "113 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMDE5ZjIwNDMtODEzNy00ZTA3LTk0NzUtYTIwMTEwZjdlZDI5XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Hamlet comes home for his father's funeral and finds his uncle Claudius marrying his widowed mother Gertrude. His father's ghost reveals Claudius murdered him, leading Hamlet toward revenge and introspection.",
+    "ratings": {
+      "imdb": "6.3",
+      "imdbVotes": "361",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt27047903_meta": {
+    "id": "tt27047903",
+    "title": "Scream 7",
+    "zhTitle": "惊声尖叫7",
+    "zhPlot": "当一个新的鬼脸杀手在西德妮·普雷斯科特开始新生活的小镇出现时，她最黑暗的恐惧成为现实，她的女儿成为了下一个目标。",
+    "year": "2026",
+    "released": "2026-02-27",
+    "genre": "Horror, Mystery",
+    "director": "Kevin Williamson",
+    "actors": "Neve Campbell, Courteney Cox, Isabel May",
+    "runtime": "114 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMzk2YzRjYmItNTA5Mi00ODczLTljYzUtOWE1ZDFkODhlZWJlXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "When a new Ghostface killer emerges in the town where Sidney Prescott has built a new life, her darkest fears are realized as her daughter becomes the next target.",
+    "ratings": {
+      "imdb": "5.6",
+      "imdbVotes": "44441",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt12308018_meta": {
+    "id": "tt12308018",
+    "title": "Newborn",
+    "zhTitle": "新生",
+    "zhPlot": "在单独监禁七年后，克里斯·纽伯恩试图重建生活并重新与家人联系，却发现自由已成为一个可怕的心理战场。",
+    "year": "2026",
+    "released": "2026-04-10",
+    "genre": "Drama, Thriller",
+    "director": "Nate Parker",
+    "actors": "Aiden Stoxx, Matthew Mylrea, Barry Pepper",
+    "runtime": "102 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZWNjMjJmYTktMTk1YS00NTg2LTkxODEtOGJkMjAwNDEzNWRiXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "After serving seven years in solitary confinement, Chris Newborn seeks to rebuild his life and reconnect with his family only to find that freedom has become a terrifying psychological battleground.",
+    "ratings": {
+      "imdb": "6.2",
+      "imdbVotes": "23",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt30413898_meta": {
+    "id": "tt30413898",
+    "title": "Dacoit: A Love Story",
+    "zhTitle": "Dacoit：爱情故事",
+    "year": "2025",
+    "released": "25 Dec 2025",
+    "genre": "Action, Drama",
+    "director": "Shaneil Deo",
+    "actors": "Mrunal Thakur, Anurag Kashyap, Adivi Sesh",
+    "runtime": "N/A",
+    "poster": "https://m.media-amazon.com/images/M/MV5BY2EzY2E5NDktMjI1ZC00OWM5LTkyZDgtNmNmNGQ4OWRjOTEzXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "Follows an angry convict seeking vengeance against his former girlfriend who betrayed him.",
+    "zhPlot": "讲述一名愤怒的囚犯寻求对背叛他的前女友复仇的故事。",
+    "ratings": {
+      "imdb": "6.4",
+      "imdbVotes": "164",
+      "rt": null,
+      "metacritic": null
+    }
   }
 }
