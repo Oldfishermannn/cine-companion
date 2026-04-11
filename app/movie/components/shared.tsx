@@ -135,25 +135,24 @@ export { CATEGORY_STYLES };
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
-      <span style={{ width: 3, height: 16, background: "var(--gold)", borderRadius: 2, flexShrink: 0 }} />
-      <h3 style={{
-        fontFamily: "var(--font-display)",
-        fontSize: "1rem",
-        fontWeight: 400,
-        letterSpacing: "0.12em",
+    <div className="editorial-divider" style={{ margin: "0 0 20px" }}>
+      <span className="sec">§</span>
+      <span className="rule-short" />
+      <span className="title" style={{
+        fontFamily: "var(--font-mono), monospace",
+        fontSize: "0.68rem",
+        letterSpacing: "0.2em",
         textTransform: "uppercase",
-        color: "var(--muted)",
-        margin: 0,
       }}>
         {children}
-      </h3>
+      </span>
+      <span className="rule-long" />
     </div>
   );
 }
 
 export function Divider() {
-  return <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent)" }} />;
+  return <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--rule) 30%, var(--rule) 70%, transparent)" }} />;
 }
 
 export function ErrorBanner({ message }: { message: string }) {

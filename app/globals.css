@@ -1,39 +1,97 @@
 @import "tailwindcss";
 
 :root {
-  --bg:       #0A0A0F;
-  --bg-card:  #111117;
-  --bg-lift:  #17171F;
-  --gold:     #D4A853;
-  --gold-dim: #8B7035;
-  --gold-glow: rgba(212,168,83,0.12);
-  --amber:    #E8C278;
-  --parchment:#F0E9D8;
-  --muted:    #7A7488;
-  --faint:    #2D2B36;
-  --border:   rgba(255,255,255,0.06);
-  --wine:     #6B2C3E;
+  /* ── Ink & paper — deeper, more neutral than before ── */
+  --ink:       #08080C;
+  --ink-2:     #0E0E14;
+  --bg:        #08080C;          /* alias → ink, legacy compat */
+  --bg-card:   #13131B;
+  --bg-lift:   #1A1A24;
 
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body:    'Outfit', system-ui, sans-serif;
+  /* ── Amber / gold (slightly more saturated than old --gold) ── */
+  --amber:     #E8B661;
+  --amber-dim: #8B6F2E;
+  --amber-glow: rgba(232,182,97,0.12);
+  --gold:      #E8B661;          /* alias → amber, legacy compat */
+  --gold-dim:  #8B6F2E;          /* alias, legacy compat */
+  --gold-glow: rgba(232,182,97,0.12);
+
+  /* ── Paper / parchment ── */
+  --cream:     #EBE3D0;          /* new: warmer than parchment */
+  --parchment: #EBE3D0;          /* alias, legacy compat */
+
+  /* ── Vermilion — the signature accent (use sparingly, <5 places) ── */
+  --vermilion: #D94F2A;
+
+  /* ── Supporting greys ── */
+  --muted:     #7A7488;
+  --faint:     #2D2B36;
+  --rule:      rgba(235,227,208,0.10);
+  --border:    rgba(235,227,208,0.08);
+  --wine:      #6B2C3E;
+
+  /* ── Typography ──
+   * next/font sets the raw family on <html> inline:
+   *   --font-display      → Fraunces (hero display serif)
+   *   --font-display-alt  → Cormorant Garamond (italic english subtitles)
+   *   --font-zh-display   → Noto Serif SC (Chinese headings)
+   *   --font-body         → Outfit (Chinese body + paragraph)
+   *   --font-mono         → JetBrains Mono (metadata, numbers, labels)
+   * Fallback stacks are spliced in at usage sites below. Redeclaring the
+   * variable here is pointless because the inline style on <html> outranks
+   * :root in the cascade.
+   */
 }
 
 * { box-sizing: border-box; }
 
+html { background: var(--ink); }
 body {
-  background: var(--bg);
-  color: var(--parchment);
-  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-body), 'Outfit', system-ui, sans-serif;
+  font-feature-settings: "kern", "ss01";
 }
 
-/* ── Film grain overlay ── */
+/* ── Film grain overlay (slightly stronger now) ── */
 body::before {
   content: "";
   position: fixed; inset: 0;
   pointer-events: none; z-index: 9999;
-  opacity: 0.018;
+  opacity: 0.028;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
+}
+
+/* ── Vignette: dark corners pull the eye toward center ── */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ── Scanline: a single hair of amber across the top (CRT nostalgia) ── */
+.scanline {
+  position: fixed;
+  top: 2px; left: 0;
+  height: 1px; width: 100vw;
+  background: var(--amber);
+  opacity: 0.14;
+  pointer-events: none;
+  z-index: 9997;
+}
+
+/* ── Projector wash: one soft diagonal shaft behind everything ── */
+.projector-wash {
+  position: fixed;
+  top: -20%; left: -20%;
+  width: 140%; height: 140%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 60% 40% at 30% 25%, rgba(232,182,97,0.055) 0%, transparent 60%);
+  transform: rotate(-8deg);
+  filter: blur(60px);
 }
 
 /* ── Keyframes ── */
@@ -90,259 +148,800 @@ body::before {
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 /* ═══════════════════════════════════════════════
-   HOMEPAGE
+   HOMEPAGE — CINÉMA NOCTURNE EDITORIAL
    ═══════════════════════════════════════════════ */
 
-/* Featured hero card */
-.featured-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
+/* ── ① MASTHEAD ─────────────────────────────────
+   A 10px solid amber bar across the very top, then a Fraunces wordmark
+   pushed to the left with the issue metadata tucked underneath. The
+   mixed-case É is the whole trick — no uppercase, no Space Grotesk. */
+
+.masthead-bar {
+  height: 8px;
+  background: var(--amber);
+  width: 100%;
 }
-.featured-hero:hover {
-  border-color: rgba(212,168,83,0.2);
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,168,83,0.08);
+
+.masthead {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 24px;
+  padding: 44px 0 28px;
+  border-bottom: 1px solid var(--rule);
 }
-.featured-hero .featured-backdrop {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center 20%;
-  filter: blur(40px) brightness(0.25) saturate(1.4);
-  transform: scale(1.2);
-  transition: transform 8s ease;
+.masthead-title {
+  font-family: var(--font-display), 'Fraunces', Georgia, serif;
+  font-size: clamp(3.6rem, 9vw, 7.2rem);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
+  letter-spacing: 0.005em;
+  line-height: 0.85;
+  color: var(--cream);
+  margin: 0;
 }
-.featured-hero:hover .featured-backdrop {
-  transform: scale(1.25);
+.masthead-title .accent { color: var(--cream); }
+
+.masthead-issue {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.featured-hero .featured-gradient {
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.5) 50%, rgba(10,10,15,0.8) 100%);
+.masthead-issue .bullet { color: var(--vermilion); }
+
+.masthead-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding-top: 14px;
 }
-.featured-hero .featured-inner {
-  position: relative; z-index: 2;
-  display: flex; gap: 28px; align-items: center;
-  padding: 32px;
-  min-height: 220px;
+.masthead-date {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--cream);
 }
-@media (max-width: 600px) {
-  .featured-hero .featured-inner {
-    padding: 14px;
-    gap: 12px;
-    min-height: auto;
+.masthead-sub {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 640px) {
+  .masthead {
+    grid-template-columns: 1fr;
+    padding: 28px 0 20px;
+    gap: 14px;
   }
-  .featured-hero .featured-poster {
-    width: 72px !important;
-  }
-  .featured-hero .featured-eng-title {
-    display: none;
-  }
-  .featured-hero .featured-detail-link {
-    display: none;
+  .masthead-right {
+    text-align: left;
+    align-items: flex-start;
+    padding-top: 0;
   }
 }
 
-/* Movie grid: 4col → 3col → 2col */
+/* ── ② SEARCH SLATE ──────────────────────────────
+   A clapperboard: amber borders top and bottom, mono label on the left,
+   input in the middle, ENTER chip on the right, blinking vermilion ▸. */
+
+.search-slate {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-top: 2px solid var(--amber);
+  border-bottom: 2px solid var(--amber);
+  background: linear-gradient(180deg, rgba(232,182,97,0.03), rgba(232,182,97,0.01));
+  margin: 36px 0 48px;
+}
+.search-slate-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--amber);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.search-slate-label .sec { color: var(--vermilion); margin-right: 4px; }
+.search-slate-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body), sans-serif;
+  font-size: 1.04rem;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  padding: 6px 0;
+  width: 100%;
+}
+.search-slate-input::placeholder { color: rgba(235,227,208,0.32); }
+.search-slate-enter {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: var(--amber-dim);
+  border: 1px solid var(--amber-dim);
+  padding: 5px 10px;
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.search-slate-enter:hover {
+  color: var(--ink);
+  background: var(--amber);
+  border-color: var(--amber);
+}
+.search-slate-ping {
+  font-size: 1rem;
+  color: var(--vermilion);
+  animation: pingBlink 1.4s ease-in-out infinite;
+  line-height: 1;
+}
+@keyframes pingBlink {
+  0%, 100% { opacity: 0.25; transform: translateX(0); }
+  50%      { opacity: 1;    transform: translateX(3px); }
+}
+@media (max-width: 640px) {
+  .search-slate {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    padding: 12px 14px;
+  }
+  .search-slate-label {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    font-size: 0.58rem;
+  }
+  .search-slate-input { grid-column: 1; grid-row: 2; }
+  .search-slate-enter { grid-column: 2; grid-row: 2; }
+  .search-slate-ping { display: none; }
+}
+
+/* ── ③ THE EDITOR'S SLATE (4 featured films) ─────
+   Asymmetric: one big poster on the left, three smaller ones stepped
+   down and to the right. Each poster carries a huge screen-blended
+   serial number overlapping its top-left corner. */
+
+.editor-slate {
+  margin: 56px 0 72px;
+}
+.editor-slate-header {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.editor-slate-header .sec { color: var(--vermilion); font-size: 0.9rem; }
+.editor-slate-header .rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.editor-slate-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 36px;
+  align-items: flex-start;
+}
+@media (max-width: 900px) {
+  .editor-slate-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+/* The one big poster (rank 01) */
+.editor-card-lead {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.editor-card-lead:hover { transform: translateY(-6px); }
+.editor-card-lead .frame {
+  position: relative;
+  aspect-ratio: 2/3;
+  width: 100%;
+  background: #1A1920;
+  padding: 8px;
+  border: 1px solid var(--amber-dim);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.75),
+    inset 0 0 0 1px rgba(235,227,208,0.05);
+  overflow: hidden;
+}
+.editor-card-lead .frame::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 3px
+  );
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 3;
+}
+.editor-card-lead .serial {
+  position: absolute;
+  top: -20px; left: -8px;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 300;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+  font-size: clamp(6rem, 12vw, 10rem);
+  line-height: 0.8;
+  color: var(--amber);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  z-index: 4;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+.editor-card-lead .label {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.editor-card-lead .label-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 500;
+  color: var(--cream);
+  line-height: 1.05;
+  letter-spacing: 0.002em;
+  margin: 0;
+}
+.editor-card-lead .label-zh {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--amber);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.editor-card-lead .label-meta {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.editor-card-lead .label-meta .dot { color: var(--vermilion); padding: 0 6px; }
+
+.editor-slate-side {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 18px;
+}
+
+/* The 3 smaller posters, stepped */
+.editor-card-mini {
+  position: relative;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  padding-left: 0;
+}
+.editor-card-mini:nth-child(1) { padding-left: 0; }
+.editor-card-mini:nth-child(2) { padding-left: 24px; }
+.editor-card-mini:nth-child(3) { padding-left: 48px; }
+.editor-card-mini:hover {
+  transform: translateX(4px);
+}
+.editor-card-mini .mini-frame {
+  position: relative;
+  aspect-ratio: 2/3;
+  width: 120px;
+  background: #1A1920;
+  padding: 5px;
+  border: 1px solid var(--amber-dim);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+.editor-card-mini .mini-frame::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent 0, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px
+  );
+  pointer-events: none;
+  opacity: 0.3;
+  z-index: 3;
+}
+.editor-card-mini .mini-serial {
+  position: absolute;
+  top: -22px; left: -14px;
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+  font-size: 4.8rem;
+  line-height: 0.8;
+  color: var(--amber);
+  mix-blend-mode: screen;
+  opacity: 0.75;
+  font-weight: 300;
+  z-index: 4;
+  pointer-events: none;
+}
+.editor-card-mini .mini-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.editor-card-mini .mini-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
+  font-size: 1.14rem;
+  font-weight: 500;
+  color: var(--cream);
+  line-height: 1.1;
+  letter-spacing: 0.005em;
+  margin: 0;
+}
+.editor-card-mini .mini-zh {
+  font-family: var(--font-zh-display), serif;
+  font-size: 0.86rem;
+  color: var(--amber);
+  margin: 0;
+}
+.editor-card-mini .mini-dim {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+@media (max-width: 900px) {
+  .editor-card-mini:nth-child(1),
+  .editor-card-mini:nth-child(2),
+  .editor-card-mini:nth-child(3) { padding-left: 0; }
+}
+@media (max-width: 520px) {
+  .editor-card-mini { grid-template-columns: 96px 1fr; gap: 12px; }
+  .editor-card-mini .mini-frame { width: 96px; }
+  .editor-card-mini .mini-serial { font-size: 3.6rem; top: -16px; left: -8px; }
+}
+
+/* ── ④ AMC GRID ── 35mm contact-sheet re-skin ──── */
+
+.section-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.section-mark .sec { color: var(--vermilion); font-size: 0.9rem; }
+.section-mark .rule { flex: 1; height: 1px; background: var(--rule); }
+
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(14px, 2.2vw, 24px);
+  gap: clamp(18px, 2.4vw, 32px);
+  position: relative;
 }
 @media (max-width: 900px) {
   .movie-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 600px) {
-  .movie-grid { grid-template-columns: repeat(2, 1fr); }
+  .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
 }
 
-/* Poster card */
 .poster-card {
   position: relative;
   cursor: pointer;
-  transform-style: preserve-3d;
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 .poster-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-6px);
   z-index: 10;
 }
 .poster-card .poster-frame {
+  position: relative;
   aspect-ratio: 2/3;
   width: 100%;
-  overflow: hidden;
-  border-radius: 10px;
   background: #1A1920;
-  position: relative;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  transition: box-shadow 0.4s ease;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+  transition: box-shadow 0.4s, border-color 0.3s;
 }
 .poster-card:hover .poster-frame {
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(212,168,83,0.04);
+  border-color: rgba(217,79,42,0.4);
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.72),
+    0 0 0 1px rgba(217,79,42,0.25),
+    0 0 40px rgba(232,182,97,0.05);
 }
 .poster-card .poster-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(10,10,15,0.92) 0%, rgba(10,10,15,0.3) 40%, transparent 70%);
+  background: linear-gradient(to top, rgba(8,8,12,0.92) 0%, rgba(8,8,12,0.3) 40%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
   display: flex; flex-direction: column;
   align-items: flex-start; justify-content: flex-end;
   padding: 14px;
 }
-.poster-card:hover .poster-overlay {
-  opacity: 1;
-}
-.poster-card:hover .poster-title {
-  color: var(--parchment);
+.poster-card:hover .poster-overlay { opacity: 1; }
+.poster-card .poster-overlay-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--amber);
+  text-transform: uppercase;
 }
 
-/* Genre filter pill */
+.poster-card .poster-footer {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.poster-card .poster-title {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cream);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s;
+  margin: 0;
+}
+.poster-card .poster-meta {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.poster-card .poster-meta .rel { color: var(--amber-dim); }
+
+/* ── Filter chips — squared, mono, no rounded pills ── */
 .genre-pill {
-  padding: 6px 18px;
-  border-radius: 24px;
-  font-size: 0.75rem;
-  font-family: var(--font-body);
-  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.64rem;
+  border: 1px solid var(--rule);
   background: transparent;
   color: var(--muted);
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.05em;
-  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 .genre-pill:hover {
-  border-color: rgba(212,168,83,0.25);
-  color: var(--parchment);
+  border-color: rgba(232,182,97,0.35);
+  color: var(--cream);
 }
 .genre-pill.active {
-  border-color: rgba(212,168,83,0.5);
-  background: rgba(212,168,83,0.1);
-  color: var(--gold);
-  font-weight: 500;
+  border-color: var(--amber);
+  background: rgba(232,182,97,0.1);
+  color: var(--amber);
 }
 
-/* Sort button */
 .sort-btn {
-  padding: 5px 14px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-family: var(--font-body);
-  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 0;
+  font-size: 0.6rem;
+  font-family: var(--font-mono), monospace;
+  border: 1px solid var(--rule);
   background: transparent;
   color: var(--muted);
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-.sort-btn:hover {
-  color: var(--parchment);
-}
+.sort-btn:hover { color: var(--cream); }
 .sort-btn.active {
-  border-color: rgba(212,168,83,0.4);
-  background: rgba(212,168,83,0.08);
-  color: var(--gold);
+  border-color: var(--amber);
+  background: rgba(232,182,97,0.08);
+  color: var(--amber);
 }
 
-/* Coming soon strip */
-.coming-soon-card {
-  flex-shrink: 0;
-  width: 150px;
-  cursor: pointer;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  transition: all 0.2s ease;
-}
-.coming-soon-card:hover {
-  border-color: rgba(212,168,83,0.2);
-  transform: translateY(-2px);
-}
-
-/* Watchlist button */
+/* ── Watchlist ── */
 .watchlist-btn {
-  position: absolute; top: 8px; right: 8px; z-index: 5;
-  width: 30px; height: 30px; border-radius: 50%;
+  position: absolute; top: 10px; right: 10px; z-index: 5;
+  width: 28px; height: 28px; border-radius: 50%;
   border: none;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
   backdrop-filter: blur(8px);
 }
 .watchlist-btn.saved {
-  background: var(--gold);
-  color: var(--bg);
-  box-shadow: 0 2px 12px rgba(212,168,83,0.3);
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: 0 2px 12px rgba(235,227,208,0.22);
 }
 .watchlist-btn.unsaved {
-  background: rgba(0,0,0,0.45);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.55);
+  background: rgba(8,8,12,0.55);
+  border: 1px solid rgba(235,227,208,0.18);
+  color: rgba(235,227,208,0.6);
 }
-.watchlist-btn:hover {
-  transform: scale(1.15);
+.watchlist-btn:hover { transform: scale(1.15); }
+
+/* ── ⑤ / ⑥ Ticket stubs for Recent / Coming ── */
+.ticket-stub {
+  position: relative;
+  flex-shrink: 0;
+  width: 220px;
+  cursor: pointer;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  display: flex;
+  gap: 0;
+  transition: all 0.2s ease;
+  clip-path: polygon(
+    0 0, 100% 0, 100% calc(50% - 6px),
+    calc(100% - 5px) 50%, 100% calc(50% + 6px),
+    100% 100%, 0 100%, 0 calc(50% + 6px),
+    5px 50%, 0 calc(50% - 6px)
+  );
+}
+.ticket-stub:hover {
+  border-color: rgba(232,182,97,0.28);
+  transform: translateX(4px);
+}
+.ticket-stub .stub-poster {
+  width: 64px;
+  flex-shrink: 0;
+  background: #1A1920;
+  position: relative;
+}
+.ticket-stub .stub-body {
+  flex: 1;
+  padding: 14px 16px 14px 18px;
+  border-left: 1px dashed var(--amber-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+  min-width: 0;
+}
+.ticket-stub .stub-title {
+  font-family: var(--font-zh-display), serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+.ticket-stub .stub-rel {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+}
+.ticket-stub .stub-rel.now  { color: var(--vermilion); }
+.ticket-stub .stub-genre {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.54rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 /* ═══════════════════════════════════════════════
-   MOVIE DETAIL PAGE
+   MOVIE DETAIL PAGE — CINÉMA NOCTURNE
    ═══════════════════════════════════════════════ */
 
 /* Hero backdrop blur */
 .hero-backdrop {
   position: absolute; inset: 0;
   background-size: cover; background-position: center top;
-  filter: blur(40px) brightness(0.25) saturate(1.4);
-  transform: scale(1.2);
+  filter: blur(60px) brightness(0.22) saturate(1.3);
+  transform: scale(1.25);
   z-index: 1;
 }
+.hero-backdrop::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center 30%, transparent 20%, rgba(8,8,12,0.85) 85%);
+}
 
-/* Hero inner: horizontal → vertical on mobile */
+/* Hero: vertical stack, serial number first, huge title second */
 .movie-hero-inner {
   position: relative; z-index: 3;
   max-width: 900px; margin: 0 auto;
-  padding: 44px 28px 52px;
-  display: flex; gap: 32px; align-items: flex-end;
+  padding: 64px 28px 56px;
 }
 @media (max-width: 640px) {
-  .movie-hero-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px 16px 36px;
-    gap: 18px;
-  }
+  .movie-hero-inner { padding: 40px 18px 36px; }
 }
 
-/* Hero poster size */
-.movie-hero-poster { flex-shrink: 0; width: 160px; }
+.hero-serial {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-serial .sec { color: var(--vermilion); font-size: 0.9rem; }
+
+.hero-title-zh {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  margin: 0 0 12px;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.8);
+}
+.hero-title-en {
+  font-family: var(--font-display-alt), 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 400;
+  color: var(--amber-dim);
+  letter-spacing: 0.04em;
+  margin: 0 0 32px;
+}
+
+.hero-body {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 28px;
+  align-items: start;
+}
 @media (max-width: 640px) {
-  .movie-hero-poster { width: 115px !important; }
+  .hero-body { grid-template-columns: 108px 1fr; gap: 18px; }
+}
+.movie-hero-poster {
+  width: 140px;
+  aspect-ratio: 2/3;
+  background: #1A1920;
+  border: 1px solid var(--amber-dim);
+  padding: 5px;
+  box-shadow: 0 28px 80px rgba(0,0,0,0.72);
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 640px) { .movie-hero-poster { width: 108px; } }
+
+/* Stat grid — mono label ······· value */
+.stat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-bottom: 6px;
+  border-bottom: 1px dotted rgba(235,227,208,0.14);
+}
+.stat-row .stat-label {
+  color: var(--amber-dim);
+  flex-shrink: 0;
+}
+.stat-row .stat-dots {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 1px dotted rgba(235,227,208,0.14);
+  transform: translateY(-3px);
+}
+.stat-row .stat-value {
+  color: var(--cream);
+  font-weight: 500;
+  text-align: right;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Content area padding */
+.hero-synopsis {
+  margin-top: 24px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: rgba(235,227,208,0.78);
+  letter-spacing: 0.01em;
+}
+
+/* Content area */
 .content-area {
   max-width: 900px; margin: 0 auto;
-  padding: 0 28px 80px;
+  padding: 0 28px 96px;
+  position: relative;
+  z-index: 2;
 }
 @media (max-width: 640px) {
-  .content-area { padding: 0 16px 64px; }
+  .content-area { padding: 0 18px 72px; }
 }
 
-/* Tab strip — redesigned */
+/* Reel tab (pre / post) */
 .tab-strip {
   display: flex;
   gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 28px;
 }
-.tab-strip button {
-  padding: 12px 28px;
-  font-size: 0.88rem;
-  letter-spacing: 0.12em;
+.reel-tab {
+  background: transparent;
+  border: none;
+  padding: 16px 24px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.reel-tab:hover { color: var(--cream); }
+.reel-tab.active { color: var(--cream); }
+.reel-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--vermilion);
+}
+.reel-tab .reel-marker {
+  color: var(--vermilion);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.reel-tab.active .reel-marker { opacity: 1; }
 @media (max-width: 480px) {
-  .tab-strip button { padding: 10px 16px; font-size: 0.8rem; letter-spacing: 0.06em; flex: 1; text-align: center; }
+  .reel-tab { padding: 14px 14px; font-size: 0.62rem; flex: 1; justify-content: center; }
 }
 
 /* Vocab grid: 2col → 1col on mobile */
@@ -381,15 +980,15 @@ body::before {
    DECORATIVE ELEMENTS
    ═══════════════════════════════════════════════ */
 
-/* Gold accent line */
+/* Gold accent line (legacy utility — kept for masthead rule fallback) */
 .gold-rule {
   width: 48px;
   height: 1px;
-  background: linear-gradient(to right, var(--gold), transparent);
-  opacity: 0.5;
+  background: linear-gradient(to right, var(--amber), transparent);
+  opacity: 0.55;
 }
 
-/* Section divider with diamond */
+/* Section divider (legacy — unused in new layout but kept for PreMovie fallback) */
 .section-divider {
   display: flex;
   align-items: center;
@@ -401,31 +1000,88 @@ body::before {
   content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent);
+  background: linear-gradient(to right, transparent, var(--rule) 30%, var(--rule) 70%, transparent);
 }
 
-/* Ambient glow behind featured content */
-.ambient-glow {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(60px);
-  opacity: 0.06;
+/* Editorial section label — §·N·— rule —·TITLE·— rule — */
+.editorial-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 48px 0 24px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
 }
+.editorial-divider .sec { color: var(--vermilion); font-size: 0.82rem; }
+.editorial-divider .rule-short { width: 28px; height: 1px; background: var(--rule); flex-shrink: 0; }
+.editorial-divider .rule-long  { flex: 1;      height: 1px; background: var(--rule); }
+.editorial-divider .title { color: var(--cream); }
 
-/* Similar movie card */
+/* Similar movie → 『ALSO IN THIS ISSUE』 — square ticket row */
 .similar-card {
   flex-shrink: 0;
-  width: 140px;
+  width: 200px;
   cursor: pointer;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  transition: all 0.2s ease;
+  background: transparent;
+  border-top: 1px dashed var(--amber-dim);
+  border-bottom: 1px dashed var(--amber-dim);
+  border-left: none; border-right: none;
+  border-radius: 0;
+  padding: 18px 14px;
+  transition: all 0.25s ease;
+  display: flex;
+  gap: 14px;
+  align-items: center;
 }
 .similar-card:hover {
-  border-color: rgba(212,168,83,0.2);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  border-color: var(--amber);
+  transform: translateX(6px);
+  background: rgba(232,182,97,0.035);
 }
+.similar-card .similar-poster {
+  width: 52px;
+  aspect-ratio: 2/3;
+  background: #1A1920;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--rule);
+}
+.similar-card .similar-body { min-width: 0; flex: 1; }
+.similar-card .similar-title {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 4px;
+}
+.similar-card .similar-meta {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Page header — now a thin mono strip */
+.page-header {
+  padding: 12px 28px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+@media (max-width: 640px) {
+  .page-header { padding: 10px 16px; font-size: 0.58rem; }
+}
+.page-header .sec { color: var(--vermilion); }
+.page-header .back { color: var(--amber-dim); cursor: pointer; transition: color 0.2s; }
+.page-header .back:hover { color: var(--amber); }
+.page-header .title { color: var(--cream); }

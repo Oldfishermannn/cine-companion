@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { CatalogMovie } from "./catalog";
+import { FEATURED_FILMS, type FeaturedFilm } from "./data/featured";
 import { useLang } from "./i18n/LangProvider";
 export type { CatalogMovie };
 
@@ -21,13 +22,13 @@ function fmtReleaseDate(s: string | undefined): string {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-function isPosterMatch(movie: CatalogMovie, d: { title?: string; year?: string }): boolean {
+function isPosterMatch(movie: { title: string; year?: string }, d: { title?: string; year?: string }): boolean {
   const normalize = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
   const expected = normalize(movie.title);
   const got = normalize(d.title || "");
   const gotYear = parseInt((d.year || "").slice(0, 4), 10);
-  const expYear = parseInt(movie.year, 10);
+  const expYear = parseInt(movie.year || "", 10);
   if (!isNaN(gotYear) && !isNaN(expYear) && Math.abs(gotYear - expYear) > 3) return false;
   if (got === expected) return true;
   if (got.includes(expected) && got.length <= expected.length * 2.0) return true;
@@ -77,18 +78,21 @@ function HScrollRow({ children }: { children: React.ReactNode }) {
   }, [check]);
 
   const scroll = (dir: number) => {
-    ref.current?.scrollBy({ left: dir * 220, behavior: "smooth" });
+    ref.current?.scrollBy({ left: dir * 240, behavior: "smooth" });
   };
 
   const arrowStyle = (visible: boolean): React.CSSProperties => ({
     position: "absolute", top: "50%", transform: "translateY(-50%)",
-    width: 32, height: 32, borderRadius: "50%",
-    background: "rgba(17,17,23,0.85)", border: "1px solid var(--border)",
-    color: "var(--parchment)", fontSize: "0.8rem",
+    width: 30, height: 30, borderRadius: 0,
+    background: "rgba(19,19,27,0.9)",
+    border: "1px solid var(--amber-dim)",
+    color: "var(--amber)",
+    fontFamily: "var(--font-mono), monospace",
+    fontSize: "0.7rem",
     display: "flex", alignItems: "center", justifyContent: "center",
     cursor: "pointer", zIndex: 5, backdropFilter: "blur(8px)",
     opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none",
-    transition: "opacity 0.2s, background 0.2s",
+    transition: "opacity 0.2s, background 0.2s, color 0.2s",
   });
 
   return (
@@ -96,15 +100,15 @@ function HScrollRow({ children }: { children: React.ReactNode }) {
       <button
         onClick={() => scroll(-1)}
         style={{ ...arrowStyle(canLeft), left: -6 }}
-        onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.2)"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "rgba(17,17,23,0.85)"; }}
+        onMouseEnter={e => { e.currentTarget.style.background = "var(--amber)"; e.currentTarget.style.color = "var(--ink)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "rgba(19,19,27,0.9)"; e.currentTarget.style.color = "var(--amber)"; }}
       >
         ‹
       </button>
       <div
         ref={ref}
         style={{
-          display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8,
+          display: "flex", gap: 14, overflowX: "auto", paddingBottom: 8,
           scrollbarWidth: "none",
         }}
       >
@@ -113,8 +117,8 @@ function HScrollRow({ children }: { children: React.ReactNode }) {
       <button
         onClick={() => scroll(1)}
         style={{ ...arrowStyle(canRight), right: -6 }}
-        onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,151,58,0.2)"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "rgba(17,17,23,0.85)"; }}
+        onMouseEnter={e => { e.currentTarget.style.background = "var(--amber)"; e.currentTarget.style.color = "var(--ink)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "rgba(19,19,27,0.9)"; e.currentTarget.style.color = "var(--amber)"; }}
       >
         ›
       </button>
@@ -125,6 +129,171 @@ function HScrollRow({ children }: { children: React.ReactNode }) {
 function movieUrl(m: CatalogMovie): string {
   return `/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`;
 }
+
+/* ═══════════════════════════════════════════════
+   ② SEARCH SLATE
+   ═══════════════════════════════════════════════ */
+
+function SearchSlate() {
+  const router = useRouter();
+  const [q, setQ] = useState("");
+
+  const submit = () => {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    router.push(`/movie?q=${encodeURIComponent(trimmed)}`);
+  };
+
+  return (
+    <div className="search-slate fade-up" style={{ animationDelay: "80ms" }}>
+      <span className="search-slate-label">
+        <span className="sec">§</span> Scene ▸
+      </span>
+      <input
+        className="search-slate-input"
+        value={q}
+        onChange={e => setQ(e.target.value)}
+        onKeyDown={e => { if (e.key === "Enter") submit(); }}
+        placeholder="搜索电影  /  Search any film…"
+        spellCheck={false}
+      />
+      <button className="search-slate-enter" onClick={submit}>[ENTER]</button>
+      <span className="search-slate-ping" aria-hidden>▸</span>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ③ THE EDITOR'S SLATE — 4 featured films
+   ═══════════════════════════════════════════════ */
+
+interface FeaturedPoster { poster: string | null; fetched: boolean; }
+
+function FeaturedSlate() {
+  const router = useRouter();
+  const [posters, setPosters] = useState<FeaturedPoster[]>(
+    FEATURED_FILMS.map(() => ({ poster: null, fetched: false }))
+  );
+
+  // Parallel poster prefetch on mount
+  useEffect(() => {
+    FEATURED_FILMS.forEach((film, i) => {
+      fetch(`/api/movie?q=${encodeURIComponent(film.title)}`)
+        .then(r => r.json())
+        .then(d => {
+          const matched = isPosterMatch({ title: film.title, year: film.year }, d);
+          setPosters(prev => {
+            const next = [...prev];
+            next[i] = { poster: matched && d.poster ? d.poster : null, fetched: true };
+            return next;
+          });
+        })
+        .catch(() => {
+          setPosters(prev => {
+            const next = [...prev];
+            next[i] = { poster: null, fetched: true };
+            return next;
+          });
+        });
+    });
+  }, []);
+
+  const go = (film: FeaturedFilm) => {
+    router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}`);
+  };
+
+  const [lead, ...rest] = FEATURED_FILMS;
+  const leadPoster = posters[0];
+
+  return (
+    <section className="editor-slate fade-up" style={{ animationDelay: "140ms" }}>
+      <div className="editor-slate-header">
+        <span className="sec">§</span>
+        <span>01 · The Editor&rsquo;s Slate</span>
+        <span className="rule" />
+      </div>
+
+      <div className="editor-slate-grid">
+        {/* ── Lead poster ── */}
+        <div className="editor-card-lead" onClick={() => go(lead)} role="link" tabIndex={0}
+          onKeyDown={e => { if (e.key === "Enter") go(lead); }}
+        >
+          <div className="frame">
+            <span className="serial" aria-hidden>01</span>
+            {leadPoster?.poster ? (
+              <Image
+                src={leadPoster.poster}
+                alt={lead.title}
+                fill
+                priority
+                loading="eager"
+                sizes="(max-width: 900px) 100vw, 560px"
+                style={{ objectFit: "cover" }}
+              />
+            ) : !leadPoster?.fetched ? (
+              <div className="skeleton" style={{ position: "absolute", inset: 8 }} />
+            ) : (
+              <div style={{ position: "absolute", inset: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "#1A1920" }}>
+                <span style={{ fontSize: "3rem", opacity: 0.2 }}>🎬</span>
+              </div>
+            )}
+          </div>
+          <div className="label">
+            <h2 className="label-title">{lead.title}</h2>
+            <p className="label-zh">{lead.zh}</p>
+            <div className="label-meta">
+              {lead.year}<span className="dot">·</span>{lead.note}
+            </div>
+          </div>
+        </div>
+
+        {/* ── 3 side posters ── */}
+        <div className="editor-slate-side">
+          {rest.map((film, i) => {
+            const p = posters[i + 1];
+            const serial = String(i + 2).padStart(2, "0");
+            return (
+              <div key={film.title} className="editor-card-mini"
+                onClick={() => go(film)} role="link" tabIndex={0}
+                onKeyDown={e => { if (e.key === "Enter") go(film); }}
+              >
+                <div className="mini-frame">
+                  <span className="mini-serial" aria-hidden>{serial}</span>
+                  {p?.poster ? (
+                    <Image
+                      src={p.poster}
+                      alt={film.title}
+                      fill
+                      priority
+                      loading="eager"
+                      sizes="120px"
+                      style={{ objectFit: "cover" }}
+                    />
+                  ) : !p?.fetched ? (
+                    <div className="skeleton" style={{ position: "absolute", inset: 5 }} />
+                  ) : (
+                    <div style={{ position: "absolute", inset: 5, display: "flex", alignItems: "center", justifyContent: "center", background: "#1A1920" }}>
+                      <span style={{ fontSize: "1.6rem", opacity: 0.2 }}>🎬</span>
+                    </div>
+                  )}
+                </div>
+                <div className="mini-meta">
+                  <h3 className="mini-title">{film.title}</h3>
+                  <p className="mini-zh">{film.zh}</p>
+                  <span className="mini-dim">{film.year} · {film.note}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN — HomeClient
+   ═══════════════════════════════════════════════ */
 
 export function HomeClient({ catalog, genres }: {
   catalog: CatalogMovie[];
@@ -137,12 +306,13 @@ export function HomeClient({ catalog, genres }: {
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
-  const { t, title: tTitle, genre: tGenre, lang } = useLang();
+  const { t, title: tTitle, genre: tGenre } = useLang();
 
   useEffect(() => { setWatchlist(loadWatchlist()); }, []);
 
   const toggleWatchlist = useCallback((title: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setWatchlist(prev => {
       const next = new Set(prev);
       if (next.has(title)) next.delete(title); else next.add(title);
@@ -152,7 +322,10 @@ export function HomeClient({ catalog, genres }: {
   }, []);
 
   const fetchPoster = useCallback((movie: CatalogMovie, i: number) => {
-    if (posters[i].fetched) return;
+    setPosters(prev => {
+      if (prev[i].fetched) return prev;
+      return prev;
+    });
     fetch(`/api/movie?q=${encodeURIComponent(movie.title)}`)
       .then(r => r.json())
       .then(d => {
@@ -171,10 +344,9 @@ export function HomeClient({ catalog, genres }: {
         n[i] = { poster: null, fetched: true };
         return n;
       }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Eagerly load first 8 posters
+  // Eagerly load first 8 posters on mount
   useEffect(() => {
     catalog.slice(0, 8).forEach((movie, i) => fetchPoster(movie, i));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,7 +364,6 @@ export function HomeClient({ catalog, genres }: {
     return list;
   }, [genreFilter, sortMode, catalog]);
 
-  // Recent releases: movies released within the last 14 days (本周新片)
   const now = Date.now();
   const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
   const recentReleases = useMemo(() => {
@@ -205,7 +376,6 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catalog]);
 
-  // Coming soon: movies with future release dates
   const comingSoon = useMemo(() => {
     return catalog
       .filter(m => parseReleaseDate(m.released) > now)
@@ -217,278 +387,70 @@ export function HomeClient({ catalog, genres }: {
     ? catalog.filter(m => m.genre === genreFilter).length
     : catalog.length;
 
-  // Featured movie = top-rated, shown as separate hero (also stays in grid)
-  const featured = sortMode === "rating" && !genreFilter && indexedMovies.length > 0 ? indexedMovies[0] : null;
   const gridMovies = indexedMovies;
 
   return (
     <>
-      {/* ── Featured Hero ── */}
-      {featured && (
-        <Link
-          href={movieUrl(featured.movie)}
-          prefetch={true}
-          className="featured-hero w-full fade-up"
-          style={{ maxWidth: 960, animationDelay: "60ms", marginTop: 32, textDecoration: "none", color: "inherit", display: "block" }}
-        >
-          {posters[featured.origIdx].poster && (
-            <div
-              className="featured-backdrop"
-              style={{ backgroundImage: `url(${posters[featured.origIdx].poster})` }}
-            />
-          )}
-          <div className="featured-gradient" />
-          <div className="featured-inner">
-            {/* Featured poster */}
-            <div className="featured-poster" style={{
-              flexShrink: 0, width: 130, aspectRatio: "2/3",
-              borderRadius: 10, overflow: "hidden",
-              boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "#1A1920",
+      {/* ── ② SEARCH SLATE ── */}
+      <SearchSlate />
+
+      {/* ── ③ EDITOR'S SLATE ── */}
+      <FeaturedSlate />
+
+      {/* ── ④ NOW SHOWING (AMC GRID) ── */}
+      <section className="fade-up" style={{ animationDelay: "180ms", marginTop: 12 }}>
+        <div className="section-mark">
+          <span className="sec">§</span>
+          <span>02 · Now Showing · AMC · {filterCount} Films</span>
+          <span className="rule" />
+        </div>
+
+        {/* Filter chips + sort */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+            <button
+              className={`genre-pill ${!genreFilter ? "active" : ""}`}
+              onClick={() => setGenreFilter(null)}
+            >
+              {t("home.filterAll")}
+            </button>
+            {genres.map(g => (
+              <button
+                key={g}
+                className={`genre-pill ${genreFilter === g ? "active" : ""}`}
+                onClick={() => setGenreFilter(genreFilter === g ? null : g)}
+              >
+                {tGenre(g)}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8 }}>
+            <span style={{
+              fontSize: "0.58rem",
+              color: "var(--muted)",
+              letterSpacing: "0.18em",
+              fontFamily: "var(--font-mono), monospace",
+              textTransform: "uppercase",
+              marginRight: 6,
             }}>
-              {posters[featured.origIdx].poster ? (
-                <Image
-                  src={posters[featured.origIdx].poster!}
-                  alt={tTitle(featured.movie)}
-                  width={130}
-                  height={195}
-                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                />
-              ) : !posters[featured.origIdx].fetched ? (
-                <div className="skeleton" style={{ width: "100%", height: "100%" }} />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.4rem", opacity: 0.25 }}>🎬</span>
-                </div>
-              )}
-            </div>
-
-            {/* Featured info */}
-            <div className="featured-info" style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <span style={{
-                  fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase",
-                  color: "var(--gold)", fontFamily: "var(--font-body)", fontWeight: 500,
-                  padding: "2px 8px", borderRadius: 4,
-                  background: "rgba(212,168,83,0.1)", border: "1px solid rgba(212,168,83,0.15)",
-                }}>
-                  {t("home.featuredBadge", { rank: featured.movie.rank })}
-                </span>
-                <span style={{ fontSize: "0.62rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                  {tGenre(featured.movie.genre)}
-                </span>
-              </div>
-              <h2 style={{
-                fontFamily: lang === "en"
-                  ? "var(--font-display)"
-                  : "system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif",
-                fontSize: "clamp(1.25rem, 3vw, 2rem)",
-                fontWeight: 600,
-                color: "var(--parchment)",
-                margin: "0 0 2px",
-                lineHeight: 1.2,
-                letterSpacing: "0.02em",
-              }}>
-                {tTitle(featured.movie)}
-              </h2>
-              <p className="featured-eng-title" style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "0.88rem",
-                color: "var(--muted)",
-                margin: "0 0 10px",
-                letterSpacing: "0.04em",
-                fontStyle: "italic",
-              }}>
-                {lang === "en" ? featured.movie.zh : featured.movie.title}
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                  {t("home.releasedOn", { date: fmtReleaseDate(featured.movie.released) || featured.movie.year })}
-                </span>
-                <span className="featured-detail-link" style={{
-                  fontSize: "0.66rem", color: "var(--gold-dim)", fontFamily: "var(--font-body)",
-                  display: "flex", alignItems: "center", gap: 4,
-                }}>
-                  {t("home.viewDetails")}
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ marginTop: 1 }}>
-                    <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              </div>
-            </div>
+              {t("home.countSuffix", { n: filterCount })}
+            </span>
+            {([
+              { mode: "rating" as SortMode, labelKey: "home.sortByRating" },
+              { mode: "newest" as SortMode, labelKey: "home.sortByNewest" },
+              { mode: "oldest" as SortMode, labelKey: "home.sortByOldest" },
+            ]).map(({ mode, labelKey }) => (
+              <button
+                key={mode}
+                className={`sort-btn ${sortMode === mode ? "active" : ""}`}
+                onClick={() => setSortMode(mode)}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
           </div>
-        </Link>
-      )}
-
-      {/* ── Recent Releases ── */}
-      {recentReleases.length > 0 && (
-        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 28, marginBottom: 4 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>{t("home.recentReleases")}</span>
-          </div>
-          <HScrollRow>
-            {recentReleases.map(m => {
-              const idx = catalog.findIndex(c => c.title === m.title);
-              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
-              return (
-                <div
-                  key={m.title}
-                  onClick={() => router.push(movieUrl(m))}
-                  style={{
-                    flexShrink: 0, width: 200, cursor: "pointer",
-                    background: "var(--bg-card)", border: "1px solid var(--border)",
-                    borderRadius: 12, overflow: "hidden",
-                    transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
-                    display: "flex", flexDirection: "row", gap: 0,
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(74,222,128,0.25)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-                >
-                  <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
-                    {posterSrc ? (
-                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 4, minWidth: 0 }}>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.85rem",
-                      color: "var(--parchment)", margin: 0,
-                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
-                    }}>
-                      {tTitle(m)}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.7rem",
-                      color: "#4ADE80", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
-                    }}>
-                      {t("home.releasedOn", { date: fmtReleaseDate(m.released) })}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.65rem",
-                      color: "var(--muted)", margin: 0, fontWeight: 300,
-                    }}>
-                      {tGenre(m.genre)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </HScrollRow>
-        </div>
-      )}
-
-      {/* ── Coming Soon ── */}
-      {comingSoon.length > 0 && (
-        <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "120ms", marginTop: 20, marginBottom: 4 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>{t("home.comingSoon")}</span>
-          </div>
-          <HScrollRow>
-            {comingSoon.map(m => {
-              const idx = catalog.findIndex(c => c.title === m.title);
-              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
-              return (
-                <div
-                  key={m.title}
-                  onClick={() => router.push(movieUrl(m))}
-                  style={{
-                    flexShrink: 0, width: 200, cursor: "pointer",
-                    background: "var(--bg-card)", border: "1px solid var(--border)",
-                    borderRadius: 12, overflow: "hidden",
-                    transition: "border-color 0.2s, transform 0.2s, box-shadow 0.2s",
-                    display: "flex", flexDirection: "row", gap: 0,
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,168,83,0.25)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-                >
-                  <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
-                    {posterSrc ? (
-                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 4, minWidth: 0 }}>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.85rem",
-                      color: "var(--parchment)", margin: 0,
-                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
-                    }}>
-                      {tTitle(m)}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.7rem",
-                      color: "var(--gold-dim)", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
-                    }}>
-                      {t("home.releasedOn", { date: fmtReleaseDate(m.released) })}
-                    </p>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.65rem",
-                      color: "var(--muted)", margin: 0, fontWeight: 300,
-                    }}>
-                      {tGenre(m.genre)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </HScrollRow>
-        </div>
-      )}
-
-      {/* ── Filter + Sort Controls ── */}
-      <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "140ms", marginTop: 24, marginBottom: 12 }}>
-        {/* Genre pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 14 }}>
-          <button
-            className={`genre-pill ${!genreFilter ? "active" : ""}`}
-            onClick={() => setGenreFilter(null)}
-          >
-            {t("home.filterAll")}
-          </button>
-          {genres.map(g => (
-            <button
-              key={g}
-              className={`genre-pill ${genreFilter === g ? "active" : ""}`}
-              onClick={() => setGenreFilter(genreFilter === g ? null : g)}
-            >
-              {tGenre(g)}
-            </button>
-          ))}
         </div>
 
-        {/* Sort + count */}
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: "0.65rem", color: "var(--faint)", letterSpacing: "0.06em", fontFamily: "var(--font-body)", marginRight: 6, fontWeight: 300 }}>
-            {t("home.countSuffix", { n: filterCount })}
-          </span>
-          {([
-            { mode: "rating" as SortMode, labelKey: "home.sortByRating" },
-            { mode: "newest" as SortMode, labelKey: "home.sortByNewest" },
-            { mode: "oldest" as SortMode, labelKey: "home.sortByOldest" },
-          ]).map(({ mode, labelKey }) => (
-            <button
-              key={mode}
-              className={`sort-btn ${sortMode === mode ? "active" : ""}`}
-              onClick={() => setSortMode(mode)}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Movie Grid ── */}
-      <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "220ms" }}>
         {gridMovies.length > 0 ? (
           <div className="movie-grid">
             {gridMovies.map(({ movie, origIdx }) => (
@@ -506,20 +468,101 @@ export function HomeClient({ catalog, genres }: {
             ))}
           </div>
         ) : (
-          <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+          <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.78rem", color: "var(--muted)", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase" }}>
             {t("home.noMatches")}
           </p>
         )}
 
-        <p style={{ textAlign: "center", marginTop: 28, fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--faint)", textTransform: "uppercase", fontWeight: 300 }}>
-          {t("home.showingAll", { n: filterCount })}
+        <p style={{ textAlign: "center", marginTop: 32, fontSize: "0.56rem", letterSpacing: "0.22em", color: "var(--faint)", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
+          — {t("home.showingAll", { n: filterCount })} —
         </p>
-      </div>
+      </section>
+
+      {/* ── ⑤ RECENT RELEASES ── */}
+      {recentReleases.length > 0 && (
+        <section className="fade-up" style={{ animationDelay: "220ms", marginTop: 56 }}>
+          <div className="section-mark">
+            <span className="sec">§</span>
+            <span>03 · Recent Releases</span>
+            <span className="rule" />
+          </div>
+          <HScrollRow>
+            {recentReleases.map(m => {
+              const idx = catalog.findIndex(c => c.title === m.title);
+              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
+              return (
+                <div
+                  key={m.title}
+                  className="ticket-stub"
+                  onClick={() => router.push(movieUrl(m))}
+                >
+                  <div className="stub-poster">
+                    {posterSrc ? (
+                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="stub-body">
+                    <p className="stub-title">{tTitle(m)}</p>
+                    <span className="stub-rel now">REL · {fmtReleaseDate(m.released)}</span>
+                    <span className="stub-genre">{tGenre(m.genre)}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </HScrollRow>
+        </section>
+      )}
+
+      {/* ── ⑥ COMING SOON ── */}
+      {comingSoon.length > 0 && (
+        <section className="fade-up" style={{ animationDelay: "240ms", marginTop: 48 }}>
+          <div className="section-mark">
+            <span className="sec">§</span>
+            <span>04 · Coming Soon</span>
+            <span className="rule" />
+          </div>
+          <HScrollRow>
+            {comingSoon.map(m => {
+              const idx = catalog.findIndex(c => c.title === m.title);
+              const posterSrc = idx >= 0 ? posters[idx]?.poster : null;
+              return (
+                <div
+                  key={m.title}
+                  className="ticket-stub"
+                  onClick={() => router.push(movieUrl(m))}
+                >
+                  <div className="stub-poster">
+                    {posterSrc ? (
+                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="stub-body">
+                    <p className="stub-title">{tTitle(m)}</p>
+                    <span className="stub-rel">REL · {fmtReleaseDate(m.released)}</span>
+                    <span className="stub-genre">{tGenre(m.genre)}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </HScrollRow>
+        </section>
+      )}
     </>
   );
 }
 
-/* ── Poster Card ── */
+/* ─────────────────────────────────────────────────
+   PosterCard — re-skinned
+   ───────────────────────────────────────────────── */
+
 function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, onToggleWatchlist, onVisible, href }: {
   movie: CatalogMovie;
   posterInfo: PosterInfo;
@@ -530,10 +573,9 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
   onVisible: () => void;
   href: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const { t, title: tTitle } = useLang();
 
-  // IntersectionObserver for lazy poster fetching
   useEffect(() => {
     if (posterInfo.fetched || index < 8) return;
     const el = ref.current;
@@ -551,7 +593,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
 
   return (
     <Link
-      ref={ref as React.Ref<HTMLAnchorElement>}
+      ref={ref}
       href={href}
       prefetch={true}
       className={`poster-card ${posterInfo.fetched ? "poster-enter" : ""}`}
@@ -575,11 +617,8 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
               sizes="(max-width: 768px) 45vw, 22vw"
             />
             <div className="poster-overlay">
-              <span style={{
-                fontFamily: "var(--font-body)", fontSize: "0.6rem",
-                color: "var(--gold)", letterSpacing: "0.08em", fontWeight: 400,
-              }}>
-                {t("home.viewDetailsArrow")}
+              <span className="poster-overlay-label">
+                View Details ▸
               </span>
             </div>
           </>
@@ -590,7 +629,6 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
           </div>
         )}
 
-        {/* Watchlist bookmark */}
         <button
           className={`watchlist-btn ${inWatchlist ? "saved" : "unsaved"}`}
           onClick={(e) => onToggleWatchlist(movie.title, e)}
@@ -600,25 +638,10 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
         </button>
       </div>
 
-      {/* Title + date below poster */}
-      <div style={{ marginTop: 10, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 6 }}>
-        <p className="poster-title" style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "0.82rem",
-          color: "var(--muted)",
-          letterSpacing: "0.02em",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          flex: 1,
-          transition: "color 0.2s",
-          fontWeight: 400,
-          margin: 0,
-        }}>
-          {displayTitle}
-        </p>
-        <span style={{ fontSize: "0.66rem", color: "var(--faint)", letterSpacing: "0.04em", flexShrink: 0, fontWeight: 300 }}>
-          {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}
+      <div className="poster-footer">
+        <p className="poster-title">{displayTitle}</p>
+        <span className="poster-meta">
+          <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}
         </span>
       </div>
     </Link>

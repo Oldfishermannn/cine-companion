@@ -179,17 +179,27 @@ function MoviePageContent() {
 
   if (!query) { router.push("/"); return null; }
 
-  return (
-    <main className="page-enter" style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  // ── Catalog index (e.g. "03 / 19"). If the query is not in catalog,
+  //    fall back to `§ Non-Catalog`. Used in the hero serial line and in
+  //    the sticky header to echo the editorial "file number" feel.
+  const catalogIdx = MOVIE_CATALOG.findIndex(m => m.title === query);
+  const serialLine = catalogIdx >= 0
+    ? `File · ${String(catalogIdx + 1).padStart(2, "0")} / ${String(MOVIE_CATALOG.length).padStart(2, "0")}`
+    : "File · Non-Catalog";
 
-      {/* Sticky Header — glassmorphism */}
+  return (
+    <main className="page-enter" style={{ minHeight: "100vh", background: "var(--ink)" }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div className="masthead-bar" />
+      <div className="scanline" />
+
+      {/* ── Sticky Header — mono editorial file slug ── */}
       <header className="page-header" style={{
-        borderBottom: "1px solid var(--border)",
+        borderBottom: "1px solid var(--rule)",
         display: "flex",
         alignItems: "center",
         gap: 14,
-        background: "rgba(10,10,15,0.85)",
+        background: "rgba(8,8,12,0.92)",
         backdropFilter: "blur(20px)",
         position: "sticky",
         top: 0,
@@ -197,28 +207,38 @@ function MoviePageContent() {
       }}>
         <button
           onClick={() => router.push("/")}
+          className="back"
           style={{
             background: "none", border: "none", cursor: "pointer",
-            color: "var(--muted)", fontFamily: "var(--font-body)", fontSize: "0.85rem",
-            padding: "4px 8px 4px 0", transition: "color 0.15s",
-            display: "flex", alignItems: "center", gap: 8,
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.64rem", letterSpacing: "0.18em", textTransform: "uppercase",
+            padding: "4px 10px 4px 0",
+            color: "var(--amber-dim)",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--parchment)"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--muted)"}
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "1rem", letterSpacing: "0.08em", color: "var(--gold)" }}>伴影</span>
+          ← INDEX
         </button>
-
+        <span style={{
+          fontFamily: "var(--font-mono), monospace",
+          color: "var(--vermilion)",
+          fontSize: "0.72rem",
+        }}>§</span>
+        <span style={{
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: "0.62rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "var(--amber-dim)",
+        }}>File /</span>
         {data && (
           <span style={{
-            fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--faint)",
+            fontFamily: "var(--font-zh-display), serif",
+            fontSize: "0.82rem",
+            color: "var(--cream)",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1,
-            fontWeight: 300,
+            fontWeight: 500,
           }}>
-            / {lang === "en" ? data.title : (data.zhTitle || data.title)}
+            {lang === "en" ? data.title : (data.zhTitle || data.title)}
           </span>
         )}
       </header>
@@ -241,108 +261,104 @@ function MoviePageContent() {
 
       {data && (
         <div className="fade-up">
-          {/* ── Cinematic Hero ── */}
-          <div style={{ position: "relative", overflow: "hidden", minHeight: 300 }}>
+          {/* ── Cinéma Nocturne Hero — vertical stack ── */}
+          <div style={{ position: "relative", overflow: "hidden", minHeight: 320 }}>
             {data.poster && (
               <div className="hero-backdrop" style={{ backgroundImage: `url(${data.poster})` }} />
             )}
             {!data.poster && (
-              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 30% 50%, rgba(200,151,58,0.06) 0%, transparent 70%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 30% 30%, rgba(232,182,97,0.05) 0%, transparent 70%)" }} />
             )}
-            {/* Gradient overlay — same style as homepage featured hero */}
-            <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(135deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.5) 50%, rgba(10,10,15,0.8) 100%)" }} />
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, background: "linear-gradient(to bottom, transparent, var(--bg))", zIndex: 2 }} />
+            {/* Bottom fade to ink */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 140, background: "linear-gradient(to bottom, transparent, var(--ink))", zIndex: 2 }} />
 
             <div className="movie-hero-inner">
-              {data.poster ? (
-                <div className="movie-hero-poster" style={{
-                  borderRadius: 10, overflow: "hidden",
-                  boxShadow: "0 32px 72px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.4)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                }}>
-                  <Image src={data.poster} alt={data.title} width={160} height={240} style={{ display: "block", objectFit: "cover" }} />
-                </div>
-              ) : (
-                <div className="movie-hero-poster" style={{
-                  height: 180, borderRadius: 10,
-                  background: "var(--bg-card)", border: "1px solid var(--border)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "2.5rem", opacity: 0.25,
-                }}>🎬</div>
+              {/* 1. Mono serial index */}
+              <div className="hero-serial">
+                <span className="sec">§</span>
+                <span>{serialLine}</span>
+              </div>
+
+              {/* 2. Huge Chinese title (or English in en mode) */}
+              <h2 className="hero-title-zh">
+                {lang === "en" ? data.title : (data.zhTitle || data.title)}
+              </h2>
+
+              {/* 3. Italic English subtitle */}
+              {data.zhTitle && data.zhTitle !== data.title && (
+                <p className="hero-title-en">
+                  {lang === "en" ? data.zhTitle : data.title}
+                </p>
               )}
 
-              <div style={{ minWidth: 0, paddingBottom: 8 }}>
-                <h2 style={{
-                  fontFamily: "system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif",
-                  fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
-                  fontWeight: 600,
-                  letterSpacing: "0.02em",
-                  color: "var(--parchment)",
-                  lineHeight: 1.15,
-                  margin: 0,
-                  textShadow: "0 2px 20px rgba(0,0,0,0.6)",
-                }}>
-                  {lang === "en" ? data.title : (data.zhTitle || data.title)}
-                </h2>
-                {data.zhTitle && data.zhTitle !== data.title && (
-                  <p style={{
-                    fontFamily: "var(--font-display)", fontSize: "0.92rem",
-                    color: "var(--muted)", margin: "6px 0 0",
-                    letterSpacing: "0.04em", fontStyle: "italic",
-                  }}>{lang === "en" ? data.zhTitle : data.title}</p>
+              {/* 4. Poster + stat grid */}
+              <div className="hero-body">
+                {data.poster ? (
+                  <div className="movie-hero-poster">
+                    <Image
+                      src={data.poster}
+                      alt={data.title}
+                      fill
+                      sizes="140px"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="movie-hero-poster" style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "2.5rem", opacity: 0.2, background: "var(--bg-card)",
+                  }}>🎬</div>
                 )}
-                <p style={{
-                  color: "var(--muted)", fontSize: "0.8rem", marginTop: 12,
-                  letterSpacing: "0.02em", fontFamily: "var(--font-body)", fontWeight: 300,
-                }}>
-                  {[
-                    data.released ? (lang === "en" ? data.released : zhReleased(data.released)) : data.year,
-                    lang === "en" ? (data.genre || "") : tGenre(zhGenre(data.genre)),
-                    lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime),
-                  ].filter(Boolean).join("  ·  ")}
-                </p>
-                {data.director && (
-                  <p style={{ color: "rgba(212,168,83,0.7)", fontSize: "0.8rem", marginTop: 8, fontFamily: "var(--font-body)", fontWeight: 300 }}>
-                    {t("movie.director")}  <span style={{ color: "var(--muted)" }}>{data.director}</span>
-                  </p>
-                )}
-                {data.actors && (
-                  <p style={{ color: "var(--muted)", fontSize: "0.78rem", marginTop: 4, fontFamily: "var(--font-body)", fontWeight: 300 }}>
-                    {data.actors.split(", ").slice(0, 4).join("  ·  ")}
-                  </p>
-                )}
-                <p style={{
-                  color: "#ADA8BC", fontSize: "0.82rem", marginTop: 14,
-                  lineHeight: 1.8, fontFamily: "var(--font-body)", maxWidth: 520, fontWeight: 300,
-                }}>
+
+                <div className="stat-grid">
                   {(() => {
-                    const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
-                    if (full.length <= 120) return full;
-                    const cap = full.slice(0, 120);
-                    const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
-                    return lastBreak > 40 ? full.slice(0, lastBreak + 1) : cap + "…";
+                    const rows: Array<{ label: string; value: string }> = [];
+                    const releasedVal = data.released
+                      ? (lang === "en" ? data.released : zhReleased(data.released))
+                      : data.year;
+                    if (releasedVal) rows.push({ label: "Released", value: releasedVal });
+                    const genreVal = lang === "en" ? (data.genre || "") : tGenre(zhGenre(data.genre));
+                    if (genreVal) rows.push({ label: "Genre", value: genreVal });
+                    const runtimeVal = lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime);
+                    if (runtimeVal) rows.push({ label: "Runtime", value: runtimeVal });
+                    if (data.director) rows.push({ label: "Director", value: data.director });
+                    if (data.actors) rows.push({ label: "Cast", value: data.actors.split(", ").slice(0, 3).join(" · ") });
+                    return rows.map((r, i) => (
+                      <div key={i} className="stat-row">
+                        <span className="stat-label">{r.label}</span>
+                        <span className="stat-dots" />
+                        <span className="stat-value">{r.value}</span>
+                      </div>
+                    ));
                   })()}
-                </p>
+                </div>
               </div>
+
+              {/* 5. Synopsis paragraph */}
+              <p className="hero-synopsis">
+                {(() => {
+                  const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
+                  if (!full) return "";
+                  if (full.length <= 160) return full;
+                  const cap = full.slice(0, 160);
+                  const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
+                  return lastBreak > 50 ? full.slice(0, lastBreak + 1) : cap + "…";
+                })()}
+              </p>
             </div>
           </div>
 
-          {/* ── Tab toggle + content ── */}
+          {/* ── Reel Tab toggle + content ── */}
           <div className="content-area">
             <div className="tab-strip">
               {(["pre", "post"] as const).map(m => (
-                <button key={m} onClick={() => setMode(m)} style={{
-                  background: mode === m ? "rgba(212,168,83,0.05)" : "none",
-                  border: "none",
-                  borderBottom: `2px solid ${mode === m ? "var(--gold)" : "transparent"}`,
-                  color: mode === m ? "var(--parchment)" : "var(--faint)",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-display)",
-                  fontWeight: mode === m ? 500 : 400,
-                  transition: "all 0.2s",
-                  marginBottom: -1,
-                }}>
-                  {t(m === "pre" ? "movie.tabBefore" : "movie.tabAfter")}
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={`reel-tab ${mode === m ? "active" : ""}`}
+                >
+                  <span className="reel-marker">▸</span>
+                  {m === "pre" ? "Reel I · Pre‧Film" : "Reel II · Post‧Film"}
                 </button>
               ))}
             </div>
@@ -391,7 +407,7 @@ function MoviePageContent() {
               )}
             </div>
 
-            {/* ── Similar Movies ── */}
+            {/* ── Also In This Issue ── */}
             {data && (() => {
               const similar = MOVIE_CATALOG
                 .filter(m => m.title !== data.title && m.genre === MOVIE_CATALOG.find(c => c.title === query)?.genre)
@@ -399,21 +415,29 @@ function MoviePageContent() {
                 .slice(0, 4);
               if (similar.length === 0) return null;
               return (
-                <section style={{ marginTop: 40 }}>
-                  <SectionLabel>{t("movie.similar")}</SectionLabel>
-                  <div style={{ display: "flex", gap: 12, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+                <section style={{ marginTop: 56 }}>
+                  <div className="editorial-divider">
+                    <span className="sec">§</span>
+                    <span className="rule-short" />
+                    <span className="title">Also In This Issue</span>
+                    <span className="rule-long" />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
                     {similar.map(m => (
                       <div
                         key={m.title}
                         className="similar-card"
                         onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
                       >
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 400 }}>
-                          {lang === "en" ? m.title : m.zh}
-                        </p>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--faint)", margin: "5px 0 0", fontWeight: 300 }}>
-                          {tGenre(m.genre)} · #{m.rank}
-                        </p>
+                        <div className="similar-poster">
+                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", opacity: 0.25 }}>🎬</div>
+                        </div>
+                        <div className="similar-body">
+                          <p className="similar-title">{lang === "en" ? m.title : m.zh}</p>
+                          <span className="similar-meta">
+                            {tGenre(m.genre)} · #{String(m.rank).padStart(2, "0")} · {m.year}
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>

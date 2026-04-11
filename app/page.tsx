@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { HomeClient } from "./HomeClient";
-import { HomeTagline, HomeColophon } from "./HomeTagline";
 import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
-
 
 export const metadata: Metadata = {
   title: "伴影 CineCompanion — 北美华人院线观影助手",
@@ -15,50 +13,64 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
-  return (
-    <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--bg)" }}>
-      {/* Ambient background glow */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden>
-        <div className="ambient-glow" style={{ top: "8%", left: "40%", width: 800, height: 500, background: "radial-gradient(ellipse, rgba(212,168,83,0.08) 0%, transparent 70%)" }} />
-        <div className="ambient-glow" style={{ top: "60%", right: "20%", width: 500, height: 400, background: "radial-gradient(ellipse, rgba(107,44,62,0.06) 0%, transparent 70%)" }} />
-      </div>
+// Build "VOL. I · NO. NN · MONTH YYYY · THE SPRING SLATE" from today.
+// Computed server-side so the masthead is stable for every visitor in the
+// same month — no hydration flicker.
+function issueLine(): { vol: string; no: string; month: string; slate: string; date: string } {
+  const now = new Date();
+  // Issue number grows by month since Jan 2026 (arbitrary epoch).
+  const epoch = new Date(2026, 0, 1);
+  const months =
+    (now.getFullYear() - epoch.getFullYear()) * 12 + (now.getMonth() - epoch.getMonth()) + 1;
+  const no = String(Math.max(1, months)).padStart(2, "0");
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const month = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+  const SLATE_BY_SEASON: Record<number, string> = {
+    0: "Winter Slate", 1: "Winter Slate", 2: "Spring Slate",
+    3: "Spring Slate", 4: "Spring Slate", 5: "Summer Slate",
+    6: "Summer Slate", 7: "Summer Slate", 8: "Fall Slate",
+    9: "Fall Slate", 10: "Fall Slate", 11: "Winter Slate",
+  };
+  const slate = `The ${SLATE_BY_SEASON[now.getMonth()]}`;
+  const date = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(now.getDate()).padStart(2, "0")}`;
+  return { vol: "Vol. I", no, month, slate, date };
+}
 
-      <div className="relative z-10 flex flex-col items-center px-6 pt-16 pb-16" style={{ maxWidth: 1040, margin: "0 auto" }}>
-        {/* Branding — editorial, left-aligned on wide, centered on narrow */}
-        <header className="w-full fade-up" style={{ animationDelay: "0ms", maxWidth: 960 }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginBottom: 8 }}>
-            <h1 style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(3rem, 7vw, 4.8rem)",
-              fontWeight: 300,
-              letterSpacing: "0.1em",
-              color: "var(--parchment)",
-              lineHeight: 1,
-              margin: 0,
-            }}>
-              伴影
+export default function Home() {
+  const issue = issueLine();
+  return (
+    <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--ink)" }}>
+      {/* Top editorial bar — the clue that this is a publication */}
+      <div className="masthead-bar" />
+      <div className="scanline" />
+      <div className="projector-wash" aria-hidden />
+
+      <div className="relative z-10 px-6 pb-20" style={{ maxWidth: 1080, margin: "0 auto" }}>
+        {/* ── ① MASTHEAD ── */}
+        <header className="masthead w-full fade-up" style={{ animationDelay: "0ms" }}>
+          <div>
+            <h1 className="masthead-title">
+              Cin<span className="accent">é</span> Companion
             </h1>
-            <div style={{ paddingBottom: "0.3em" }}>
-              <span style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "0.78rem",
-                letterSpacing: "0.4em",
-                color: "var(--gold-dim)",
-                textTransform: "uppercase",
-                fontWeight: 400,
-              }}>
-                CineCompanion
-              </span>
+            <div className="masthead-issue">
+              <span>{issue.vol}</span>
+              <span className="bullet">·</span>
+              <span>No. {issue.no}</span>
+              <span className="bullet">·</span>
+              <span>{issue.month}</span>
+              <span className="bullet">·</span>
+              <span>{issue.slate}</span>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 0 }}>
-            <div className="gold-rule" />
-            <HomeTagline count={MOVIE_CATALOG.length} />
+          <div className="masthead-right">
+            <div className="masthead-date">{issue.date}</div>
+            <div className="masthead-sub">
+              北美院线观影助手 · {MOVIE_CATALOG.length} 部在映
+            </div>
           </div>
         </header>
 
-        {/* SEO: server-rendered movie list for crawlers (hidden visually, readable by bots) */}
+        {/* SEO: server-rendered movie list for crawlers */}
         <noscript>
           <nav aria-label="院线电影列表">
             <ul>
@@ -73,12 +85,24 @@ export default function Home() {
           </nav>
         </noscript>
 
-        {/* Interactive client components */}
+        {/* Interactive: search slate, editor's slate, AMC grid, strips */}
         <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} />
 
-        <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 56, textAlign: "center" }}>
-          <div className="gold-rule" style={{ margin: "0 auto 16px", width: 32 }} />
-          <HomeColophon />
+        {/* ── ⑦ COLOPHON ── */}
+        <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 72, paddingTop: 24, borderTop: "1px solid var(--rule)" }}>
+          <div style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.58rem",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+            textAlign: "center",
+            lineHeight: 1.8,
+          }}>
+            Set in Fraunces · Noto Serif SC · JetBrains Mono
+            <br />
+            Powered by Claude AI & OMDb
+          </div>
         </footer>
       </div>
     </main>
