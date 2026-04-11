@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
+import { LangProvider } from "./i18n/LangProvider";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-display",
@@ -30,7 +31,9 @@ export default function RootLayout({
       lang="zh"
       className={`${cormorant.variable} ${outfit.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <LangProvider>{children}</LangProvider>
+      </body>
     </html>
   );
 }

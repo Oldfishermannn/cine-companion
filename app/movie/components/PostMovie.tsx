@@ -6,6 +6,7 @@ import { RATING_DIMS, EGG_ICON } from "../types";
 import { saveRating } from "../utils";
 import { SectionLabel, FactCard, ErrorBanner } from "./shared";
 import { CharacterGraph } from "./CharacterGraph";
+import { useLang } from "../../i18n/LangProvider";
 
 interface PostMovieProps {
   data: MovieData;
@@ -69,6 +70,7 @@ export function PostMovie({
   data, postContent, postLoading, postFromCache, postError,
   postUnlocked, setPostUnlocked, personalScores, setPersonalScores,
 }: PostMovieProps) {
+  const { t } = useLang();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
       {/* Spoiler gate */}
@@ -91,14 +93,14 @@ export function PostMovie({
             <p style={{
               fontFamily: "var(--font-display)", fontSize: "1.3rem",
               fontWeight: 400, color: "var(--parchment)", letterSpacing: "0.06em", margin: "0 0 8px",
-            }}>观后复盘</p>
+            }}>{t("post.lockTitle")}</p>
             <p style={{
               fontFamily: "var(--font-body)", fontSize: "0.88rem",
               color: "var(--muted)", lineHeight: 1.8, maxWidth: 320, margin: "0 auto",
             }}>
-              以下内容包含完整剧透<br />
-              剧情梳理 · 人物关系 · 彩蛋解析<br />
-              请确认已看完电影再解锁
+              {t("post.lockHintLine1")}<br />
+              {t("post.lockHintLine2")}<br />
+              {t("post.lockHintLine3")}
             </p>
           </div>
           <button
@@ -115,7 +117,7 @@ export function PostMovie({
             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 28px rgba(212,168,83,0.3)"; }}
             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(212,168,83,0.2)"; }}
           >
-            我已看完，解锁复盘
+            {t("post.unlockButton")}
           </button>
         </div>
       ) : (
@@ -130,9 +132,9 @@ export function PostMovie({
             <span style={{
               fontFamily: "var(--font-body)", fontSize: "0.78rem",
               color: "#F59E0B", letterSpacing: "0.04em",
-            }}>以下内容含完整剧透</span>
+            }}>{t("post.spoilerBar")}</span>
             {postFromCache && (
-              <span style={{ marginLeft: "auto", color: "rgba(200,151,58,0.5)", fontSize: "0.68rem" }}>⚡ 已缓存</span>
+              <span style={{ marginLeft: "auto", color: "rgba(200,151,58,0.5)", fontSize: "0.68rem" }}>{t("pre.cached")}</span>
             )}
           </div>
 
@@ -144,15 +146,15 @@ export function PostMovie({
               <p style={{
                 color: "var(--muted)", fontSize: "0.78rem",
                 letterSpacing: "0.08em", fontFamily: "var(--font-body)", textAlign: "center",
-              }}>AI 正在生成复盘内容…</p>
+              }}>{t("post.generating")}</p>
             </div>
           ) : postError ? (
-            <ErrorBanner message="观后复盘生成失败，请刷新页面重试" />
+            <ErrorBanner message={t("post.error")} />
           ) : postContent ? (
             <>
               {/* ── Plot Summary ── */}
               <section>
-                <SectionLabel>剧情梳理</SectionLabel>
+                <SectionLabel>{t("post.plotSummary")}</SectionLabel>
                 <div style={{
                   background: "var(--bg-card)", border: "1px solid var(--border)",
                   borderRadius: 14, overflow: "hidden",
@@ -160,9 +162,9 @@ export function PostMovie({
                   {(postContent.plot_summary.sections?.length
                     ? postContent.plot_summary.sections
                     : [
-                        { title: "第一幕 · 建置", content: postContent.plot_summary.act1 ?? "" },
-                        { title: "第二幕 · 对抗", content: postContent.plot_summary.act2 ?? "" },
-                        { title: "第三幕 · 结局", content: postContent.plot_summary.act3 ?? "" },
+                        { title: t("post.act1"), content: postContent.plot_summary.act1 ?? "" },
+                        { title: t("post.act2"), content: postContent.plot_summary.act2 ?? "" },
+                        { title: t("post.act3"), content: postContent.plot_summary.act3 ?? "" },
                       ].filter(s => s.content)
                   ).map((s, i, arr) => (
                     <div key={i} style={{
@@ -218,7 +220,7 @@ export function PostMovie({
               {/* ── Characters ── */}
               {postContent.characters.length > 0 && (
                 <section>
-                  <SectionLabel>人物关系</SectionLabel>
+                  <SectionLabel>{t("post.characters")}</SectionLabel>
                   <CharacterGraph characters={postContent.characters} relationships={postContent.relationships} />
                 </section>
               )}
@@ -226,7 +228,7 @@ export function PostMovie({
               {/* ── Easter Eggs ── */}
               {postContent.easter_eggs.length > 0 && (
                 <section>
-                  <SectionLabel>彩蛋 & 隐藏细节</SectionLabel>
+                  <SectionLabel>{t("post.easterEggs")}</SectionLabel>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {postContent.easter_eggs.map((egg, i) => (
                       <div key={i} className="poster-enter" style={{
@@ -266,7 +268,7 @@ export function PostMovie({
               {/* ── Spoiler Fun Facts ── */}
               {postContent.spoiler_fun_facts.length > 0 && (
                 <section>
-                  <SectionLabel>幕后揭秘</SectionLabel>
+                  <SectionLabel>{t("post.spoilerFunFacts")}</SectionLabel>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {postContent.spoiler_fun_facts.map((f, i) => (
                       <FactCard key={i} item={{ fact: f.fact, category: f.category as FunFactItem["category"] }} index={i} />
@@ -279,16 +281,18 @@ export function PostMovie({
 
           {/* ── Personal Rating ── */}
           <section>
-            <SectionLabel>我的评分</SectionLabel>
+            <SectionLabel>{t("post.personalRating")}</SectionLabel>
             <div style={{
               background: "var(--bg-card)", border: "1px solid var(--border)",
               borderRadius: 14, padding: "20px 22px",
             }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {RATING_DIMS.map((dim, di) => (
+                {RATING_DIMS.map((dim, di) => {
+                  const dimKey = ["post.dim.plot", "post.dim.visual", "post.dim.acting", "post.dim.music", "post.dim.lasting"][di];
+                  return (
                   <StarRow
                     key={dim}
-                    dim={dim}
+                    dim={t(dimKey)}
                     score={personalScores[di]}
                     onChange={(v) => {
                       const next = [...personalScores];
@@ -297,7 +301,8 @@ export function PostMovie({
                       saveRating(data.id, next);
                     }}
                   />
-                ))}
+                  );
+                })}
               </div>
               {personalScores.some(s => s > 0) && (
                 <div style={{
@@ -308,7 +313,7 @@ export function PostMovie({
                   <span style={{
                     fontFamily: "var(--font-body)", fontSize: "0.85rem",
                     color: "var(--muted)", fontWeight: 500,
-                  }}>综合评分</span>
+                  }}>{t("post.overallRating")}</span>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                     <span style={{
                       fontFamily: "var(--font-display)", fontSize: "2rem",

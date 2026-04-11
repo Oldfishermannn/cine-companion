@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, SectionLabel, ErrorBanner } from "./shared";
+import { useLang } from "../../i18n/LangProvider";
 
 interface CastMember {
   name: string;
@@ -50,6 +51,7 @@ export function PreMovie({
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
 }: PreMovieProps) {
+  const { t } = useLang();
   const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
 
   // Merge OMDb + live data
@@ -73,7 +75,7 @@ export function PreMovie({
     <>
       {/* ── Ratings ── */}
       <section>
-        <SectionLabel>评分</SectionLabel>
+        <SectionLabel>{t("pre.ratings")}</SectionLabel>
         <div className="ratings-row" style={{
           background: "var(--bg-card)", border: "1px solid var(--border)",
           borderRadius: 16, padding: "24px 16px",
@@ -88,10 +90,10 @@ export function PreMovie({
           ) : (
             <>
               {[
-                { value: imdbScore,  label: "IMDb",       href: `https://www.imdb.com/title/${data.id}/` },
-                { value: rtScore,    label: "烂番茄",      href: rtUrl },
-                { value: mcScore,    label: "Metacritic", href: mcUrl },
-                { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: "豆瓣", href: liveRatings?.douban?.url ?? undefined },
+                { value: imdbScore,  label: "IMDb",             href: `https://www.imdb.com/title/${data.id}/` },
+                { value: rtScore,    label: t("pre.rtLabel"),    href: rtUrl },
+                { value: mcScore,    label: "Metacritic",       href: mcUrl },
+                { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
               ].filter(r => r.value).map((r, idx, arr) => (
                 <React.Fragment key={r.label}>
                   <div className="rating-item" style={{ display: "flex", justifyContent: "center" }}>
@@ -107,14 +109,14 @@ export function PreMovie({
         </div>
         {!ratingsLoading && allEmpty && (
           <p style={{ color: "var(--muted)", fontSize: "0.78rem", textAlign: "center", marginTop: 10, letterSpacing: "0.03em" }}>
-            新片上映不久，评分数据待更新
+            {t("pre.ratingsEmpty")}
           </p>
         )}
       </section>
 
       {/* ── Trailer ── */}
       <section>
-        <SectionLabel>预告片</SectionLabel>
+        <SectionLabel>{t("pre.trailer")}</SectionLabel>
         {trailerUrl ? (
           <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden", background: "#000" }}>
             <iframe
@@ -145,8 +147,8 @@ export function PreMovie({
       {/* ── Background ── */}
       <section>
         <SectionLabel>
-          观影前背景
-          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
+          {t("pre.background")}
+          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· {t("pre.zeroSpoiler")}</span>
         </SectionLabel>
 
         {aiLoading ? (
@@ -154,10 +156,10 @@ export function PreMovie({
             {[100, 85, 70, 50].map((w, i) => (
               <div key={i} className="skeleton" style={{ height: 12, borderRadius: 4, width: `${w}%` }} />
             ))}
-            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 生成中…</p>
+            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>{t("pre.aiGenerating")}</p>
           </div>
         ) : aiError ? (
-          <ErrorBanner message="AI 内容生成失败，请刷新页面重试" />
+          <ErrorBanner message={t("pre.aiError")} />
         ) : aiContent ? (
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
             {/* Summary lead */}
@@ -214,7 +216,7 @@ export function PreMovie({
                 onMouseEnter={e => { e.currentTarget.style.background = "rgba(217,119,6,0.12)"; }}
                 onMouseLeave={e => { e.currentTarget.style.background = "rgba(217,119,6,0.06)"; }}
               >
-                🔓 解锁轻剧透（第一幕提示）
+                {t("pre.spoilerUnlock")}
               </button>
             ) : (
               <div style={{
@@ -222,7 +224,7 @@ export function PreMovie({
                 background: "rgba(217,119,6,0.04)", borderRadius: 8, padding: 14,
                 marginTop: -4,
               }}>
-                <p style={{ color: "#F59E0B", fontSize: "0.72rem", letterSpacing: "0.06em", marginBottom: 10, fontFamily: "var(--font-body)", fontWeight: 500 }}>⚠ 含轻微剧透</p>
+                <p style={{ color: "#F59E0B", fontSize: "0.72rem", letterSpacing: "0.06em", marginBottom: 10, fontFamily: "var(--font-body)", fontWeight: 500 }}>{t("pre.lightSpoilerWarn")}</p>
                 {funFacts?.first_act_hint ? (
                   <p style={{ color: "#C8C4D4", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0 }}>
                     {funFacts.first_act_hint}
@@ -234,7 +236,7 @@ export function PreMovie({
                     {aiContent.background.wikipedia.slice(0, 400)}…
                   </p>
                 ) : (
-                  <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", margin: 0 }}>暂无提示信息</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", margin: 0 }}>{t("pre.noHintInfo")}</p>
                 )}
               </div>
             )}
@@ -245,10 +247,10 @@ export function PreMovie({
       {/* ── Fun Facts ── */}
       <section>
         <SectionLabel>
-          幕后花絮
-          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· 零剧透</span>
+          {t("pre.funFacts")}
+          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· {t("pre.zeroSpoiler")}</span>
           {factsFromCache && (
-            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>⚡ 已缓存</span>
+            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>{t("pre.cached")}</span>
           )}
         </SectionLabel>
 
@@ -259,7 +261,7 @@ export function PreMovie({
             ))}
           </div>
         ) : factsError ? (
-          <ErrorBanner message="花絮加载失败，请刷新页面重试" />
+          <ErrorBanner message={t("pre.factsError")} />
         ) : funFacts ? (
           <CollapsibleFacts facts={funFacts.fun_facts} />
         ) : null}
@@ -268,15 +270,15 @@ export function PreMovie({
       {/* ── Vocabulary ── */}
       <section>
         <SectionLabel>
-          关键词汇
+          {t("pre.vocabulary")}
           {aiFromCache && (
             <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>
-              ⚡ 已缓存
+              {t("pre.cached")}
             </span>
           )}
         </SectionLabel>
         <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          点击展开解释 · ▶ 播放发音
+          {t("pre.vocabHint")}
         </p>
 
         {aiLoading ? (
@@ -292,7 +294,7 @@ export function PreMovie({
             ))}
           </div>
         ) : aiError ? (
-          <ErrorBanner message="词汇预习生成失败，请刷新页面重试" />
+          <ErrorBanner message={t("pre.vocabError")} />
         ) : aiContent ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {(() => {
@@ -340,15 +342,15 @@ export function PreMovie({
       {/* ── Break Calculator ── */}
       {(breaksLoading || breaksError || breaksContent) && (
       <section>
-        <SectionLabel>厕所时间</SectionLabel>
+        <SectionLabel>{t("pre.breaks")}</SectionLabel>
         <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
-          AI 分析叙事节奏，推荐不错过关键剧情的起身时机
+          {t("pre.breaksHint")}
         </p>
 
         {breaksContent && (
         <div style={{ marginBottom: 16, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px" }}>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--parchment)", flexShrink: 0 }}>🎬 场次时间</span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--parchment)", flexShrink: 0 }}>{t("pre.showtimeLabel")}</span>
             <input
               type="time"
               value={movieStartTime}
@@ -364,10 +366,10 @@ export function PreMovie({
               <div style={{ position: "absolute", top: 2, left: includeTrailers ? 16 : 2, width: 14, height: 14, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
             </div>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: includeTrailers ? "var(--parchment)" : "var(--muted)" }}>
-              包含预告片时间
+              {t("pre.includeTrailers")}
             </span>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: includeTrailers ? "var(--gold-dim)" : "var(--faint)", marginLeft: "auto" }}>
-              {includeTrailers ? "+25 分钟" : "不计入"}
+              {includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}
             </span>
           </div>
         </div>
@@ -376,10 +378,10 @@ export function PreMovie({
         {breaksLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />)}
-            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>AI 分析中…</p>
+            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>{t("pre.aiAnalyzing")}</p>
           </div>
         ) : breaksError ? (
-          <ErrorBanner message="厕所时间分析失败，请刷新页面重试" />
+          <ErrorBanner message={t("pre.breaksError")} />
         ) : breaksContent ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {breaksContent.breaks.map((b, i) => {
@@ -424,7 +426,7 @@ export function PreMovie({
                         }}>
                           {b.minute}
                         </div>
-                        <div style={{ fontSize: "0.68rem", color: "var(--muted)", marginTop: 3, fontFamily: "var(--font-body)" }}>分钟</div>
+                        <div style={{ fontSize: "0.68rem", color: "var(--muted)", marginTop: 3, fontFamily: "var(--font-body)" }}>{t("pre.minuteUnit")}</div>
                       </>
                     )}
                   </div>
@@ -436,11 +438,13 @@ export function PreMovie({
                           background: "rgba(200,151,58,0.15)", color: "var(--gold)",
                           fontFamily: "var(--font-body)", letterSpacing: "0.04em", fontWeight: 600,
                         }}>
-                          ⭐ 最佳时机
+                          {t("pre.bestBreak")}
                         </span>
                       )}
                       <span style={{ fontSize: "0.73rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                        {timeRange ? `第 ${b.minute} 分钟 · ` : ""}安全 {b.duration} 分钟 · 风险 {b.miss_risk}
+                        {timeRange
+                          ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
+                          : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
                       </span>
                     </div>
                     <p style={{
@@ -469,7 +473,7 @@ export function PreMovie({
               onMouseEnter={e => { e.currentTarget.style.color = "var(--gold)"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
             >
-              去看这场？ <span style={{ color: "var(--gold-dim)" }}>AMC 购票 →</span>
+              {t("pre.amcLink")} <span style={{ color: "var(--gold-dim)" }}>{t("pre.amcCta")}</span>
             </a>
           </p>
         )}
@@ -481,6 +485,7 @@ export function PreMovie({
 
 /* ── Collapsible Fun Facts ── */
 function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
+  const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
   const LIMIT = 4;
   const visible = expanded ? facts : facts.slice(0, LIMIT);
@@ -541,7 +546,7 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(200,151,58,0.25)"; e.currentTarget.style.color = "var(--parchment)"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--muted)"; }}
         >
-          展开更多（还有 {facts.length - LIMIT} 条）
+          {t("pre.expandMore", { n: facts.length - LIMIT })}
         </button>
       )}
     </div>
@@ -550,6 +555,7 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
 
 /* ── Cast Section ── */
 function CastSection({ castMembers }: { castMembers: CastMember[] }) {
+  const { t } = useLang();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showFade, setShowFade] = useState(true);
 
@@ -566,7 +572,7 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
 
   return (
     <section>
-      <SectionLabel>演职表</SectionLabel>
+      <SectionLabel>{t("pre.cast")}</SectionLabel>
       <div style={{ position: "relative" }}>
         <div ref={scrollRef} style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
           {castMembers.map((m, i) => (
@@ -608,7 +614,7 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
                     color: m.role === "director" ? "var(--gold)" : "rgba(180,175,190,0.85)",
                     margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                   }}>
-                    {m.role === "director" ? "导演" : m.character || "演员"}
+                    {m.role === "director" ? t("pre.roleDirector") : m.character || t("pre.roleActor")}
                   </p>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { CatalogMovie } from "./catalog";
+import { useLang } from "./i18n/LangProvider";
 export type { CatalogMovie };
 
 function parseReleaseDate(s: string): number {
@@ -136,6 +137,7 @@ export function HomeClient({ catalog, genres }: {
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
+  const { t, title: tTitle, genre: tGenre, lang, toggle: toggleLang } = useLang();
 
   useEffect(() => { setWatchlist(loadWatchlist()); }, []);
 
@@ -248,7 +250,7 @@ export function HomeClient({ catalog, genres }: {
               {posters[featured.origIdx].poster ? (
                 <Image
                   src={posters[featured.origIdx].poster!}
-                  alt={featured.movie.zh}
+                  alt={tTitle(featured.movie)}
                   width={130}
                   height={195}
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
@@ -271,14 +273,16 @@ export function HomeClient({ catalog, genres }: {
                   padding: "2px 8px", borderRadius: 4,
                   background: "rgba(212,168,83,0.1)", border: "1px solid rgba(212,168,83,0.15)",
                 }}>
-                  #{featured.movie.rank} 推荐
+                  {t("home.featuredBadge", { rank: featured.movie.rank })}
                 </span>
                 <span style={{ fontSize: "0.62rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                  {featured.movie.genre}
+                  {tGenre(featured.movie.genre)}
                 </span>
               </div>
               <h2 style={{
-                fontFamily: "system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+                fontFamily: lang === "en"
+                  ? "var(--font-display)"
+                  : "system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif",
                 fontSize: "clamp(1.25rem, 3vw, 2rem)",
                 fontWeight: 600,
                 color: "var(--parchment)",
@@ -286,7 +290,7 @@ export function HomeClient({ catalog, genres }: {
                 lineHeight: 1.2,
                 letterSpacing: "0.02em",
               }}>
-                {featured.movie.zh}
+                {tTitle(featured.movie)}
               </h2>
               <p className="featured-eng-title" style={{
                 fontFamily: "var(--font-display)",
@@ -296,17 +300,17 @@ export function HomeClient({ catalog, genres }: {
                 letterSpacing: "0.04em",
                 fontStyle: "italic",
               }}>
-                {featured.movie.title}
+                {lang === "en" ? featured.movie.zh : featured.movie.title}
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                  {fmtReleaseDate(featured.movie.released) || featured.movie.year} 上映
+                  {t("home.releasedOn", { date: fmtReleaseDate(featured.movie.released) || featured.movie.year })}
                 </span>
                 <span className="featured-detail-link" style={{
                   fontSize: "0.66rem", color: "var(--gold-dim)", fontFamily: "var(--font-body)",
                   display: "flex", alignItems: "center", gap: 4,
                 }}>
-                  查看详情
+                  {t("home.viewDetails")}
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ marginTop: 1 }}>
                     <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -317,12 +321,12 @@ export function HomeClient({ catalog, genres }: {
         </Link>
       )}
 
-      {/* ── Recent Releases 近期上映 ── */}
+      {/* ── Recent Releases ── */}
       {recentReleases.length > 0 && (
         <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "100ms", marginTop: 28, marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ width: 3, height: 14, background: "#4ADE80", borderRadius: 2 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>近期上映</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>{t("home.recentReleases")}</span>
           </div>
           <HScrollRow>
             {recentReleases.map(m => {
@@ -344,7 +348,7 @@ export function HomeClient({ catalog, genres }: {
                 >
                   <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
                     {posterSrc ? (
-                      <Image src={posterSrc} alt={m.zh} fill style={{ objectFit: "cover" }} sizes="64px" />
+                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
                     ) : (
                       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
@@ -357,19 +361,19 @@ export function HomeClient({ catalog, genres }: {
                       color: "var(--parchment)", margin: 0,
                       whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
                     }}>
-                      {m.zh}
+                      {tTitle(m)}
                     </p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.7rem",
                       color: "#4ADE80", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
                     }}>
-                      {fmtReleaseDate(m.released)} 上映
+                      {t("home.releasedOn", { date: fmtReleaseDate(m.released) })}
                     </p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.65rem",
                       color: "var(--muted)", margin: 0, fontWeight: 300,
                     }}>
-                      {m.genre}
+                      {tGenre(m.genre)}
                     </p>
                   </div>
                 </div>
@@ -379,12 +383,12 @@ export function HomeClient({ catalog, genres }: {
         </div>
       )}
 
-      {/* ── Coming Soon 即将上映 ── */}
+      {/* ── Coming Soon ── */}
       {comingSoon.length > 0 && (
         <div className="w-full fade-up" style={{ maxWidth: 960, animationDelay: "120ms", marginTop: 20, marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ width: 3, height: 14, background: "var(--gold)", borderRadius: 2 }} />
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>即将上映</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.88rem", letterSpacing: "0.12em", color: "var(--muted)", textTransform: "uppercase" }}>{t("home.comingSoon")}</span>
           </div>
           <HScrollRow>
             {comingSoon.map(m => {
@@ -406,7 +410,7 @@ export function HomeClient({ catalog, genres }: {
                 >
                   <div style={{ width: 64, flexShrink: 0, background: "#1A1920", position: "relative" }}>
                     {posterSrc ? (
-                      <Image src={posterSrc} alt={m.zh} fill style={{ objectFit: "cover" }} sizes="64px" />
+                      <Image src={posterSrc} alt={tTitle(m)} fill style={{ objectFit: "cover" }} sizes="64px" />
                     ) : (
                       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ fontSize: "1.2rem", opacity: 0.2 }}>🎬</span>
@@ -419,19 +423,19 @@ export function HomeClient({ catalog, genres }: {
                       color: "var(--parchment)", margin: 0,
                       whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500,
                     }}>
-                      {m.zh}
+                      {tTitle(m)}
                     </p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.7rem",
                       color: "var(--gold-dim)", margin: 0, letterSpacing: "0.03em", fontWeight: 400,
                     }}>
-                      {fmtReleaseDate(m.released)} 上映
+                      {t("home.releasedOn", { date: fmtReleaseDate(m.released) })}
                     </p>
                     <p style={{
                       fontFamily: "var(--font-body)", fontSize: "0.65rem",
                       color: "var(--muted)", margin: 0, fontWeight: 300,
                     }}>
-                      {m.genre}
+                      {tGenre(m.genre)}
                     </p>
                   </div>
                 </div>
@@ -449,7 +453,7 @@ export function HomeClient({ catalog, genres }: {
             className={`genre-pill ${!genreFilter ? "active" : ""}`}
             onClick={() => setGenreFilter(null)}
           >
-            全部
+            {t("home.filterAll")}
           </button>
           {genres.map(g => (
             <button
@@ -457,7 +461,7 @@ export function HomeClient({ catalog, genres }: {
               className={`genre-pill ${genreFilter === g ? "active" : ""}`}
               onClick={() => setGenreFilter(genreFilter === g ? null : g)}
             >
-              {g}
+              {tGenre(g)}
             </button>
           ))}
         </div>
@@ -465,19 +469,19 @@ export function HomeClient({ catalog, genres }: {
         {/* Sort + count */}
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginBottom: 4 }}>
           <span style={{ fontSize: "0.65rem", color: "var(--faint)", letterSpacing: "0.06em", fontFamily: "var(--font-body)", marginRight: 6, fontWeight: 300 }}>
-            {filterCount} 部
+            {t("home.countSuffix", { n: filterCount })}
           </span>
           {([
-            { mode: "rating" as SortMode, label: "评分最高 ★" },
-            { mode: "newest" as SortMode, label: "最新上映 ↓" },
-            { mode: "oldest" as SortMode, label: "最早上映 ↑" },
-          ]).map(({ mode, label }) => (
+            { mode: "rating" as SortMode, labelKey: "home.sortByRating" },
+            { mode: "newest" as SortMode, labelKey: "home.sortByNewest" },
+            { mode: "oldest" as SortMode, labelKey: "home.sortByOldest" },
+          ]).map(({ mode, labelKey }) => (
             <button
               key={mode}
               className={`sort-btn ${sortMode === mode ? "active" : ""}`}
               onClick={() => setSortMode(mode)}
             >
-              {label}
+              {t(labelKey)}
             </button>
           ))}
         </div>
@@ -503,14 +507,53 @@ export function HomeClient({ catalog, genres }: {
           </div>
         ) : (
           <p style={{ textAlign: "center", marginTop: 48, fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-            没有符合筛选条件的电影
+            {t("home.noMatches")}
           </p>
         )}
 
         <p style={{ textAlign: "center", marginTop: 28, fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--faint)", textTransform: "uppercase", fontWeight: 300 }}>
-          已显示全部 {filterCount} 部
+          {t("home.showingAll", { n: filterCount })}
         </p>
       </div>
+
+      {/* ── Lang toggle (floating bottom-right, unobtrusive) ── */}
+      <button
+        onClick={toggleLang}
+        aria-label={t("brand.toggleLangLabel")}
+        title={t("brand.toggleLangLabel")}
+        style={{
+          position: "fixed",
+          right: "clamp(16px, 3vw, 32px)",
+          bottom: "clamp(16px, 3vw, 32px)",
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          background: "rgba(17,17,23,0.92)",
+          border: "1px solid rgba(212,168,83,0.35)",
+          color: "var(--gold)",
+          fontFamily: "var(--font-body)",
+          fontSize: "0.78rem",
+          fontWeight: 500,
+          letterSpacing: "0.04em",
+          cursor: "pointer",
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
+          transition: "transform 0.2s, background 0.2s, border-color 0.2s",
+          zIndex: 50,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(212,168,83,0.15)";
+          e.currentTarget.style.borderColor = "rgba(212,168,83,0.6)";
+          e.currentTarget.style.transform = "scale(1.06)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "rgba(17,17,23,0.92)";
+          e.currentTarget.style.borderColor = "rgba(212,168,83,0.35)";
+          e.currentTarget.style.transform = "scale(1)";
+        }}
+      >
+        {t("brand.toggleLang")}
+      </button>
     </>
   );
 }
@@ -527,6 +570,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
   href: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const { t, title: tTitle } = useLang();
 
   // IntersectionObserver for lazy poster fetching
   useEffect(() => {
@@ -541,6 +585,8 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
     return () => observer.disconnect();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posterInfo.fetched, index]);
+
+  const displayTitle = tTitle(movie);
 
   return (
     <Link
@@ -561,7 +607,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
           <>
             <Image
               src={posterInfo.poster}
-              alt={movie.zh}
+              alt={displayTitle}
               fill
               loading={index < 8 ? "eager" : "lazy"}
               style={{ objectFit: "cover" }}
@@ -572,14 +618,14 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
                 fontFamily: "var(--font-body)", fontSize: "0.6rem",
                 color: "var(--gold)", letterSpacing: "0.08em", fontWeight: 400,
               }}>
-                查看详情 →
+                {t("home.viewDetailsArrow")}
               </span>
             </div>
           </>
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: 12 }}>
             <span style={{ fontSize: "1.8rem", opacity: 0.2 }}>🎬</span>
-            <span style={{ color: "var(--muted)", fontSize: "0.62rem", textAlign: "center", lineHeight: 1.4, fontFamily: "var(--font-body)", fontWeight: 300 }}>{movie.zh}</span>
+            <span style={{ color: "var(--muted)", fontSize: "0.62rem", textAlign: "center", lineHeight: 1.4, fontFamily: "var(--font-body)", fontWeight: 300 }}>{displayTitle}</span>
           </div>
         )}
 
@@ -587,7 +633,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
         <button
           className={`watchlist-btn ${inWatchlist ? "saved" : "unsaved"}`}
           onClick={(e) => onToggleWatchlist(movie.title, e)}
-          title={inWatchlist ? "取消想看" : "标记想看"}
+          title={inWatchlist ? t("home.watchlistRemove") : t("home.watchlistAdd")}
         >
           {inWatchlist ? "★" : "☆"}
         </button>
@@ -608,7 +654,7 @@ function PosterCard({ movie, posterInfo, index, catalogReleased, inWatchlist, on
           fontWeight: 400,
           margin: 0,
         }}>
-          {movie.zh}
+          {displayTitle}
         </p>
         <span style={{ fontSize: "0.66rem", color: "var(--faint)", letterSpacing: "0.04em", flexShrink: 0, fontWeight: 300 }}>
           {fmtReleaseDate(catalogReleased || posterInfo.released) || movie.year}

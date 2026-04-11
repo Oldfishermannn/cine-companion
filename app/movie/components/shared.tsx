@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import type { VocabItem, FunFactItem } from "../types";
 import { FACT_CATEGORY_ICON, CATEGORY_STYLES } from "../types";
 import { speak, capitalize } from "../utils";
+import { useLang } from "../../i18n/LangProvider";
 
 export function RatingBlock({ value, label, href }: { value: string | null; label: string; href?: string }) {
   const inner = (
@@ -41,6 +42,7 @@ export function RatingBlock({ value, label, href }: { value: string | null; labe
 }
 
 export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
 
   return (
@@ -75,7 +77,7 @@ export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
             cursor: "pointer",
             transition: "background 0.15s",
           }}
-          title="播放发音"
+          title={t("pre.playPronunciation")}
         >
           ▶
         </button>

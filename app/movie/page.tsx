@@ -11,6 +11,7 @@ import { Divider, SectionLabel } from "./components/shared";
 import { PreMovie } from "./components/PreMovie";
 import { PostMovie } from "./components/PostMovie";
 import { MOVIE_CATALOG } from "../catalog";
+import { useLang } from "../i18n/LangProvider";
 
 /** Fetch with 60s timeout + 1 retry for AI endpoints */
 async function fetchRetry(url: string, { timeout = 60_000, retries = 1 } = {}): Promise<Response> {
@@ -32,6 +33,7 @@ async function fetchRetry(url: string, { timeout = 60_000, retries = 1 } = {}): 
 function MoviePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { t, lang, genre: tGenre } = useLang();
   const query = searchParams.get("q") || "";
   const zhFromUrl = searchParams.get("zh") || "";
   const amcSlug = searchParams.get("amc") || "";
@@ -135,7 +137,7 @@ function MoviePageContent() {
           .catch(() => setBreaksError(true))
           .finally(() => setBreaksLoading(false));
       })
-      .catch(() => { setError("网络错误，请重试"); setLoading(false); });
+      .catch(() => { setError("__network__"); setLoading(false); });
   }, [query]);
 
   // Background prefetch: start loading post content after AI content is ready
@@ -193,7 +195,7 @@ function MoviePageContent() {
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1,
             fontWeight: 300,
           }}>
-            / {data.zhTitle || data.title}
+            / {lang === "en" ? data.title : (data.zhTitle || data.title)}
           </span>
         )}
       </header>
@@ -202,14 +204,14 @@ function MoviePageContent() {
       {loading && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, paddingTop: 120 }}>
           <div style={{ width: 28, height: 28, border: "1.5px solid var(--gold)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-          <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.12em", fontFamily: "var(--font-body)", fontWeight: 300 }}>正在搜索...</p>
+          <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.12em", fontFamily: "var(--font-body)", fontWeight: 300 }}>{t("movie.searching")}</p>
         </div>
       )}
 
       {error && (
         <div style={{ maxWidth: 680, margin: "40px auto", padding: "0 20px" }}>
           <div style={{ background: "rgba(107,44,62,0.2)", border: "1px solid rgba(107,44,62,0.3)", borderRadius: 12, padding: "14px 18px", color: "#F9A8B8", fontSize: "0.85rem", fontFamily: "var(--font-body)" }}>
-            {error === "Movie not found" ? "未找到该电影，请尝试英文片名" : error}
+            {error === "Movie not found" ? t("movie.notFound") : error === "__network__" ? t("movie.networkError") : error}
           </div>
         </div>
       )}
@@ -257,24 +259,28 @@ function MoviePageContent() {
                   margin: 0,
                   textShadow: "0 2px 20px rgba(0,0,0,0.6)",
                 }}>
-                  {data.zhTitle || data.title}
+                  {lang === "en" ? data.title : (data.zhTitle || data.title)}
                 </h2>
                 {data.zhTitle && data.zhTitle !== data.title && (
                   <p style={{
                     fontFamily: "var(--font-display)", fontSize: "0.92rem",
                     color: "var(--muted)", margin: "6px 0 0",
                     letterSpacing: "0.04em", fontStyle: "italic",
-                  }}>{data.title}</p>
+                  }}>{lang === "en" ? data.zhTitle : data.title}</p>
                 )}
                 <p style={{
                   color: "var(--muted)", fontSize: "0.8rem", marginTop: 12,
                   letterSpacing: "0.02em", fontFamily: "var(--font-body)", fontWeight: 300,
                 }}>
-                  {[data.released ? zhReleased(data.released) : data.year, zhGenre(data.genre), zhRuntime(data.runtime)].filter(Boolean).join("  ·  ")}
+                  {[
+                    data.released ? (lang === "en" ? data.released : zhReleased(data.released)) : data.year,
+                    lang === "en" ? (data.genre || "") : tGenre(zhGenre(data.genre)),
+                    lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime),
+                  ].filter(Boolean).join("  ·  ")}
                 </p>
                 {data.director && (
                   <p style={{ color: "rgba(212,168,83,0.7)", fontSize: "0.8rem", marginTop: 8, fontFamily: "var(--font-body)", fontWeight: 300 }}>
-                    导演  <span style={{ color: "var(--muted)" }}>{data.director}</span>
+                    {t("movie.director")}  <span style={{ color: "var(--muted)" }}>{data.director}</span>
                   </p>
                 )}
                 {data.actors && (
@@ -313,7 +319,7 @@ function MoviePageContent() {
                   transition: "all 0.2s",
                   marginBottom: -1,
                 }}>
-                  {m === "pre" ? "观 前" : "观 后"}
+                  {t(m === "pre" ? "movie.tabBefore" : "movie.tabAfter")}
                 </button>
               ))}
             </div>
@@ -371,7 +377,7 @@ function MoviePageContent() {
               if (similar.length === 0) return null;
               return (
                 <section style={{ marginTop: 40 }}>
-                  <SectionLabel>同类推荐</SectionLabel>
+                  <SectionLabel>{t("movie.similar")}</SectionLabel>
                   <div style={{ display: "flex", gap: 12, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
                     {similar.map(m => (
                       <div
@@ -380,10 +386,10 @@ function MoviePageContent() {
                         onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
                       >
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--parchment)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 400 }}>
-                          {m.zh}
+                          {lang === "en" ? m.title : m.zh}
                         </p>
                         <p style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--faint)", margin: "5px 0 0", fontWeight: 300 }}>
-                          {m.genre} · #{m.rank}
+                          {tGenre(m.genre)} · #{m.rank}
                         </p>
                       </div>
                     ))}

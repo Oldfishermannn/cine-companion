@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HomeClient } from "./HomeClient";
+import { HomeTagline, HomeColophon } from "./HomeTagline";
 import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
 
 
@@ -53,17 +54,7 @@ export default function Home() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 0 }}>
             <div className="gold-rule" />
-            <p style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "0.68rem",
-              letterSpacing: "0.18em",
-              color: "var(--muted)",
-              textTransform: "uppercase",
-              margin: 0,
-              fontWeight: 300,
-            }}>
-              北美院线观影助手 &middot; {MOVIE_CATALOG.length} 部在映
-            </p>
+            <HomeTagline count={MOVIE_CATALOG.length} />
           </div>
         </header>
 
@@ -87,9 +78,7 @@ export default function Home() {
 
         <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 56, textAlign: "center" }}>
           <div className="gold-rule" style={{ margin: "0 auto 16px", width: 32 }} />
-          <p style={{ fontSize: "0.6rem", letterSpacing: "0.25em", color: "var(--faint)", textTransform: "uppercase", fontWeight: 300 }}>
-            Powered by Claude AI &middot; OMDb
-          </p>
+          <HomeColophon />
         </footer>
       </div>
     </main>
