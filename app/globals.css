@@ -821,6 +821,29 @@ body::after {
   margin: 0 0 32px;
 }
 
+/* Mobile title compression — target: full title block (serial + title + subtitle)
+   occupies ≤ 1/6 of phone viewport height. Desktop rules above stay intact. */
+@media (max-width: 520px) {
+  .movie-hero-inner { padding: 20px 18px 28px; }
+  .hero-serial {
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .hero-serial .sec { font-size: 0.72rem; }
+  .hero-title-zh {
+    font-size: 1.55rem;
+    line-height: 1.1;
+    margin: 0 0 4px;
+    letter-spacing: 0;
+  }
+  .hero-title-en {
+    font-size: 0.82rem;
+    margin: 0 0 14px;
+  }
+}
+
 .hero-body {
   display: grid;
   grid-template-columns: 140px 1fr;
@@ -1875,4 +1898,5 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+
 
