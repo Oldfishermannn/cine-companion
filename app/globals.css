@@ -185,14 +185,14 @@ body::after {
   margin: 0;
   padding-bottom: 0.12em; /* clear Fraunces "g" descender so it doesn't collide with the issue line */
 }
-/* The O is the whole trick — vermilion signature, upright & refined (no WONK/italic on a capital).
-   Weight lands at 450 — midway between the 300 base and a heavy 600, thick enough to pull
-   focus without turning into a blob against the thin "Lights...ut" silhouette. */
+/* The O is the whole trick — vermilion signature. Shape axes (SOFT/WONK/opsz) stay identical
+   to the base wordmark so the O is optically the SAME letter as its neighbors; only color and
+   weight change. Earlier SOFT 30 produced sharper terminals that read as an italic tilt. */
 .masthead-title .accent {
   color: var(--vermilion);
   font-style: normal;
   font-weight: 450;
-  font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
+  font-variation-settings: "SOFT" 60, "WONK" 0, "opsz" 144;
 }
 
 .masthead-issue {
@@ -1901,6 +1901,7 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+
 
 
 
