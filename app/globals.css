@@ -119,6 +119,10 @@ body::after {
   from { opacity: 0; transform: translateX(-16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes posterFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 /* ── Page transition ── */
 @keyframes pageIn {
