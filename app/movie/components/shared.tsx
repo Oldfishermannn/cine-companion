@@ -47,62 +47,24 @@ export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
 
   return (
     <div
-      className="poster-enter"
-      style={{
-        "--r": "0deg",
-        animationDelay: `${index * 35}ms`,
-        background: "var(--bg-card)",
-        border: `1px solid ${open ? "rgba(200,151,58,0.2)" : "var(--border)"}`,
-        borderRadius: 12,
-        padding: "12px 14px",
-        cursor: "pointer",
-        transition: "border-color 0.15s, background 0.15s",
-      } as React.CSSProperties}
+      className={`vocab-card poster-enter${open ? " open" : ""}`}
+      style={{ "--r": "0deg", animationDelay: `${index * 35}ms` } as React.CSSProperties}
       onClick={() => setOpen(!open)}
-      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--bg-lift)"}
-      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = open ? "var(--bg-lift)" : "var(--bg-card)"}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div className="row">
         <button
+          className="speak"
           onClick={e => { e.stopPropagation(); speak(item.word); }}
-          style={{
-            flexShrink: 0,
-            width: 24, height: 24,
-            borderRadius: "50%",
-            border: "1px solid rgba(200,151,58,0.3)",
-            background: "rgba(200,151,58,0.08)",
-            color: "var(--gold)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.55rem",
-            cursor: "pointer",
-            transition: "background 0.15s",
-          }}
           title={t("pre.playPronunciation")}
         >
           ▶
         </button>
-        <div style={{ minWidth: 0 }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "0.98rem", fontWeight: 500, color: "var(--parchment)", letterSpacing: "0.02em" }}>
-            {capitalize(item.word)}
-          </span>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--muted)", marginLeft: 7 }}>
-            {item.translation}
-          </span>
+        <div className="text">
+          <span className="word">{capitalize(item.word)}</span>
+          <span className="trans">{item.translation}</span>
         </div>
       </div>
-      {open && (
-        <p style={{
-          marginTop: 10,
-          paddingTop: 10,
-          borderTop: "1px solid var(--border)",
-          color: "#B0ACBA",
-          fontSize: "0.8rem",
-          lineHeight: 1.7,
-          fontFamily: "var(--font-body)",
-        }}>
-          {item.explanation}
-        </p>
-      )}
+      {open && <p className="explain">{item.explanation}</p>}
     </div>
   );
 }
@@ -112,20 +74,13 @@ export function FactCard({ item, index }: { item: FunFactItem; index: number }) 
 
   return (
     <div
-      className="poster-enter"
-      style={{ "--r": "0deg", animationDelay: `${index * 40}ms`, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 16px" } as React.CSSProperties}
+      className="fact-card poster-enter"
+      style={{ "--r": "0deg", animationDelay: `${index * 40}ms` } as React.CSSProperties}
     >
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-        <span style={{ fontSize: "1rem", flexShrink: 0, lineHeight: 1.4 }}>{icon}</span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: "inline-block", fontSize: "0.65rem", padding: "1px 7px", borderRadius: 20, background: "rgba(200,151,58,0.08)", color: "var(--gold-dim)", fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginBottom: 4 }}>
-            {item.category}
-          </span>
-          <br />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--muted)", letterSpacing: "0.02em", lineHeight: 1.6 }}>
-            {item.fact}
-          </span>
-        </div>
+      <div className="icon">{icon}</div>
+      <div className="body">
+        <span className="ed-tag ghost">{item.category}</span>
+        <p className="text">{item.fact}</p>
       </div>
     </div>
   );

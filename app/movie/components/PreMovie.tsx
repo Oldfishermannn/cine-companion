@@ -39,14 +39,14 @@ interface PreMovieProps {
   setIncludeTrailers: (v: boolean | ((prev: boolean) => boolean)) => void;
 }
 
-/* ── Fact category icons & colors ── */
+/* ── Fact category icons ── */
 const FACT_ICON: Record<string, string> = {
   "制作花絮": "🎥", "幕后秘闻": "🔍", "选角故事": "🌟",
   "原著改编": "📖", "技术亮点": "⚡", "导演风格": "🎬",
 };
 
 export function PreMovie({
-  data, amcSlug, castMembers, trailerUrl, trailerType, aiContent, aiLoading, aiFromCache, aiError,
+  data, amcSlug, castMembers, trailerUrl, aiContent, aiLoading, aiFromCache, aiError,
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
@@ -76,15 +76,12 @@ export function PreMovie({
       {/* ── Ratings ── */}
       <section>
         <SectionLabel>{t("pre.ratings")}</SectionLabel>
-        <div className="ratings-row" style={{
-          background: "var(--bg-card)", border: "1px solid var(--border)",
-          borderRadius: 16, padding: "24px 16px",
-        }}>
+        <div className="ed-ratings">
           {ratingsLoading ? (
             [0,1,2,3].map(i => (
-              <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
-                <div className="skeleton" style={{ width: 44, height: 20, borderRadius: 4 }} />
-                <div className="skeleton" style={{ width: 32, height: 10, borderRadius: 3 }} />
+              <div key={i} className="rating-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div className="skeleton" style={{ width: 44, height: 20 }} />
+                <div className="skeleton" style={{ width: 32, height: 10 }} />
               </div>
             ))
           ) : (
@@ -94,21 +91,16 @@ export function PreMovie({
                 { value: rtScore,    label: t("pre.rtLabel"),    href: rtUrl },
                 { value: mcScore,    label: "Metacritic",       href: mcUrl },
                 { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
-              ].filter(r => r.value).map((r, idx, arr) => (
-                <React.Fragment key={r.label}>
-                  <div className="rating-item" style={{ display: "flex", justifyContent: "center" }}>
-                    <RatingBlock value={r.value} label={r.label} href={r.href} />
-                  </div>
-                  {idx < arr.length - 1 && (
-                    <div className="ratings-divider" style={{ width: 1, height: 36, background: "var(--border)", flexShrink: 0 }} />
-                  )}
-                </React.Fragment>
+              ].filter(r => r.value).map((r) => (
+                <div key={r.label} className="rating-item">
+                  <RatingBlock value={r.value} label={r.label} href={r.href} />
+                </div>
               ))}
             </>
           )}
         </div>
         {!ratingsLoading && allEmpty && (
-          <p style={{ color: "var(--muted)", fontSize: "0.78rem", textAlign: "center", marginTop: 10, letterSpacing: "0.03em" }}>
+          <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
             {t("pre.ratingsEmpty")}
           </p>
         )}
@@ -118,22 +110,19 @@ export function PreMovie({
       <section>
         <SectionLabel>{t("pre.trailer")}</SectionLabel>
         {trailerUrl ? (
-          <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden", background: "#000" }}>
+          <div className="trailer-frame">
             <iframe
               src={trailerUrl}
               title="Trailer"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
             />
           </div>
         ) : (
-          <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 12, overflow: "hidden" }}>
+          <div className="trailer-frame">
             <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: "1.2rem", marginLeft: 3, opacity: 0.3 }}>▶</span>
-              </div>
+            <div className="trailer-placeholder">
+              <div className="icon">▶</div>
             </div>
           </div>
         )}
@@ -148,98 +137,100 @@ export function PreMovie({
       <section>
         <SectionLabel>
           {t("pre.background")}
-          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· {t("pre.zeroSpoiler")}</span>
+          <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
         </SectionLabel>
 
         {aiLoading ? (
-          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-            {[100, 85, 70, 50].map((w, i) => (
-              <div key={i} className="skeleton" style={{ height: 12, borderRadius: 4, width: `${w}%` }} />
-            ))}
-            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>{t("pre.aiGenerating")}</p>
+          <div className="film-card">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[100, 85, 70, 50].map((w, i) => (
+                <div key={i} className="skeleton" style={{ height: 12, width: `${w}%` }} />
+              ))}
+            </div>
+            <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 14, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiGenerating")}</p>
           </div>
         ) : aiError ? (
           <ErrorBanner message={t("pre.aiError")} />
         ) : aiContent ? (
-          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="film-stack">
             {/* Summary lead */}
             {aiContent.background.summary && (
-              <p style={{
-                fontFamily: "var(--font-body)", fontSize: "0.92rem",
-                color: "var(--parchment)", lineHeight: 1.8, margin: 0,
-                paddingBottom: 14, borderBottom: "1px solid var(--border)",
-              }}>
-                {aiContent.background.summary}
-              </p>
-            )}
-            {/* Context points */}
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-              {aiContent.background.context.filter((point, i) => {
-                if (i !== 0) return true;
-                const summary = aiContent.background.summary || "";
-                if (!summary) return true;
-                const overlap = point.slice(0, 30);
-                return !summary.includes(overlap.slice(0, 20));
-              }).map((point, i) => (
-                <li key={i} style={{ display: "flex", gap: 12, fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
-                  <span style={{ color: "var(--gold)", flexShrink: 0, marginTop: 3, fontSize: "0.6rem" }}>●</span>
-                  <span style={{ color: "#C8C4D4" }}>{point}</span>
-                </li>
-              ))}
-            </ul>
-            {/* Director note */}
-            {aiContent.background.director_note && (
-              <div style={{
-                borderTop: "1px solid var(--border)", paddingTop: 14,
-                display: "flex", gap: 10, alignItems: "flex-start",
-              }}>
-                <span style={{ fontSize: "0.85rem", flexShrink: 0, marginTop: 2 }}>🎬</span>
+              <div className="block">
                 <p style={{
-                  color: "#B8B4C4", fontSize: "0.88rem",
-                  lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0,
+                  fontFamily: "var(--font-body), sans-serif",
+                  fontSize: "0.94rem",
+                  color: "rgba(235,227,208,0.88)",
+                  lineHeight: 1.85,
+                  margin: 0,
                 }}>
-                  {aiContent.background.director_note}
+                  {aiContent.background.summary}
                 </p>
               </div>
             )}
-            {/* Spoiler unlock */}
-            {!spoilerUnlocked ? (
-              <button
-                onClick={() => setSpoilerUnlocked(true)}
-                style={{
-                  background: "rgba(217,119,6,0.06)", border: "1px solid rgba(217,119,6,0.2)",
-                  borderRadius: 8, cursor: "pointer", color: "#D97706",
-                  fontSize: "0.8rem", letterSpacing: "0.02em",
-                  fontFamily: "var(--font-body)", padding: "8px 14px",
-                  alignSelf: "flex-start", transition: "background 0.2s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(217,119,6,0.12)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "rgba(217,119,6,0.06)"; }}
-              >
-                {t("pre.spoilerUnlock")}
-              </button>
-            ) : (
-              <div style={{
-                borderTop: "1px solid var(--border)", paddingTop: 14,
-                background: "rgba(217,119,6,0.04)", borderRadius: 8, padding: 14,
-                marginTop: -4,
-              }}>
-                <p style={{ color: "#F59E0B", fontSize: "0.72rem", letterSpacing: "0.06em", marginBottom: 10, fontFamily: "var(--font-body)", fontWeight: 500 }}>{t("pre.lightSpoilerWarn")}</p>
-                {funFacts?.first_act_hint ? (
-                  <p style={{ color: "#C8C4D4", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0 }}>
-                    {funFacts.first_act_hint}
-                  </p>
-                ) : factsLoading ? (
-                  <div className="skeleton" style={{ height: 48, borderRadius: 6 }} />
-                ) : aiContent.background.wikipedia ? (
-                  <p style={{ color: "#B8B4C4", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body)", margin: 0 }}>
-                    {aiContent.background.wikipedia.slice(0, 400)}…
-                  </p>
-                ) : (
-                  <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", margin: 0 }}>{t("pre.noHintInfo")}</p>
-                )}
+            {/* Context points */}
+            {aiContent.background.context.length > 0 && (
+              <div className="block">
+                <ul className="ed-bullets">
+                  {aiContent.background.context.filter((point, i) => {
+                    if (i !== 0) return true;
+                    const summary = aiContent.background.summary || "";
+                    if (!summary) return true;
+                    const overlap = point.slice(0, 30);
+                    return !summary.includes(overlap.slice(0, 20));
+                  }).map((point, i) => (
+                    <li key={i}><span>{point}</span></li>
+                  ))}
+                </ul>
               </div>
             )}
+            {/* Director note */}
+            {aiContent.background.director_note && (
+              <div className="block accent">
+                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
+                  <p style={{
+                    color: "rgba(235,227,208,0.78)",
+                    fontSize: "0.88rem",
+                    lineHeight: 1.8,
+                    fontFamily: "var(--font-body), sans-serif",
+                    margin: 0,
+                  }}>
+                    {aiContent.background.director_note}
+                  </p>
+                </div>
+              </div>
+            )}
+            {/* Spoiler unlock */}
+            <div className="block">
+              {!spoilerUnlocked ? (
+                <button
+                  className="ed-btn ghost"
+                  onClick={() => setSpoilerUnlocked(true)}
+                >
+                  ▸ {t("pre.spoilerUnlock")}
+                </button>
+              ) : (
+                <div>
+                  <div className="spoiler-strip" style={{ marginBottom: 14 }}>
+                    <span className="sec">※</span>
+                    <span>{t("pre.lightSpoilerWarn")}</span>
+                  </div>
+                  {funFacts?.first_act_hint ? (
+                    <p style={{ color: "rgba(235,227,208,0.82)", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
+                      {funFacts.first_act_hint}
+                    </p>
+                  ) : factsLoading ? (
+                    <div className="skeleton" style={{ height: 48 }} />
+                  ) : aiContent.background.wikipedia ? (
+                    <p style={{ color: "rgba(235,227,208,0.72)", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
+                      {aiContent.background.wikipedia.slice(0, 400)}…
+                    </p>
+                  ) : (
+                    <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body), sans-serif", margin: 0 }}>{t("pre.noHintInfo")}</p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         ) : null}
       </section>
@@ -248,16 +239,16 @@ export function PreMovie({
       <section>
         <SectionLabel>
           {t("pre.funFacts")}
-          <span style={{ color: "#4ADE80", fontSize: "0.7rem", letterSpacing: "0.05em", marginLeft: 8, textTransform: "none", fontFamily: "var(--font-body)" }}>· {t("pre.zeroSpoiler")}</span>
+          <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
           {factsFromCache && (
-            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>{t("pre.cached")}</span>
+            <span className="ed-tag ghost" style={{ marginLeft: 6 }}>{t("pre.cached")}</span>
           )}
         </SectionLabel>
 
         {factsLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 56, borderRadius: 12 }} />
+              <div key={i} className="skeleton" style={{ height: 68 }} />
             ))}
           </div>
         ) : factsError ? (
@@ -272,23 +263,23 @@ export function PreMovie({
         <SectionLabel>
           {t("pre.vocabulary")}
           {aiFromCache && (
-            <span style={{ color: "rgba(200,151,58,0.5)", fontSize: "0.65rem", marginLeft: 8, letterSpacing: "0.06em", fontFamily: "var(--font-body)", textTransform: "none" }}>
-              {t("pre.cached")}
-            </span>
+            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.cached")}</span>
           )}
         </SectionLabel>
-        <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-body)" }}>
+        <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
           {t("pre.vocabHint")}
         </p>
 
         {aiLoading ? (
           <div className="vocab-grid">
             {[...Array(8)].map((_, i) => (
-              <div key={i} style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 8 }}>
-                <div className="skeleton" style={{ width: 24, height: 24, borderRadius: "50%", flexShrink: 0 }} />
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
-                  <div className="skeleton" style={{ height: 12, borderRadius: 4, width: "60%" }} />
-                  <div className="skeleton" style={{ height: 10, borderRadius: 3, width: "40%" }} />
+              <div key={i} className="vocab-card">
+                <div className="row">
+                  <div className="skeleton" style={{ width: 22, height: 22, flexShrink: 0 }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+                    <div className="skeleton" style={{ height: 12, width: "60%" }} />
+                    <div className="skeleton" style={{ height: 10, width: "40%" }} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -296,7 +287,7 @@ export function PreMovie({
         ) : aiError ? (
           <ErrorBanner message={t("pre.vocabError")} />
         ) : aiContent ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <div>
             {(() => {
               const groups: Record<string, VocabItem[]> = {};
               for (const item of aiContent.vocabulary) {
@@ -307,23 +298,13 @@ export function PreMovie({
                 .concat(Object.keys(groups).filter(c => !CATEGORY_ORDER.includes(c)));
               let globalIdx = 0;
               return ordered.map(cat => {
-                const s = CATEGORY_STYLES[cat] || { dot: "var(--muted)", text: "var(--muted)" };
+                const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
                 return (
-                  <div key={cat} style={{ marginBottom: 20 }}>
-                    <div style={{
-                      display: "flex", alignItems: "center", gap: 8, marginBottom: 10,
-                      paddingBottom: 6, borderBottom: `1px solid ${s.dot}22`,
-                    }}>
-                      <span style={{
-                        width: 8, height: 8, borderRadius: "50%", background: s.dot, flexShrink: 0,
-                        boxShadow: `0 0 6px ${s.dot}44`,
-                      }} />
-                      <span style={{ fontSize: "0.78rem", color: s.text, letterSpacing: "0.06em", fontFamily: "var(--font-body)", fontWeight: 500 }}>
-                        {cat}
-                      </span>
-                      <span style={{ fontSize: "0.65rem", color: "var(--faint)", fontFamily: "var(--font-body)" }}>
-                        {groups[cat].length}
-                      </span>
+                  <div key={cat}>
+                    <div className="vocab-cat-head">
+                      <span className="dot" style={{ background: s.dot }} />
+                      <span>{cat}</span>
+                      <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
                     </div>
                     <div className="vocab-grid">
                       {groups[cat].map((item) => {
@@ -343,32 +324,30 @@ export function PreMovie({
       {(breaksLoading || breaksError || breaksContent) && (
       <section>
         <SectionLabel>{t("pre.breaks")}</SectionLabel>
-        <p style={{ color: "var(--muted)", fontSize: "0.78rem", letterSpacing: "0.04em", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-body)" }}>
+        <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 14, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
           {t("pre.breaksHint")}
         </p>
 
         {breaksContent && (
-        <div style={{ marginBottom: 16, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px" }}>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--parchment)", flexShrink: 0 }}>{t("pre.showtimeLabel")}</span>
+        <div className="film-card" style={{ padding: 0, marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px" }}>
+            <span className="ed-tag solid">{t("pre.showtimeLabel")}</span>
             <input
               type="time"
               value={movieStartTime}
               onChange={e => setMovieStartTime(e.target.value)}
-              style={{ background: "none", border: "none", outline: "none", color: "var(--parchment)", fontFamily: "var(--font-body)", fontSize: "0.88rem", cursor: "pointer", colorScheme: "dark", marginLeft: "auto" }}
+              style={{ background: "none", border: "none", outline: "none", color: "var(--cream)", fontFamily: "var(--font-mono), monospace", fontSize: "0.92rem", letterSpacing: "0.08em", cursor: "pointer", colorScheme: "dark", marginLeft: "auto" }}
             />
           </div>
           <div
             onClick={() => setIncludeTrailers((v: boolean) => !v)}
-            style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", borderTop: "1px solid var(--border)", cursor: "pointer", background: includeTrailers ? "rgba(200,151,58,0.05)" : "transparent", transition: "background 0.15s" }}
+            style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 18px", borderTop: "1px solid var(--rule)", cursor: "pointer", background: includeTrailers ? "rgba(232,182,97,0.035)" : "transparent", transition: "background 0.15s" }}
           >
-            <div style={{ width: 32, height: 18, borderRadius: 9, background: includeTrailers ? "var(--gold)" : "var(--faint)", position: "relative", flexShrink: 0, transition: "background 0.2s" }}>
-              <div style={{ position: "absolute", top: 2, left: includeTrailers ? 16 : 2, width: 14, height: 14, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
-            </div>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.78rem", color: includeTrailers ? "var(--parchment)" : "var(--muted)" }}>
+            <div className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.64rem", letterSpacing: "0.14em", textTransform: "uppercase", color: includeTrailers ? "var(--cream)" : "var(--muted)" }}>
               {t("pre.includeTrailers")}
             </span>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: includeTrailers ? "var(--gold-dim)" : "var(--faint)", marginLeft: "auto" }}>
+            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.56rem", letterSpacing: "0.14em", textTransform: "uppercase", color: includeTrailers ? "var(--amber)" : "var(--faint)", marginLeft: "auto" }}>
               {includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}
             </span>
           </div>
@@ -377,13 +356,13 @@ export function PreMovie({
 
         {breaksLoading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />)}
-            <p style={{ color: "var(--muted)", fontSize: "0.72rem", letterSpacing: "0.08em", marginTop: 4, fontFamily: "var(--font-body)" }}>{t("pre.aiAnalyzing")}</p>
+            {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
+            <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
           </div>
         ) : breaksError ? (
           <ErrorBanner message={t("pre.breaksError")} />
         ) : breaksContent ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div>
             {breaksContent.breaks.map((b, i) => {
               const isBest = b.minute === breaksContent.best_break;
               let timeRange = "";
@@ -401,56 +380,27 @@ export function PreMovie({
                 timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
               }
               return (
-                <div key={i} style={{
-                  background: isBest
-                    ? "linear-gradient(135deg, rgba(200,151,58,0.08) 0%, var(--bg-card) 100%)"
-                    : "var(--bg-card)",
-                  border: `1px solid ${isBest ? "rgba(200,151,58,0.35)" : "var(--border)"}`,
-                  borderRadius: 12, padding: "16px 18px",
-                  display: "flex", gap: 16, alignItems: "flex-start",
-                  boxShadow: isBest ? "0 4px 16px rgba(200,151,58,0.08)" : "none",
-                }}>
-                  <div style={{ flexShrink: 0, textAlign: "center", minWidth: 60 }}>
+                <div key={i} className={`break-card${isBest ? " best" : ""}`}>
+                  <div className="timecol">
                     {timeRange ? (
-                      <div style={{
-                        fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 600,
-                        color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1.4, whiteSpace: "nowrap",
-                      }}>
-                        {timeRange}
-                      </div>
+                      <div className="time">{timeRange}</div>
                     ) : (
                       <>
-                        <div style={{
-                          fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 500,
-                          color: isBest ? "var(--gold)" : "var(--parchment)", lineHeight: 1,
-                        }}>
-                          {b.minute}
-                        </div>
-                        <div style={{ fontSize: "0.68rem", color: "var(--muted)", marginTop: 3, fontFamily: "var(--font-body)" }}>{t("pre.minuteUnit")}</div>
+                        <div className="minute">{b.minute}</div>
+                        <div className="label">{t("pre.minuteUnit")}</div>
                       </>
                     )}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      {isBest && (
-                        <span style={{
-                          fontSize: "0.68rem", padding: "2px 10px", borderRadius: 10,
-                          background: "rgba(200,151,58,0.15)", color: "var(--gold)",
-                          fontFamily: "var(--font-body)", letterSpacing: "0.04em", fontWeight: 600,
-                        }}>
-                          {t("pre.bestBreak")}
-                        </span>
-                      )}
-                      <span style={{ fontSize: "0.73rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+                  <div className="body">
+                    <div className="meta">
+                      {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
+                      <span>
                         {timeRange
                           ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
                           : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
                       </span>
                     </div>
-                    <p style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.88rem",
-                      color: "#C0BACA", lineHeight: 1.7, margin: 0,
-                    }}>{b.scene_hint}</p>
+                    <p className="hint">{b.scene_hint}</p>
                   </div>
                 </div>
               );
@@ -460,20 +410,15 @@ export function PreMovie({
 
         {/* AMC link */}
         {amcUrl && (
-          <p style={{ textAlign: "center", marginTop: 20, marginBottom: 0 }}>
+          <p style={{ textAlign: "center", marginTop: 22, marginBottom: 0 }}>
             <a
               href={amcUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                fontFamily: "var(--font-body)", fontSize: "0.78rem", letterSpacing: "0.04em",
-                color: "var(--muted)", textDecoration: "none",
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = "var(--gold)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; }}
+              className="ed-btn ghost"
+              style={{ display: "inline-block", textDecoration: "none" }}
             >
-              {t("pre.amcLink")} <span style={{ color: "var(--gold-dim)" }}>{t("pre.amcCta")}</span>
+              {t("pre.amcLink")} ↗
             </a>
           </p>
         )}
@@ -498,55 +443,24 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
         return (
           <div
             key={i}
-            className="poster-enter"
-            style={{
-              "--r": "0deg",
-              animationDelay: `${i * 40}ms`,
-              background: "var(--bg-card)", border: "1px solid var(--border)",
-              borderRadius: 12, padding: "16px 18px",
-            } as React.CSSProperties}
+            className="fact-card poster-enter"
+            style={{ "--r": "0deg", animationDelay: `${i * 40}ms` } as React.CSSProperties}
           >
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-              <span style={{
-                fontSize: "1.1rem", flexShrink: 0, lineHeight: 1.4,
-                width: 32, height: 32, borderRadius: 8,
-                background: "rgba(200,151,58,0.06)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>{icon}</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <span style={{
-                  display: "inline-block", fontSize: "0.68rem", padding: "2px 10px",
-                  borderRadius: 20, background: "rgba(200,151,58,0.1)", color: "var(--gold)",
-                  fontFamily: "var(--font-body)", letterSpacing: "0.02em", marginBottom: 6,
-                  fontWeight: 500,
-                }}>
-                  {item.category}
-                </span>
-                <p style={{
-                  fontFamily: "var(--font-body)", fontSize: "0.88rem",
-                  color: "#C8C4D4", letterSpacing: "0.02em", lineHeight: 1.75, margin: 0,
-                }}>
-                  {item.fact}
-                </p>
-              </div>
+            <div className="icon">{icon}</div>
+            <div className="body">
+              <span className="ed-tag">{item.category}</span>
+              <p className="text">{item.fact}</p>
             </div>
           </div>
         );
       })}
       {hasMore && !expanded && (
         <button
+          className="ed-btn ghost"
           onClick={() => setExpanded(true)}
-          style={{
-            background: "none", border: "1px solid var(--border)",
-            borderRadius: 10, padding: "10px 0", cursor: "pointer",
-            color: "var(--muted)", fontSize: "0.78rem",
-            fontFamily: "var(--font-body)", letterSpacing: "0.04em",
-            transition: "border-color 0.2s, color 0.2s",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(200,151,58,0.25)"; e.currentTarget.style.color = "var(--parchment)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--muted)"; }}
+          style={{ marginTop: 4 }}
         >
-          {t("pre.expandMore", { n: facts.length - LIMIT })}
+          ▾ {t("pre.expandMore", { n: facts.length - LIMIT })}
         </button>
       )}
     </div>
@@ -581,39 +495,20 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
               href={m.imdbUrl ?? "#"}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ flexShrink: 0, width: 100, textDecoration: "none" }}
+              style={{ flexShrink: 0, width: 104, textDecoration: "none" }}
             >
-              <div style={{
-                aspectRatio: "2/3", width: "100%", overflow: "hidden", borderRadius: 8,
-                background: "#2A2830", position: "relative",
-                border: m.role === "director" ? "1.5px solid rgba(200,151,58,0.35)" : "1px solid var(--border)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-              }}>
+              <div className={`cast-frame${m.role === "director" ? " director" : ""}`}>
                 {m.photo ? (
-                  <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="100px" />
+                  <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="104px" />
                 ) : (
                   <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
                     <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
-                    <span style={{ color: "var(--muted)", fontSize: "0.6rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-body)" }}>{m.name}</span>
+                    <span style={{ color: "var(--muted)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.08em" }}>{m.name}</span>
                   </div>
                 )}
-                <div style={{
-                  position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-                  background: "linear-gradient(to top, rgba(9,9,14,0.92) 0%, rgba(9,9,14,0.4) 60%, transparent 100%)",
-                  display: "flex", flexDirection: "column", justifyContent: "flex-end",
-                  padding: "8px 7px",
-                }}>
-                  <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--parchment)",
-                    margin: 0, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
-                    {m.name}
-                  </p>
-                  <p style={{
-                    fontFamily: "var(--font-body)", fontSize: "0.58rem",
-                    color: m.role === "director" ? "var(--gold)" : "rgba(180,175,190,0.85)",
-                    margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
+                <div className="cast-caption">
+                  <p className="name">{m.name}</p>
+                  <p className="role">
                     {m.role === "director" ? t("pre.roleDirector") : m.character || t("pre.roleActor")}
                   </p>
                 </div>
@@ -624,7 +519,7 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
         {showFade && (
           <div style={{
             position: "absolute", top: 0, right: 0, bottom: 8, width: 40,
-            background: "linear-gradient(to left, var(--bg) 0%, transparent 100%)",
+            background: "linear-gradient(to left, var(--ink) 0%, transparent 100%)",
             pointerEvents: "none",
           }} />
         )}

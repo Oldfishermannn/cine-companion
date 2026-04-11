@@ -20,17 +20,12 @@ interface PostMovieProps {
   setPersonalScores: (v: number[]) => void;
 }
 
-/* ── Radar Chart (SVG, 5-axis) ──
- * Renders a pentagon radar for the 5 rating dimensions. Used as a visual
- * summary of the user's personal profile for the film. Pure SVG, no deps.
- * Size is fixed in viewBox-space; outer width is responsive via % width.
- */
+/* ── Radar Chart (SVG, 5-axis) ── */
 function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) {
   const CX = 130;
   const CY = 118;
   const R = 82;
   const N = 5;
-  // Angle for vertex i, starting from top (-90deg) and going clockwise
   const angle = (i: number) => (-Math.PI / 2) + (i * 2 * Math.PI) / N;
   const point = (i: number, radius: number) => {
     const a = angle(i);
@@ -42,27 +37,21 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     }).join(" ");
 
-  // Concentric background rings at 1/5, 2/5, ..., 5/5
   const rings = [1, 2, 3, 4, 5].map(k => polyPath(() => (R * k) / 5));
-  // User score polygon
   const userPoly = polyPath(i => (R * Math.max(0, Math.min(5, scores[i] ?? 0))) / 5);
-  // Axis lines from center to each vertex
   const axes = Array.from({ length: N }, (_, i) => {
     const [x, y] = point(i, R);
     return { x1: CX, y1: CY, x2: x, y2: y };
   });
-  // Label positions (pushed out past the outer ring)
   const labelPos = Array.from({ length: N }, (_, i) => {
     const a = angle(i);
     const lr = R + 16;
     const x = CX + lr * Math.cos(a);
     const y = CY + lr * Math.sin(a);
-    // anchor logic: top label centered, right-side end=start, left-side end=end
     let anchor: "start" | "middle" | "end" = "middle";
     if (Math.abs(Math.cos(a)) > 0.25) anchor = Math.cos(a) > 0 ? "start" : "end";
     return { x, y: y + 4, anchor, score: scores[i] ?? 0 };
   });
-  // Vertex dots (only draw where user has a non-zero score)
   const dots = Array.from({ length: N }, (_, i) => {
     const s = scores[i] ?? 0;
     if (s <= 0) return null;
@@ -77,17 +66,15 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
       style={{ maxWidth: 260, display: "block", margin: "0 auto" }}
       aria-hidden
     >
-      {/* Background rings */}
       {rings.map((pts, i) => (
         <polygon
           key={i}
           points={pts}
           fill="none"
-          stroke={i === 4 ? "rgba(212,168,83,0.28)" : "rgba(235,227,208,0.06)"}
+          stroke={i === 4 ? "rgba(232,182,97,0.35)" : "rgba(235,227,208,0.06)"}
           strokeWidth={i === 4 ? 1 : 0.75}
         />
       ))}
-      {/* Axes */}
       {axes.map((a, i) => (
         <line
           key={i}
@@ -96,29 +83,26 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
           strokeWidth={0.75}
         />
       ))}
-      {/* User polygon */}
       <polygon
         points={userPoly}
-        fill="rgba(212,168,83,0.22)"
-        stroke="rgba(212,168,83,0.9)"
+        fill="rgba(232,182,97,0.22)"
+        stroke="rgba(232,182,97,0.9)"
         strokeWidth={1.5}
         strokeLinejoin="round"
       />
-      {/* Vertex dots */}
       {dots.map((d, i) => d && (
-        <circle key={i} cx={d.x} cy={d.y} r={3} fill="var(--gold)" />
+        <circle key={i} cx={d.x} cy={d.y} r={3} fill="var(--amber)" />
       ))}
-      {/* Labels */}
       {labelPos.map((l, i) => (
         <g key={i}>
           <text
             x={l.x}
             y={l.y - 4}
             textAnchor={l.anchor}
-            fontSize="11"
-            fontFamily="var(--font-body)"
-            fill="var(--parchment)"
-            style={{ letterSpacing: "0.04em" }}
+            fontSize="10"
+            fontFamily="var(--font-mono), monospace"
+            fill="var(--cream)"
+            style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}
           >
             {labels[i]}
           </text>
@@ -127,8 +111,8 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
             y={l.y + 8}
             textAnchor={l.anchor}
             fontSize="10"
-            fontFamily="var(--font-display)"
-            fill={l.score > 0 ? "var(--gold)" : "var(--faint)"}
+            fontFamily="var(--font-mono), monospace"
+            fill={l.score > 0 ? "var(--amber)" : "var(--faint)"}
             fontWeight={500}
           >
             {l.score > 0 ? l.score.toFixed(0) : "–"}
@@ -142,32 +126,23 @@ function RadarChart({ scores, labels }: { scores: number[]; labels: string[] }) 
 /* ── Star Rating Row ── */
 function StarRow({ dim, score, onChange }: { dim: string; score: number; onChange: (v: number) => void }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "10px 0" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 0" }}>
       <span style={{
-        fontFamily: "var(--font-body)", fontSize: "0.88rem", color: "var(--parchment)",
-        width: 42, flexShrink: 0, fontWeight: 500,
+        fontFamily: "var(--font-mono), monospace",
+        fontSize: "0.64rem",
+        letterSpacing: "0.14em",
+        textTransform: "uppercase",
+        color: "var(--amber)",
+        width: 56,
+        flexShrink: 0,
       }}>{dim}</span>
-      <div style={{ display: "flex", gap: 4, flex: 1 }}>
+      <div style={{ display: "flex", gap: 6, flex: 1 }}>
         {[1, 2, 3, 4, 5].map(star => (
           <button
             key={star}
             onClick={() => onChange(score === star ? 0 : star)}
-            style={{
-              width: 36, height: 36, borderRadius: 8,
-              border: "1px solid",
-              borderColor: score >= star ? "var(--gold)" : "var(--border)",
-              background: score >= star
-                ? "linear-gradient(135deg, var(--gold), #C49A3C)"
-                : "rgba(255,255,255,0.02)",
-              cursor: "pointer",
-              fontSize: "0.85rem",
-              fontWeight: 700,
-              color: score >= star ? "#09090E" : "var(--muted)",
-              transition: "all 0.2s cubic-bezier(0.22,1,0.36,1)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              transform: score >= star ? "scale(1.05)" : "scale(1)",
-              boxShadow: score >= star ? "0 2px 8px rgba(212,168,83,0.25)" : "none",
-            }}
+            className={`ed-star${score >= star ? " lit" : ""}`}
+            type="button"
           >
             {star}
           </button>
@@ -175,10 +150,14 @@ function StarRow({ dim, score, onChange }: { dim: string; score: number; onChang
       </div>
       {score > 0 && (
         <span style={{
-          fontFamily: "var(--font-display)", fontSize: "1.1rem",
-          color: "var(--gold)", letterSpacing: 2, minWidth: 70, textAlign: "right",
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: "0.72rem",
+          letterSpacing: "0.1em",
+          color: "var(--amber)",
+          minWidth: 44,
+          textAlign: "right",
         }}>
-          {"★".repeat(score)}{"☆".repeat(5 - score)}
+          {score.toFixed(0)}/5
         </span>
       )}
     </div>
@@ -194,77 +173,45 @@ export function PostMovie({
     <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
       {/* Spoiler gate */}
       {!postUnlocked ? (
-        <div style={{
-          textAlign: "center", padding: "52px 24px",
-          background: "linear-gradient(180deg, var(--bg-card) 0%, rgba(17,17,23,0.6) 100%)",
-          border: "1px solid var(--border)", borderRadius: 16,
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 20,
-        }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: "50%",
-            background: "rgba(200,151,58,0.08)", border: "1px solid rgba(200,151,58,0.2)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.6rem",
-          }}>
-            🔒
-          </div>
+        <div className="lock-gate">
+          <div className="icon-box">🔒</div>
           <div>
-            <p style={{
-              fontFamily: "var(--font-display)", fontSize: "1.3rem",
-              fontWeight: 400, color: "var(--parchment)", letterSpacing: "0.06em", margin: "0 0 8px",
-            }}>{t("post.lockTitle")}</p>
-            <p style={{
-              fontFamily: "var(--font-body)", fontSize: "0.88rem",
-              color: "var(--muted)", lineHeight: 1.8, maxWidth: 320, margin: "0 auto",
-            }}>
-              {t("post.lockHintLine1")}<br />
-              {t("post.lockHintLine2")}<br />
-              {t("post.lockHintLine3")}
-            </p>
+            <p className="title-zh">{t("post.lockTitle")}</p>
+            <p className="title-en">Reel II · Spoilers Ahead</p>
           </div>
+          <p className="hint">
+            {t("post.lockHintLine1")}<br />
+            {t("post.lockHintLine2")}<br />
+            {t("post.lockHintLine3")}
+          </p>
           <button
+            className="ed-btn primary"
             onClick={() => setPostUnlocked(true)}
-            style={{
-              padding: "12px 32px", marginTop: 4,
-              background: "linear-gradient(135deg, var(--gold), #C49A3C)",
-              color: "#09090E", border: "none", borderRadius: 12,
-              fontFamily: "var(--font-body)", fontWeight: 600,
-              fontSize: "0.9rem", cursor: "pointer", letterSpacing: "0.04em",
-              boxShadow: "0 4px 20px rgba(212,168,83,0.2)",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 28px rgba(212,168,83,0.3)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(212,168,83,0.2)"; }}
+            type="button"
           >
-            {t("post.unlockButton")}
+            ▸ {t("post.unlockButton")}
           </button>
         </div>
       ) : (
         <>
           {/* Spoiler warning bar */}
-          <div style={{
-            background: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
-            borderRadius: 10, padding: "10px 16px",
-            display: "flex", alignItems: "center", gap: 10,
-          }}>
-            <span style={{ fontSize: "0.9rem" }}>⚠️</span>
-            <span style={{
-              fontFamily: "var(--font-body)", fontSize: "0.78rem",
-              color: "#F59E0B", letterSpacing: "0.04em",
-            }}>{t("post.spoilerBar")}</span>
+          <div className="spoiler-strip">
+            <span className="sec">※</span>
+            <span>{t("post.spoilerBar")}</span>
             {postFromCache && (
-              <span style={{ marginLeft: "auto", color: "rgba(200,151,58,0.5)", fontSize: "0.68rem" }}>{t("pre.cached")}</span>
+              <span className="cache">{t("pre.cached")}</span>
             )}
           </div>
 
           {postLoading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[1, 2, 3].map(i => (
-                <div key={i} className="skeleton" style={{ height: i === 1 ? 140 : 64, borderRadius: 14 }} />
+                <div key={i} className="skeleton" style={{ height: i === 1 ? 140 : 64 }} />
               ))}
               <p style={{
-                color: "var(--muted)", fontSize: "0.78rem",
-                letterSpacing: "0.08em", fontFamily: "var(--font-body)", textAlign: "center",
+                color: "var(--muted)", fontSize: "0.62rem",
+                letterSpacing: "0.16em", textTransform: "uppercase",
+                fontFamily: "var(--font-mono), monospace", textAlign: "center",
               }}>{t("post.generating")}</p>
             </div>
           ) : postError ? (
@@ -274,10 +221,7 @@ export function PostMovie({
               {/* ── Plot Summary ── */}
               <section>
                 <SectionLabel>{t("post.plotSummary")}</SectionLabel>
-                <div style={{
-                  background: "var(--bg-card)", border: "1px solid var(--border)",
-                  borderRadius: 14, overflow: "hidden",
-                }}>
+                <div className="film-stack">
                   {(postContent.plot_summary.sections?.length
                     ? postContent.plot_summary.sections
                     : [
@@ -285,52 +229,26 @@ export function PostMovie({
                         { title: t("post.act2"), content: postContent.plot_summary.act2 ?? "" },
                         { title: t("post.act3"), content: postContent.plot_summary.act3 ?? "" },
                       ].filter(s => s.content)
-                  ).map((s, i, arr) => (
-                    <div key={i} style={{
-                      padding: "20px 22px",
-                      borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none",
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                        <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "0.68rem",
-                          color: "#09090E", letterSpacing: "0.08em",
-                          background: "var(--gold-dim)", padding: "2px 10px",
-                          borderRadius: 4, fontWeight: 600,
-                        }}>
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span style={{
-                          fontFamily: "var(--font-body)", fontSize: "0.82rem",
-                          color: "var(--parchment)", letterSpacing: "0.06em",
-                          fontWeight: 500,
-                        }}>
-                          {s.title}
-                        </span>
+                  ).map((s, i) => (
+                    <div key={i} className="block">
+                      <div className="act-head">
+                        <span className="num">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="title">{s.title}</span>
                       </div>
                       <p style={{
-                        fontFamily: "var(--font-body)", fontSize: "0.9rem",
-                        color: "#D4D0DE", lineHeight: 1.85, margin: 0,
-                        paddingLeft: 2,
+                        fontFamily: "var(--font-body), sans-serif",
+                        fontSize: "0.9rem",
+                        color: "rgba(235,227,208,0.82)",
+                        lineHeight: 1.85,
+                        margin: 0,
                       }}>{s.content}</p>
                     </div>
                   ))}
                   {/* Theme quote */}
                   {postContent.plot_summary.theme && (
-                    <div style={{
-                      padding: "16px 22px",
-                      background: "rgba(200,151,58,0.04)",
-                      borderTop: "1px solid var(--border)",
-                      display: "flex", alignItems: "center", gap: 12,
-                    }}>
-                      <span style={{
-                        fontFamily: "var(--font-display)", fontSize: "1.6rem",
-                        color: "var(--gold-dim)", lineHeight: 1, opacity: 0.4,
-                      }}>"</span>
-                      <p style={{
-                        fontFamily: "var(--font-display)", fontSize: "1rem",
-                        fontStyle: "italic", color: "var(--amber)",
-                        letterSpacing: "0.03em", margin: 0, lineHeight: 1.6,
-                      }}>{postContent.plot_summary.theme}</p>
+                    <div className="theme-quote">
+                      <span className="mark">&ldquo;</span>
+                      <p className="text">{postContent.plot_summary.theme}</p>
                     </div>
                   )}
                 </div>
@@ -348,35 +266,17 @@ export function PostMovie({
               {postContent.easter_eggs.length > 0 && (
                 <section>
                   <SectionLabel>{t("post.easterEggs")}</SectionLabel>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div>
                     {postContent.easter_eggs.map((egg, i) => (
-                      <div key={i} className="poster-enter" style={{
-                        "--r": "0deg",
-                        animationDelay: `${i * 40}ms`,
-                        background: "var(--bg-card)", border: "1px solid var(--border)",
-                        borderRadius: 12, padding: "16px 18px",
-                        display: "flex", gap: 14, alignItems: "flex-start",
-                      } as React.CSSProperties}>
-                        <span style={{
-                          fontSize: "1.3rem", flexShrink: 0, marginTop: 2,
-                          width: 36, height: 36, borderRadius: 8,
-                          background: "rgba(200,151,58,0.06)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
-                          {EGG_ICON[egg.category] ?? "🥚"}
-                        </span>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{
-                            fontFamily: "var(--font-body)", fontSize: "0.68rem",
-                            padding: "2px 10px", borderRadius: 20,
-                            background: "rgba(200,151,58,0.1)", color: "var(--gold)",
-                            letterSpacing: "0.05em", display: "inline-block", marginBottom: 8,
-                            fontWeight: 500,
-                          }}>{egg.category}</span>
-                          <p style={{
-                            fontFamily: "var(--font-body)", fontSize: "0.88rem",
-                            color: "#C8C4D4", lineHeight: 1.8, margin: 0,
-                          }}>{egg.detail}</p>
+                      <div
+                        key={i}
+                        className="fact-card poster-enter"
+                        style={{ "--r": "0deg", animationDelay: `${i * 40}ms` } as React.CSSProperties}
+                      >
+                        <div className="icon">{EGG_ICON[egg.category] ?? "🥚"}</div>
+                        <div className="body">
+                          <span className="ed-tag">{egg.category}</span>
+                          <p className="text">{egg.detail}</p>
                         </div>
                       </div>
                     ))}
@@ -388,7 +288,7 @@ export function PostMovie({
               {postContent.spoiler_fun_facts.length > 0 && (
                 <section>
                   <SectionLabel>{t("post.spoilerFunFacts")}</SectionLabel>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div>
                     {postContent.spoiler_fun_facts.map((f, i) => (
                       <FactCard key={i} item={{ fact: f.fact, category: f.category as FunFactItem["category"] }} index={i} />
                     ))}
@@ -401,33 +301,28 @@ export function PostMovie({
           {/* ── Personal Rating ── */}
           <section>
             <SectionLabel>{t("post.personalRating")}</SectionLabel>
-            <div style={{
-              background: "var(--bg-card)", border: "1px solid var(--border)",
-              borderRadius: 14, padding: "20px 22px",
-            }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <div className="film-card">
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {RATING_DIMS.map((dim, di) => {
                   const dimKey = ["post.dim.plot", "post.dim.visual", "post.dim.acting", "post.dim.music", "post.dim.lasting"][di];
                   return (
-                  <StarRow
-                    key={dim}
-                    dim={t(dimKey)}
-                    score={personalScores[di]}
-                    onChange={(v) => {
-                      const next = [...personalScores];
-                      next[di] = v;
-                      setPersonalScores(next);
-                      saveRating(data.id, next);
-                    }}
-                  />
+                    <StarRow
+                      key={dim}
+                      dim={t(dimKey)}
+                      score={personalScores[di]}
+                      onChange={(v) => {
+                        const next = [...personalScores];
+                        next[di] = v;
+                        setPersonalScores(next);
+                        saveRating(data.id, next);
+                      }}
+                    />
                   );
                 })}
               </div>
               {personalScores.filter(s => s > 0).length >= 3 && (
-                <div style={{
-                  marginTop: 18, paddingTop: 18,
-                  borderTop: "1px solid var(--border)",
-                }}>
+                <>
+                  <div className="film-card-divider" />
                   <RadarChart
                     scores={personalScores}
                     labels={[
@@ -438,31 +333,43 @@ export function PostMovie({
                       t("post.dim.lasting"),
                     ]}
                   />
-                </div>
+                </>
               )}
               {personalScores.some(s => s > 0) && (
-                <div style={{
-                  marginTop: 16, paddingTop: 16,
-                  borderTop: "1px solid var(--border)",
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                }}>
-                  <span style={{
-                    fontFamily: "var(--font-body)", fontSize: "0.85rem",
-                    color: "var(--muted)", fontWeight: 500,
-                  }}>{t("post.overallRating")}</span>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                <>
+                  <div className="film-card-divider" />
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}>
                     <span style={{
-                      fontFamily: "var(--font-display)", fontSize: "2rem",
-                      fontWeight: 500, color: "var(--gold)", lineHeight: 1,
-                    }}>
-                      {(personalScores.filter(s => s > 0).reduce((a, b) => a + b, 0) / personalScores.filter(s => s > 0).length).toFixed(1)}
-                    </span>
-                    <span style={{
-                      fontFamily: "var(--font-body)", fontSize: "0.78rem",
-                      color: "var(--muted)",
-                    }}>/ 5</span>
+                      fontFamily: "var(--font-mono), monospace",
+                      fontSize: "0.64rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--amber)",
+                    }}>§ {t("post.overallRating")}</span>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                      <span style={{
+                        fontFamily: "var(--font-display), 'Fraunces', Georgia, serif",
+                        fontVariationSettings: '"SOFT" 60, "WONK" 1, "opsz" 144',
+                        fontSize: "2.4rem",
+                        fontWeight: 500,
+                        color: "var(--amber)",
+                        lineHeight: 1,
+                      }}>
+                        {(personalScores.filter(s => s > 0).reduce((a, b) => a + b, 0) / personalScores.filter(s => s > 0).length).toFixed(1)}
+                      </span>
+                      <span style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontSize: "0.72rem",
+                        letterSpacing: "0.1em",
+                        color: "var(--muted)",
+                      }}>/ 5</span>
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </section>
