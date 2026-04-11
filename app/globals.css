@@ -185,10 +185,12 @@ body::after {
   margin: 0;
   padding-bottom: 0.12em; /* clear Fraunces "g" descender so it doesn't collide with the issue line */
 }
-/* The O is the whole trick — vermilion signature, upright & refined (no WONK/italic on a capital) */
+/* The O is the whole trick — vermilion signature, upright & refined (no WONK/italic on a capital).
+   Weight pushed to 600 against the 300 wordmark so the O reads as a deliberate focal point. */
 .masthead-title .accent {
   color: var(--vermilion);
   font-style: normal;
+  font-weight: 600;
   font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
 }
 
@@ -1898,6 +1900,7 @@ body::after {
   font-weight: 600;
 }
 .act-head .title { color: var(--cream); }
+
 
 
 
