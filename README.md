@@ -1,4 +1,4 @@
-# 伴影 CineCompanion
+# Lights Out
 
 **中文语境观影全程助手** — 观前预习 · 观中辅助 · 观后复盘
 
@@ -40,7 +40,7 @@
 
 | 功能 | 说明 |
 |------|------|
-| **刊头 Masthead** | `CINÉ COMPANION` editorial 刊头 + 动态期号（VOL · NO · 月份） |
+| **刊头 Masthead** | `LIGHTS OUT` editorial 刊头 + 动态期号（VOL · NO · 月份） |
 | **Search Slate** | 电影拍摄板样式搜索框，支持中英文双向（「沙丘」和「Dune」等价） |
 | **Editor's Choice** | 4 部编辑精选（Project Hail Mary / Dune / Oppenheimer / Reminders of Him），非对称 contact sheet 排版 |
 | **Now Showing** | AMC 院线在映片海报网格，按真实 IMDb 分数排序（实时抓取） |

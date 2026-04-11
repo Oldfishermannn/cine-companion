@@ -332,7 +332,7 @@ function WatchPageContent() {
                 fontSize: "0.78rem", color: "var(--muted)",
                 lineHeight: 1.7, marginBottom: 24,
               }}>
-                点击下方按钮，CineCompanion 会在最佳时间点提醒你起身
+                点击下方按钮，Lights Out 会在最佳时间点提醒你起身
               </p>
 
               {breaksLoading ? (

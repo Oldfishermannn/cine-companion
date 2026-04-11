@@ -48,7 +48,7 @@ const notoSerifSC = Noto_Serif_SC({
 });
 
 export const metadata: Metadata = {
-  title: "伴影 CineCompanion",
+  title: "Lights Out",
   description: "北美院线观影助手",
 };
 

@@ -7,7 +7,7 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 async function fetchWikipedia(title: string) {
   const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-  const res = await fetch(url, { headers: { "User-Agent": "CineCompanion/1.0" } });
+  const res = await fetch(url, { headers: { "User-Agent": "LightsOut/1.0" } });
   if (!res.ok) return null;
   return res.json();
 }

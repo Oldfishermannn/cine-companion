@@ -3,10 +3,10 @@ import { HomeClient } from "./HomeClient";
 import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
 
 export const metadata: Metadata = {
-  title: "伴影 CineCompanion — 北美华人院线观影助手",
+  title: "Lights Out — North America Theater Companion",
   description: `北美正在热映 ${MOVIE_CATALOG.length} 部院线电影。词汇预习、背景知识、幕后花絮、厕所时间、观后复盘——北美院线全流程观影陪伴。`,
   openGraph: {
-    title: "伴影 CineCompanion",
+    title: "Lights Out",
     description: "北美华人院线观影助手：词汇预习 · 背景知识 · 幕后花絮 · 厕所时间 · 观后复盘",
     type: "website",
     locale: "zh_CN",
@@ -50,7 +50,7 @@ export default function Home() {
         <header className="masthead w-full fade-up" style={{ animationDelay: "0ms" }}>
           <div>
             <h1 className="masthead-title">
-              Cin<span className="accent">é</span> Companion
+              Lights <span className="accent">O</span>ut
             </h1>
             <div className="masthead-issue">
               <span>{issue.vol}</span>

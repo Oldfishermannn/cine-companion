@@ -65,7 +65,7 @@ function bar(done, total, width = 20) {
 async function main() {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
 
-  console.log("\n🎬  伴影 CineUsher — Cache Pre-Warmer");
+  console.log("\n🎬  Lights Out — Cache Pre-Warmer");
   console.log("━".repeat(50));
   console.log(`📁  Cache dir: ${CACHE_DIR}`);
   console.log(`🎞   Movies: ${MOVIE_CATALOG.length}\n`);
