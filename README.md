@@ -2,6 +2,8 @@
 
 **中文语境观影全程助手** — 观前预习 · 观中辅助 · 观后复盘
 
+🎬 **Live**: [lights-out-cinema.vercel.app](https://lights-out-cinema.vercel.app/)
+
 > 为北美华人观众打造。看英语电影时，再也不用因为听不懂一个词、不了解文化背景而出戏。
 
 ---
@@ -81,8 +83,8 @@ AI        Claude Sonnet 4.6（内容生成）· Claude Haiku 4.5（快速查词/
 ### 本地运行
 
 ```bash
-git clone https://github.com/Oldfishermannn/cine-companion.git
-cd cine-companion
+git clone https://github.com/Oldfishermannn/lights-out.git
+cd lights-out
 npm install
 ```
 
