@@ -1980,11 +1980,7 @@ body::after {
 
 /* ── Full-bleed score bar ── */
 .dc-bar-wrap {
-  /* Break out of any parent horizontal padding to reach screen edges */
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  margin-left: -50vw;
+  width: 100%;
   margin-bottom: 22px;
   padding: 18px 0 10px;
 }
