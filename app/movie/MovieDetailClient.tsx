@@ -489,53 +489,6 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               )}
             </div>
 
-            {/* ── Also In This Issue ── */}
-            {data && (() => {
-              const similar = MOVIE_CATALOG
-                .filter(m => m.title !== data.title && m.genre === MOVIE_CATALOG.find(c => c.title === query)?.genre)
-                .sort((a, b) => a.rank - b.rank)
-                .slice(0, 4);
-              if (similar.length === 0) return null;
-              return (
-                <section style={{ marginTop: 56 }}>
-                  <div className="editorial-divider">
-                    <span className="sec">§</span>
-                    <span className="rule-short" />
-                    <span className="title">Also In This Issue</span>
-                    <span className="rule-long" />
-                  </div>
-                  <div className="similar-stack">
-                    {similar.map((m, i) => {
-                      const poster = m.posterUrl;
-                      return (
-                        <div
-                          key={m.title}
-                          className="similar-card"
-                          onClick={() => router.push(`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`)}
-                        >
-                          <span className="similar-index">{String(i + 1).padStart(2, "0")}</span>
-                          <div className="similar-poster">
-                            {poster ? (
-                              <Image src={poster} alt={m.title} fill style={{ objectFit: "cover" }} sizes="56px" />
-                            ) : (
-                              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", opacity: 0.25 }}>🎬</div>
-                            )}
-                          </div>
-                          <div className="similar-body">
-                            <p className="similar-title">{lang === "en" ? m.title : m.zh}</p>
-                            <p className="similar-subtitle">{lang === "en" ? m.zh : m.title}</p>
-                            <span className="similar-meta">
-                              {tGenre(m.genre)} · #{String(m.rank).padStart(2, "0")} · {m.year}
-                            </span>
-                          </div>
-                          <span className="similar-arrow">→</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
-              );
-            })()}
           </div>
         </div>
       )}
