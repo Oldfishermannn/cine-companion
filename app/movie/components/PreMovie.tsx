@@ -111,7 +111,6 @@ export function PreMovie({
 
       {/* ── 预告片 ── */}
       <div className="pre-section">
-        <PreLabel>{t("pre.trailer")}</PreLabel>
         {trailerUrl ? (
           <div className="trailer-frame">
             <iframe
@@ -132,7 +131,6 @@ export function PreMovie({
       {/* ── 演职表 ── */}
       {castMembers.length > 0 && (
         <div className="pre-section">
-          <PreLabel>{t("pre.cast")}</PreLabel>
           <CastSection castMembers={castMembers} />
         </div>
       )}
