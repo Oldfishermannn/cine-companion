@@ -1002,7 +1002,7 @@ body::after {
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 .reel-tab {
   background: transparent;
@@ -2177,11 +2177,14 @@ body::after {
   gap: 0;
 }
 .pre-section {
-  padding: 24px 0;
+  padding: 20px 0;
   border-bottom: 1px solid var(--rule);
 }
 .pre-section:last-child {
   border-bottom: none;
+}
+.pre-movie > .pre-section:first-child {
+  padding-top: 16px;
 }
 .pre-label {
   font-family: var(--font-mono), monospace;

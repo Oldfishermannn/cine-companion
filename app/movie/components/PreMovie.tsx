@@ -79,7 +79,6 @@ export function PreMovie({
 
       {/* ── 评分 ── */}
       <div className="pre-section">
-        <PreLabel>{t("pre.ratings")}</PreLabel>
         <div className="ed-ratings">
           {ratingsLoading ? (
             [0,1,2,3].map(i => (

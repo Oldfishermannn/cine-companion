@@ -568,9 +568,6 @@ function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchl
       <div className="poster-footer">
         <span className="poster-genre">{tGenre(movie.genre)}</span>
         <p className="poster-title">{displayTitle}</p>
-        <span className="poster-meta">
-          <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased) || movie.year}
-        </span>
         {oneLiner && (
           <p className="poster-oneliner">{oneLiner}</p>
         )}
