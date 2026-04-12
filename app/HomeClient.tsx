@@ -405,7 +405,6 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
 
         {gridMovies.length > 0 ? (
           <>
-          <div className="film-sprockets" aria-hidden />
           <div className="movie-grid">
             {gridMovies.map(({ movie, origIdx }) => (
               <PosterCard
