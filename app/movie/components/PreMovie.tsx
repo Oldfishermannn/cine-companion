@@ -165,6 +165,7 @@ export function PreMovie({
 
       {/* ── 关键词汇 (collapsible) ── */}
       <CollapsibleLayer
+        defaultOpen
         title={t("pre.vocabTitle")}
         onExpand={() => track("layer_expand", { layer: "关键词汇", title: data.title })}
         badge={
@@ -202,6 +203,7 @@ export function PreMovie({
 
       {/* ── 幕后花絮 (collapsible) ── */}
       <CollapsibleLayer
+        defaultOpen
         title={t("pre.factsTitle")}
         onExpand={() => track("layer_expand", { layer: "幕后花絮", title: data.title })}
         badge={
@@ -227,6 +229,7 @@ export function PreMovie({
       {/* ── 厕所时间 (collapsible) ── */}
       {(breaksLoading || breaksError || breaksContent) && (
         <CollapsibleLayer
+          defaultOpen
           title={t("pre.breaks")}
           onExpand={() => track("layer_expand", { layer: "breaks", title: data.title })}
           badge={<SourceBadge type="inferred" />}
