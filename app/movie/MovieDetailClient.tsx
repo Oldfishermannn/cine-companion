@@ -411,7 +411,8 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               </div>
 
               {/* 5. Decision Card */}
-              <div style={{ marginTop: 24 }}>
+              <div style={{ marginTop: 0 }}>
+                <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--rule) 30%, var(--rule) 70%, transparent)", margin: "24px 0 20px" }} />
                 <DecisionCard verdict={verdictContent} loading={verdictLoading} />
               </div>
             </div>

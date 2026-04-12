@@ -53,7 +53,6 @@ export function PreMovie({
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
 }: PreMovieProps) {
   const { t } = useLang();
-  const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
 
   // Merge OMDb + live data
   const imdbScore = data.ratings.imdb
@@ -137,6 +136,11 @@ export function PreMovie({
           )}
         </section>
 
+        {/* Cast — below trailer */}
+        {castMembers.length > 0 && (
+          <CastSection castMembers={castMembers} />
+        )}
+
         {/* AMC 购票模块 */}
         {amcUrl && (
           <section>
@@ -166,8 +170,8 @@ export function PreMovie({
           Background + Vocabulary
           ═══════════════════════════════════════════════════════════════ */}
       <CollapsibleLayer
-        title="观影前补课"
-        onExpand={() => track("layer_expand", { layer: "观影前补课", title: data.title })}
+        title="关键词汇"
+        onExpand={() => track("layer_expand", { layer: "关键词汇", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
@@ -177,84 +181,6 @@ export function PreMovie({
           </span>
         }
       >
-        {/* Background */}
-        <section>
-          <SectionLabel>
-            {t("pre.background")}
-            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
-          </SectionLabel>
-
-          {aiLoading ? (
-            <div className="film-card">
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {[100, 85, 70, 50].map((w, i) => (
-                  <div key={i} className="skeleton" style={{ height: 12, width: `${w}%` }} />
-                ))}
-              </div>
-              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 14, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiGenerating")}</p>
-            </div>
-          ) : aiError ? (
-            <ErrorBanner message={t("pre.aiError")} />
-          ) : aiContent ? (
-            <div className="bg-flow">
-              {aiContent.background.summary && (
-                <p className="bg-lead">
-                  {aiContent.background.summary}
-                </p>
-              )}
-              {aiContent.background.context.length > 0 && (
-                <ul className="ed-bullets">
-                  {aiContent.background.context.filter((point, i) => {
-                    if (i !== 0) return true;
-                    const summary = aiContent.background.summary || "";
-                    if (!summary) return true;
-                    const overlap = point.slice(0, 30);
-                    return !summary.includes(overlap.slice(0, 20));
-                  }).map((point, i) => (
-                    <li key={i}><span>{point}</span></li>
-                  ))}
-                </ul>
-              )}
-              {aiContent.background.director_note && (
-                <div className="bg-director">
-                  <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
-                  <p>{aiContent.background.director_note}</p>
-                </div>
-              )}
-              <div className="bg-spoiler">
-                {!spoilerUnlocked ? (
-                  <button
-                    className="ed-btn ghost"
-                    onClick={() => setSpoilerUnlocked(true)}
-                  >
-                    ▸ {t("pre.spoilerUnlock")}
-                  </button>
-                ) : (
-                  <div>
-                    <div className="spoiler-strip" style={{ marginBottom: 14 }}>
-                      <span className="sec">※</span>
-                      <span>{t("pre.lightSpoilerWarn")}</span>
-                    </div>
-                    {funFacts?.first_act_hint ? (
-                      <p style={{ color: "rgba(235,227,208,0.82)", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
-                        {funFacts.first_act_hint}
-                      </p>
-                    ) : factsLoading ? (
-                      <div className="skeleton" style={{ height: 48 }} />
-                    ) : aiContent.background.wikipedia ? (
-                      <p style={{ color: "rgba(235,227,208,0.72)", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
-                        {aiContent.background.wikipedia.slice(0, 400)}…
-                      </p>
-                    ) : (
-                      <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body), sans-serif", margin: 0 }}>{t("pre.noHintInfo")}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : null}
-        </section>
-
         {/* Vocabulary */}
         <section>
           <SectionLabel>
@@ -331,11 +257,6 @@ export function PreMovie({
           </span>
         }
       >
-        {/* Cast */}
-        {castMembers.length > 0 && (
-          <CastSection castMembers={castMembers} />
-        )}
-
         {/* Fun Facts */}
         <section>
           <SectionLabel>
@@ -358,97 +279,101 @@ export function PreMovie({
       </CollapsibleLayer>
 
       {/* ═══════════════════════════════════════════════════════════════
-          Break Calculator — bottom of page
+          Break Calculator — collapsible, bottom of page
           ═══════════════════════════════════════════════════════════════ */}
       {(breaksLoading || breaksError || breaksContent) && (
-        <section>
-          <SectionLabel>{t("pre.breaks")}</SectionLabel>
-          <SourceBadge type="inferred" />
-          <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 6, fontFamily: "var(--font-body), sans-serif" }}>
-            {t("pre.breaksHint")}
-          </p>
+        <CollapsibleLayer
+          title={t("pre.breaks")}
+          onExpand={() => track("layer_expand", { layer: "breaks", title: data.title })}
+          badge={<SourceBadge type="inferred" />}
+        >
+          <section>
+            <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 0, fontFamily: "var(--font-body), sans-serif" }}>
+              {t("pre.breaksHint")}
+            </p>
 
-          {breaksContent && (
-            <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
-              <label className="showtime-main" htmlFor="showtime-input">
-                <span className="q">{t("pre.showtimePrompt")}</span>
-                <div className="showtime-field">
-                  <input
-                    id="showtime-input"
-                    type="time"
-                    value={movieStartTime}
-                    onChange={e => setMovieStartTime(e.target.value)}
-                  />
-                  {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
-                </div>
-              </label>
-              <button
-                type="button"
-                className={`showtime-toggle${includeTrailers ? " on" : ""}`}
-                onClick={() => setIncludeTrailers((v: boolean) => !v)}
-                aria-pressed={includeTrailers}
-              >
-                <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
-                <span className="label">{t("pre.includeTrailers")}</span>
-                <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
-              </button>
-            </div>
-          )}
-
-          {breaksLoading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
-              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
-            </div>
-          ) : breaksError ? (
-            <ErrorBanner message={t("pre.breaksError")} />
-          ) : breaksContent ? (
-            <div>
-              {breaksContent.breaks.map((b, i) => {
-                const isBest = b.minute === breaksContent.best_break;
-                let timeRange = "";
-                if (movieStartTime) {
-                  const [sh, sm] = movieStartTime.split(":").map(Number);
-                  const trailerOffset = includeTrailers ? 25 : 0;
-                  const startMin = sh * 60 + sm + trailerOffset + b.minute;
-                  const endMin = startMin + b.duration;
-                  const fmt = (tt: number) => {
-                    const total = Math.floor(tt / 60) % 24, m = tt % 60;
-                    const period = total >= 12 ? "PM" : "AM";
-                    const h = total % 12 || 12;
-                    return `${h}:${String(m).padStart(2, "0")} ${period}`;
-                  };
-                  timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
-                }
-                return (
-                  <div key={i} className={`break-card${isBest ? " best" : ""}`}>
-                    <div className="timecol">
-                      {timeRange ? (
-                        <div className="time">{timeRange}</div>
-                      ) : (
-                        <>
-                          <div className="minute">{b.minute}</div>
-                          <div className="label">{t("pre.minuteUnit")}</div>
-                        </>
-                      )}
-                    </div>
-                    <div className="body">
-                      <div className="meta">
-                        {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
-                        <span>
-                          {timeRange
-                            ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
-                            : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
-                        </span>
-                      </div>
-                      <p className="hint">{b.scene_hint}</p>
-                    </div>
+            {breaksContent && (
+              <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
+                <label className="showtime-main" htmlFor="showtime-input">
+                  <span className="q">{t("pre.showtimePrompt")}</span>
+                  <div className="showtime-field">
+                    <input
+                      id="showtime-input"
+                      type="time"
+                      value={movieStartTime}
+                      onChange={e => setMovieStartTime(e.target.value)}
+                    />
+                    {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
                   </div>
-                );
-              })}
-            </div>
-          ) : null}
-        </section>
+                </label>
+                <button
+                  type="button"
+                  className={`showtime-toggle${includeTrailers ? " on" : ""}`}
+                  onClick={() => setIncludeTrailers((v: boolean) => !v)}
+                  aria-pressed={includeTrailers}
+                >
+                  <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+                  <span className="label">{t("pre.includeTrailers")}</span>
+                  <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
+                </button>
+              </div>
+            )}
+
+            {breaksLoading ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
+                <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
+              </div>
+            ) : breaksError ? (
+              <ErrorBanner message={t("pre.breaksError")} />
+            ) : breaksContent ? (
+              <div>
+                {breaksContent.breaks.map((b, i) => {
+                  const isBest = b.minute === breaksContent.best_break;
+                  let timeRange = "";
+                  if (movieStartTime) {
+                    const [sh, sm] = movieStartTime.split(":").map(Number);
+                    const trailerOffset = includeTrailers ? 25 : 0;
+                    const startMin = sh * 60 + sm + trailerOffset + b.minute;
+                    const endMin = startMin + b.duration;
+                    const fmt = (tt: number) => {
+                      const total = Math.floor(tt / 60) % 24, m = tt % 60;
+                      const period = total >= 12 ? "PM" : "AM";
+                      const h = total % 12 || 12;
+                      return `${h}:${String(m).padStart(2, "0")} ${period}`;
+                    };
+                    timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
+                  }
+                  return (
+                    <div key={i} className={`break-card${isBest ? " best" : ""}`}>
+                      <div className="timecol">
+                        {timeRange ? (
+                          <div className="time">{timeRange}</div>
+                        ) : (
+                          <>
+                            <div className="minute">{b.minute}</div>
+                            <div className="label">{t("pre.minuteUnit")}</div>
+                          </>
+                        )}
+                      </div>
+                      <div className="body">
+                        <div className="meta">
+                          {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
+                          <span>
+                            {timeRange
+                              ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
+                              : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
+                          </span>
+                        </div>
+                        <p className="hint">{b.scene_hint}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+          </section>
+        </CollapsibleLayer>
       )}
     </>
   );
