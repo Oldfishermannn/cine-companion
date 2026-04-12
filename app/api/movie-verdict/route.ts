@@ -138,6 +138,13 @@ ${runtime ? `时长：${runtime}` : ""}
     if (!toolUse || toolUse.type !== "tool_use") throw new Error("AI did not call tool");
 
     const input = toolUse.input as Record<string, unknown>;
+    const theatricalNeed = String(input.theatrical_need || "medium");
+    let rawScore = Number(input.recommendation_score) || 7;
+    // Enforce score/theatrical_need consistency server-side
+    if (theatricalNeed === "low"    && rawScore > 6.5) rawScore = 6.5;
+    if (theatricalNeed === "medium" && rawScore < 6.0) rawScore = 6.0;
+    if (theatricalNeed === "medium" && rawScore > 8.0) rawScore = 8.0;
+    if (theatricalNeed === "high"   && rawScore < 7.5) rawScore = 7.5;
     const result = {
       one_line_verdict: String(input.one_line_verdict || ""),
       good_for: safeParseJSON(input.good_for, []) as string[],
@@ -146,8 +153,8 @@ ${runtime ? `时长：${runtime}` : ""}
       pacing: String(input.pacing || "mixed"),
       english_difficulty: String(input.english_difficulty || "medium"),
       english_note: String(input.english_note || ""),
-      theatrical_need: String(input.theatrical_need || "medium"),
-      recommendation_score: Number(input.recommendation_score) || 7,
+      theatrical_need: theatricalNeed,
+      recommendation_score: rawScore,
       has_credits_scene: Boolean(input.has_credits_scene),
       credits_detail: String(input.credits_detail || ""),
       one_line_summary: String(input.one_line_summary || ""),
