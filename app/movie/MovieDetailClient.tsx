@@ -410,12 +410,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                 </div>
               </div>
 
-              {/* 5. Decision Card — below poster + info */}
-              <div style={{ marginTop: 24 }}>
-                <DecisionCard verdict={verdictContent} loading={verdictLoading} />
-              </div>
-
-              {/* 6. Synopsis paragraph + expand */}
+              {/* 5. Synopsis — below movie info, above decision card, capped at poster width */}
               {(() => {
                 const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
                 if (!full) return null;
@@ -425,7 +420,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                 const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
                 const truncated = lastBreak > 40 ? full.slice(0, lastBreak + 1) : cap + "…";
                 return (
-                  <div style={{ marginTop: 24 }}>
+                  <div style={{ marginTop: 20, maxWidth: 320 }}>
                     <p className="hero-synopsis" style={{ margin: 0 }}>
                       {synopsisExpanded || !needsCap ? full : truncated}
                     </p>
@@ -433,31 +428,27 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                       <button
                         onClick={() => setSynopsisExpanded(true)}
                         style={{
-                          marginTop: 8,
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
+                          marginTop: 6,
+                          background: "none", border: "none", cursor: "pointer",
                           fontFamily: "var(--font-mono), monospace",
-                          fontSize: "0.6rem",
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                          color: "var(--amber-dim)",
-                          padding: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
-                          transition: "color 0.15s",
+                          fontSize: "0.6rem", letterSpacing: "0.16em",
+                          textTransform: "uppercase", color: "var(--amber-dim)",
+                          padding: 0, display: "flex", alignItems: "center", gap: 6,
                         }}
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber)"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber-dim)"; }}
                       >
-                        <span>▾</span>
-                        <span>Expand</span>
+                        <span>▾</span><span>Expand</span>
                       </button>
                     )}
                   </div>
                 );
               })()}
+
+              {/* 6. Decision Card — below synopsis */}
+              <div style={{ marginTop: 24 }}>
+                <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+              </div>
             </div>
           </div>
 
