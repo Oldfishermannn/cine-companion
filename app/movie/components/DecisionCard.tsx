@@ -9,7 +9,7 @@ const THEATRICAL_ZH: Record<string, string> = { low: "流媒体即可", medium: 
 const KNOWLEDGE_ZH: Record<string, string>  = { none: "无需", low: "略知即可", medium: "建议了解", high: "需要补课" };
 
 /** Animate a number from 0 → target over `duration` ms, returns current display value */
-function useCountUp(target: number, duration = 900, delay = 200) {
+function useCountUp(target: number, duration = 2200, delay = 300) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     let start: number | null = null;
@@ -18,8 +18,8 @@ function useCountUp(target: number, duration = 900, delay = 200) {
       const step = (ts: number) => {
         if (!start) start = ts;
         const progress = Math.min((ts - start) / duration, 1);
-        // ease-out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
+        // ease-out-quint — very gradual deceleration, feels luxurious
+        const eased = 1 - Math.pow(1 - progress, 5);
         setValue(parseFloat((eased * target).toFixed(1)));
         if (progress < 1) raf = requestAnimationFrame(step);
         else setValue(target);
@@ -59,12 +59,12 @@ function DecisionCardInner({ verdict }: { verdict: VerdictContent }) {
   const animated  = useCountUp(score, 900, 200);
   const pct       = `${(animated / 10) * 100}%`;
 
-  // Color interpolates gently: muted red → warm amber → soft green
-  const scoreColor = score >= 8
-    ? "rgba(134,200,130,0.9)"
-    : score >= 6
-    ? "rgba(210,185,120,0.9)"
-    : "rgba(200,120,110,0.9)";
+  // Use the site's own amber palette — no jarring external colors
+  const scoreColor = score >= 7
+    ? "var(--amber)"
+    : score >= 5
+    ? "var(--cream)"
+    : "var(--muted)";
 
   const scoreDesc = score >= 8 ? "强烈推荐" : score >= 6 ? "值得一看" : "谨慎考虑";
 
