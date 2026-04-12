@@ -140,11 +140,10 @@ function StarRow({ dim, score, onChange }: { dim: string; score: number; onChang
     }}>
       {/* Dimension label — min-width auto so it never truncates */}
       <span style={{
-        fontFamily: "var(--font-mono), monospace",
-        fontSize: "0.62rem",
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: score > 0 ? "var(--amber)" : "var(--muted)",
+        fontFamily: "var(--font-body), sans-serif",
+        fontSize: "0.82rem",
+        letterSpacing: "0.02em",
+        color: score > 0 ? "var(--amber)" : "rgba(235,227,208,0.6)",
         minWidth: 52,
         flexShrink: 0,
         transition: "color 0.2s",
@@ -187,7 +186,7 @@ export function PostMovie({
 }: PostMovieProps) {
   const { t } = useLang();
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {/* Spoiler gate */}
       {!postUnlocked ? (
         <div className="lock-gate">
@@ -254,9 +253,9 @@ export function PostMovie({
                       </div>
                       <p style={{
                         fontFamily: "var(--font-body), sans-serif",
-                        fontSize: "0.9rem",
-                        color: "rgba(235,227,208,0.82)",
-                        lineHeight: 1.85,
+                        fontSize: "0.95rem",
+                        color: "rgba(235,227,208,0.88)",
+                        lineHeight: 1.95,
                         margin: 0,
                       }}>{s.content}</p>
                     </div>
