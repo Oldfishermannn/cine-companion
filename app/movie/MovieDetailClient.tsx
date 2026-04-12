@@ -410,42 +410,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                 </div>
               </div>
 
-              {/* 5. Synopsis — below movie info, above decision card, capped at poster width */}
-              {(() => {
-                const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
-                if (!full) return null;
-                const SHORT_LIMIT = 120;
-                const needsCap = full.length > SHORT_LIMIT;
-                const cap = full.slice(0, SHORT_LIMIT);
-                const lastBreak = Math.max(cap.lastIndexOf("。"), cap.lastIndexOf("！"), cap.lastIndexOf("？"));
-                const truncated = lastBreak > 40 ? full.slice(0, lastBreak + 1) : cap + "…";
-                return (
-                  <div style={{ marginTop: 20, maxWidth: 320 }}>
-                    <p className="hero-synopsis" style={{ margin: 0 }}>
-                      {synopsisExpanded || !needsCap ? full : truncated}
-                    </p>
-                    {needsCap && !synopsisExpanded && (
-                      <button
-                        onClick={() => setSynopsisExpanded(true)}
-                        style={{
-                          marginTop: 6,
-                          background: "none", border: "none", cursor: "pointer",
-                          fontFamily: "var(--font-mono), monospace",
-                          fontSize: "0.6rem", letterSpacing: "0.16em",
-                          textTransform: "uppercase", color: "var(--amber-dim)",
-                          padding: 0, display: "flex", alignItems: "center", gap: 6,
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber)"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--amber-dim)"; }}
-                      >
-                        <span>▾</span><span>Expand</span>
-                      </button>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* 6. Decision Card — below synopsis */}
+              {/* 5. Decision Card */}
               <div style={{ marginTop: 24 }}>
                 <DecisionCard verdict={verdictContent} loading={verdictLoading} />
               </div>
