@@ -304,9 +304,12 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
     if (sceneFilter) list = list.filter(({ movie }) => movieSceneTags[movie.title]?.includes(sceneFilter));
     list.sort((a, b) => {
       if (sortMode === "verdict") {
-        const sa = verdictMap[a.movie.title]?.score ?? 0;
-        const sb = verdictMap[b.movie.title]?.score ?? 0;
-        return sb - sa;
+        const va = verdictMap[a.movie.title];
+        const vb = verdictMap[b.movie.title];
+        if (!va && !vb) return a.movie.rank - b.movie.rank;
+        if (!va) return 1;
+        if (!vb) return -1;
+        return vb.score - va.score;
       }
       if (sortMode === "rating") {
         const sa = a.movie.imdbScore;

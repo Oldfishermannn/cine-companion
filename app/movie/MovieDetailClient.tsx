@@ -386,7 +386,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                   }}>🎬</div>
                 )}
 
-                <div className="stat-grid" style={{ alignSelf: "start" }}>
+                <div className="stat-grid" style={{ alignSelf: "center" }}>
                   {(() => {
                     const rows: Array<{ label: string; value: string }> = [];
                     const releasedVal = data.released
