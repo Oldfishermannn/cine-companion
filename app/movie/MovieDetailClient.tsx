@@ -122,6 +122,17 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
       .then(r => r.json())
       .then(t => { if (t.url) { setTrailerUrl(t.url); setTrailerType(t.type || "youtube"); } })
       .catch(() => {});
+
+    // Verdict — fetch if missing from baked cache
+    if (!initialData.verdict) {
+      setVerdictLoading(true);
+      const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
+      fetchRetry(`/api/movie-verdict?${verdictParams}`)
+        .then(r => r.json())
+        .then(v => { if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } })
+        .catch(() => {})
+        .finally(() => setVerdictLoading(false));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
