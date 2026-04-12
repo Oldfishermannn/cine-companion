@@ -18,19 +18,24 @@ import baked from "@/app/generated/baked.json";
 type MetaEntry = { title?: string };
 
 const TITLE_TO_ID = new Map<string, string>();
+const TITLE_TO_ID_LOWER = new Map<string, string>();
 
 for (const [key, value] of Object.entries(baked as Record<string, unknown>)) {
   if (!key.endsWith("_meta")) continue;
   const meta = value as MetaEntry;
   if (meta && typeof meta === "object" && typeof meta.title === "string") {
-    TITLE_TO_ID.set(meta.title, key.replace(/_meta$/, ""));
+    const id = key.replace(/_meta$/, "");
+    TITLE_TO_ID.set(meta.title, id);
+    TITLE_TO_ID_LOWER.set(meta.title.toLowerCase(), id);
   }
 }
 
 /**
  * Resolve a movie title to its imdbId by walking baked.json's `_meta` entries.
+ * Falls back to case-insensitive match to handle OMDb title casing differences
+ * (e.g., catalog "Goat" vs OMDb-resolved "GOAT").
  * Returns null for non-catalog movies that haven't been warmed.
  */
 export function lookupImdbId(title: string): string | null {
-  return TITLE_TO_ID.get(title) ?? null;
+  return TITLE_TO_ID.get(title) ?? TITLE_TO_ID_LOWER.get(title.toLowerCase()) ?? null;
 }
