@@ -198,21 +198,19 @@ export function PreMovie({
             <ErrorBanner message={t("pre.breaksError")} />
           ) : breaksContent ? (
             <div>
-              {/* Conservative / Relaxed mode toggle — only show when dual data available */}
-              {(breaksContent.conservative_breaks || breaksContent.relaxed_breaks) && (
-                <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-                  {(["conservative", "relaxed"] as const).map(mode => (
-                    <button
-                      key={mode}
-                      type="button"
-                      className={`sort-btn${breakMode === mode ? " active" : ""}`}
-                      onClick={() => setBreakMode(mode)}
-                    >
-                      {mode === "conservative" ? "保守模式" : "宽松模式"}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* Conservative / Relaxed mode toggle — always visible */}
+              <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+                {(["conservative", "relaxed"] as const).map(mode => (
+                  <button
+                    key={mode}
+                    type="button"
+                    className={`sort-btn${breakMode === mode ? " active" : ""}`}
+                    onClick={() => setBreakMode(mode)}
+                  >
+                    {mode === "conservative" ? "保守模式" : "宽松模式"}
+                  </button>
+                ))}
+              </div>
               {(() => {
                 const list = breakMode === "conservative" && breaksContent.conservative_breaks
                   ? breaksContent.conservative_breaks
