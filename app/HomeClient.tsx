@@ -363,23 +363,6 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
 
         {/* Filter chips + sort */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-            <button
-              className={`genre-pill ${!genreFilter ? "active" : ""}`}
-              onClick={() => setGenreFilter(null)}
-            >
-              {t("home.filterAll")}
-            </button>
-            {genres.map(g => (
-              <button
-                key={g}
-                className={`genre-pill ${genreFilter === g ? "active" : ""}`}
-                onClick={() => setGenreFilter(genreFilter === g ? null : g)}
-              >
-                {tGenre(g)}
-              </button>
-            ))}
-          </div>
           {/* Scene tags */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
             {SCENE_TAGS.filter(tag => catalog.some(m => movieSceneTags[m.title]?.includes(tag.key))).map(tag => (
@@ -535,7 +518,7 @@ function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchl
   href: string;
   oneLiner?: string;
 }) {
-  const { t, title: tTitle } = useLang();
+  const { t, title: tTitle, genre: tGenre } = useLang();
   const displayTitle = tTitle(movie);
 
   return (
@@ -583,6 +566,7 @@ function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchl
       </div>
 
       <div className="poster-footer">
+        <span className="poster-genre">{tGenre(movie.genre)}</span>
         <p className="poster-title">{displayTitle}</p>
         <span className="poster-meta">
           <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased) || movie.year}

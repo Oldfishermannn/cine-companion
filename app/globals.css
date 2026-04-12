@@ -630,6 +630,16 @@ body::after {
 }
 .poster-card .poster-meta .rel { color: var(--amber-dim); }
 
+.poster-card .poster-genre {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-bottom: 2px;
+}
+
 .poster-card .poster-oneliner {
   font-family: var(--font-body), sans-serif;
   font-size: 0.7rem;
