@@ -22,11 +22,15 @@ export async function GET(req: NextRequest) {
   const actors = searchParams.get("actors") || "";
   const runtime = searchParams.get("runtime") || "";
 
+  const lang = searchParams.get("lang") || "zh";
+  const isEn = lang === "en";
+
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
   // Cache hit
+  const cacheKey = isEn ? `${id}_verdict_en` : `${id}_verdict`;
   if (id) {
-    const cached = await readCache(`${id}_verdict`);
+    const cached = await readCache(cacheKey);
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
@@ -37,7 +41,7 @@ export async function GET(req: NextRequest) {
       tools: [
         {
           name: "movie_verdict",
-          description: "为中文语境观众生成电影快速决策卡",
+          description: isEn ? "Generate a quick decision card for English-speaking moviegoers" : "为中文语境观众生成电影快速决策卡",
           input_schema: {
             type: "object" as const,
             properties: {
@@ -114,7 +118,25 @@ export async function GET(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `你是帮助中文语境观众做出观影决策的助手。请基于以下电影信息，调用 movie_verdict 工具生成快速决策卡。
+          content: isEn
+            ? `You are an assistant helping moviegoers make viewing decisions. Based on the following movie info, call the movie_verdict tool to generate a quick decision card. ALL output must be in English.
+
+Movie: ${title} (${year})
+Genre: ${genre}
+${director ? `Director: ${director}` : ""}
+${actors ? `Cast: ${actors}` : ""}
+${runtime ? `Runtime: ${runtime}` : ""}
+Synopsis: ${plot}
+
+Requirements:
+1. one_line_verdict: Be specific and opinionated — state who it's for and whether it's worth seeing in theaters vs streaming.
+2. good_for / not_good_for: Specific audience tags (e.g. "sci-fi fans", "puzzle lovers", "date night pick").
+3. english_difficulty: Consider dialogue speed, accents, jargon, cultural references.
+4. theatrical_need: Consider visual spectacle, sound design, IMAX suitability, and event-viewing value.
+5. recommendation_score: 1-10 "is it worth the theater trip?" index. Must be consistent with theatrical_need.
+6. has_credits_scene: Best knowledge estimate. Note if speculative.
+7. one_line_summary: A punchy 10-20 word magazine-style blurb for the home page card.`
+            : `你是帮助中文语境观众做出观影决策的助手。请基于以下电影信息，调用 movie_verdict 工具生成快速决策卡。
 
 电影：${title}（${year}）
 类型：${genre}
@@ -168,7 +190,7 @@ ${runtime ? `时长：${runtime}` : ""}
       one_line_summary: String(input.one_line_summary || ""),
     };
 
-    if (id) await writeCache(`${id}_verdict`, result);
+    if (id) await writeCache(cacheKey, result);
 
     return NextResponse.json(result);
   } catch (err) {

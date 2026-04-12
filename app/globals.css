@@ -228,6 +228,24 @@ body::after {
   letter-spacing: 0.08em;
 }
 
+.lang-switcher {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: transparent;
+  border: 1px solid var(--amber-dim);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 2px;
+}
+.lang-switcher:hover {
+  background: var(--amber-glow);
+  color: var(--cream);
+}
+
 @media (max-width: 640px) {
   .masthead {
     grid-template-columns: 1fr;

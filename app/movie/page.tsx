@@ -45,14 +45,21 @@ export default async function MoviePage({
     // Parallel cache reads — each is a synchronous Map.get under the hood
     // (lib/cache reads baked.json at module load), so this resolves in
     // microseconds. No HTTP, no waterfall.
-    const [meta, ai, post, facts, breaks, ratings, verdict] = await Promise.all([
+    // Read both Chinese and English caches in parallel.
+    const [meta, ai, post, facts, breaks, ratings, verdict,
+           aiEn, postEn, factsEn, breaksEn, verdictEn] = await Promise.all([
       readCache(`${id}_meta`),
-      readCache(id),                  // movie-ai response
+      readCache(id),                  // movie-ai response (zh)
       readCache(`${id}_post`),
       readCache(`${id}_facts`),
       readCache(`${id}_breaks`),
       readCache(`${id}_ratings`),
       readCache(`${id}_verdict`),
+      readCache(`${id}_en`),          // movie-ai response (en)
+      readCache(`${id}_post_en`),
+      readCache(`${id}_facts_en`),
+      readCache(`${id}_breaks_en`),
+      readCache(`${id}_verdict_en`),
     ]);
     initialData.meta    = (meta    as MovieData       | null) ?? null;
     initialData.ai      = (ai      as AiContent       | null) ?? null;
@@ -61,6 +68,11 @@ export default async function MoviePage({
     initialData.breaks  = (breaks  as BreaksContent   | null) ?? null;
     initialData.ratings = (ratings as LiveRatings     | null) ?? null;
     initialData.verdict = (verdict as VerdictContent  | null) ?? null;
+    initialData.ai_en      = (aiEn      as AiContent       | null) ?? null;
+    initialData.post_en    = (postEn    as PostContent     | null) ?? null;
+    initialData.facts_en   = (factsEn   as FunFacts        | null) ?? null;
+    initialData.breaks_en  = (breaksEn  as BreaksContent   | null) ?? null;
+    initialData.verdict_en = (verdictEn as VerdictContent  | null) ?? null;
   }
 
   return (

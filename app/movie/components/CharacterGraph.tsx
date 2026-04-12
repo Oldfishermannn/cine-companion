@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLang } from "../../i18n/LangProvider";
 
 interface Character {
   name: string;
@@ -23,6 +24,7 @@ export function CharacterGraph({
   characters: Character[];
   relationships?: Relationship[];
 }) {
+  const { lang, t } = useLang();
   const [expanded, setExpanded] = useState<Set<number>>(new Set([0])); // protagonist expanded by default
   const n = characters.length;
   if (n === 0) return null;
@@ -61,7 +63,7 @@ export function CharacterGraph({
         const open = expanded.has(i);
 
         // Badge tag
-        const badgeLabel = isProtagonist ? "主角" : isSupporting ? "配角" : null;
+        const badgeLabel = isProtagonist ? t("post.protagonist") : isSupporting ? t("post.supporting") : null;
         const badgeVariant = isProtagonist ? "" : "ghost";
 
         return (
@@ -90,26 +92,28 @@ export function CharacterGraph({
                 {String(i + 1).padStart(2, "0")}
               </span>
 
-              {/* Chinese name */}
+              {/* Primary name */}
               <span style={{
-                fontFamily: "var(--font-zh-display), 'Noto Serif SC', serif",
+                fontFamily: lang === "en" ? "var(--font-display-alt), 'Cormorant Garamond', serif" : "var(--font-zh-display), 'Noto Serif SC', serif",
                 fontSize: isProtagonist ? "1.1rem" : "0.96rem",
                 fontWeight: isProtagonist ? 600 : 500,
                 color: "var(--cream)",
                 letterSpacing: "0.02em",
                 lineHeight: 1.2,
+                fontStyle: lang === "en" ? "italic" : "normal",
               }}>
-                {c.zh_name}
+                {lang === "en" ? c.name : c.zh_name}
               </span>
 
-              {/* English name */}
+              {/* Secondary name */}
               <span style={{
-                fontFamily: "var(--font-display-alt), 'Cormorant Garamond', serif",
-                fontStyle: "italic",
+                fontFamily: lang === "en" ? "var(--font-zh-display), 'Noto Serif SC', serif" : "var(--font-display-alt), 'Cormorant Garamond', serif",
+                fontStyle: lang === "en" ? "normal" : "italic",
                 fontSize: "0.82rem",
                 color: "var(--amber-dim)",
+                display: lang === "en" ? "none" : undefined,
               }}>
-                {c.name}
+                {lang === "en" ? c.zh_name : c.name}
               </span>
 
               {/* Importance badge */}
@@ -199,12 +203,12 @@ export function CharacterGraph({
                           {r.dir}
                         </span>
                         <span style={{
-                          fontFamily: "var(--font-zh-display), serif",
+                          fontFamily: lang === "en" ? "var(--font-body), sans-serif" : "var(--font-zh-display), serif",
                           fontSize: "0.84rem",
                           color: "var(--cream)",
                           letterSpacing: "0.01em",
                         }}>
-                          {r.targetZh}
+                          {lang === "en" ? r.target : r.targetZh}
                         </span>
                       </div>
                     ))}
