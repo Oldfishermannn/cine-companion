@@ -20,18 +20,17 @@ interface LangCtx {
 const Ctx = createContext<LangCtx | null>(null);
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  // Default language: Chinese. Rehydrate from localStorage on mount so
-  // returning users keep their language preference.
+  // Default language: Chinese. The toggle button is currently hidden (the
+  // English chrome didn't meet the editorial bar), so we no longer rehydrate
+  // from localStorage — any stale "en" value from previous versions would
+  // otherwise keep flipping users to English against their will. When the
+  // toggle comes back, wire the localStorage read back in.
   const [lang, setLangState] = useState<Lang>("zh");
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // Rehydrate from localStorage — default Chinese, switch to English only
-    // if explicitly stored from a previous visit.
-    try {
-      const stored = localStorage.getItem(LS_KEY);
-      if (stored === "en") setLangState("en");
-    } catch {}
+    // Clean up any legacy "en" value so the default is truly Chinese.
+    try { localStorage.removeItem(LS_KEY); } catch {}
     setHydrated(true);
   }, []);
 

@@ -2,34 +2,12 @@
 
 import React from "react";
 import type { VerdictContent } from "../types";
-import { useLang } from "@/app/i18n/LangProvider";
 
-const PACING: Record<string, { zh: string; en: string }> = {
-  slow:  { zh: "慢热",     en: "Slow Burn" },
-  mixed: { zh: "张弛有度", en: "Mixed" },
-  fast:  { zh: "快节奏",   en: "Fast-Paced" },
-};
-const DIFF: Record<string, { zh: string; en: string }> = {
-  low:    { zh: "友好", en: "Friendly" },
-  medium: { zh: "中等", en: "Moderate" },
-  high:   { zh: "较难", en: "Challenging" },
-};
-const THEATRICAL: Record<string, { zh: string; en: string }> = {
-  low:    { zh: "流媒体即可", en: "Stream It" },
-  medium: { zh: "建议影院",   en: "See in Theater" },
-  high:   { zh: "必须影院",   en: "Must See in Theater" },
-};
-const KNOWLEDGE: Record<string, { zh: string; en: string }> = {
-  none:   { zh: "无需",     en: "None" },
-  low:    { zh: "略知即可", en: "A Little" },
-  medium: { zh: "建议了解", en: "Recommended" },
-  high:   { zh: "需要补课", en: "Required" },
-};
-const POPULARITY: Record<string, { zh: string; en: string }> = {
-  low:    { zh: "小众冷门",   en: "Niche" },
-  medium: { zh: "稳健热映",   en: "Steady Hit" },
-  high:   { zh: "现象级爆款", en: "Blockbuster" },
-};
+const PACING_ZH: Record<string, string>     = { slow: "慢热", mixed: "张弛有度", fast: "快节奏" };
+const DIFF_ZH: Record<string, string>       = { low: "友好", medium: "中等", high: "较难" };
+const THEATRICAL_ZH: Record<string, string> = { low: "流媒体即可", medium: "建议影院", high: "必须影院" };
+const KNOWLEDGE_ZH: Record<string, string>  = { none: "无需", low: "略知即可", medium: "建议了解", high: "需要补课" };
+const POPULARITY_ZH: Record<string, string> = { low: "小众冷门", medium: "稳健热映", high: "现象级爆款" };
 
 // 0–100 percentage for each possible value
 const LEVEL_PCT: Record<string, number> = {
@@ -37,17 +15,11 @@ const LEVEL_PCT: Record<string, number> = {
   slow: 30, mixed: 62, fast: 100,
 };
 
-function pick(map: Record<string, { zh: string; en: string }>, key: string, lang: "zh" | "en"): string {
-  return map[key]?.[lang] ?? key;
-}
-
 export function DecisionCard({ verdict, loading, error }: { verdict: VerdictContent | null; loading?: boolean; error?: boolean }) {
-  const { lang, t } = useLang();
-
   if (loading) {
     return (
       <div className="decision-card">
-        <div className="dc-section-title">{t("dc.title")}</div>
+        <div className="dc-section-title">值不值得看</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}>
           <div className="skeleton" style={{ height: 6, width: "100%", borderRadius: 3 }} />
           <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
@@ -64,8 +36,8 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
   if (error && !verdict) {
     return (
       <div className="decision-card" style={{ opacity: 0.5 }}>
-        <div className="dc-section-title">{t("dc.title")}</div>
-        <p style={{ marginTop: 10, fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>{t("dc.error")}</p>
+        <div className="dc-section-title">值不值得看</div>
+        <p style={{ marginTop: 10, fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>决策卡加载失败，请刷新重试</p>
       </div>
     );
   }
@@ -75,43 +47,43 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
   const score      = verdict.recommendation_score;
   const scorePct   = `${(score / 10) * 100}%`;
   const scoreColor = score >= 7 ? "var(--amber)" : score >= 5 ? "var(--cream)" : "var(--muted)";
-  const scoreDesc  = score >= 8 ? t("dc.score.high") : score >= 7 ? t("dc.score.good") : score >= 6 ? t("dc.score.ok") : score >= 4 ? t("dc.score.low") : t("dc.score.low");
+  const scoreDesc  = score >= 8 ? "强烈推荐" : score >= 7 ? "值得一看" : score >= 6 ? "可以考虑" : "流媒体即可";
 
   const stats = [
-    { label: t("dc.stat.knowledge"),  value: pick(KNOWLEDGE,   verdict.prior_knowledge,       lang), pct: LEVEL_PCT[verdict.prior_knowledge] ?? 0 },
-    { label: t("dc.stat.english"),    value: pick(DIFF,        verdict.english_difficulty,     lang), pct: LEVEL_PCT[verdict.english_difficulty] ?? 50 },
-    { label: t("dc.stat.pacing"),     value: pick(PACING,      verdict.pacing,                lang), pct: LEVEL_PCT[verdict.pacing] ?? 50 },
-    { label: t("dc.stat.popularity"), value: pick(POPULARITY,  verdict.popularity || "medium", lang), pct: LEVEL_PCT[verdict.popularity || "medium"] ?? 62 },
-    { label: t("dc.stat.theatrical"), value: pick(THEATRICAL,  verdict.theatrical_need,        lang), pct: LEVEL_PCT[verdict.theatrical_need] ?? 50 },
+    { label: "前置知识", value: KNOWLEDGE_ZH[verdict.prior_knowledge]      || verdict.prior_knowledge,      pct: LEVEL_PCT[verdict.prior_knowledge] ?? 0 },
+    { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]        || verdict.english_difficulty,   pct: LEVEL_PCT[verdict.english_difficulty] ?? 50 },
+    { label: "节奏快慢", value: PACING_ZH[verdict.pacing]                 || verdict.pacing,               pct: LEVEL_PCT[verdict.pacing] ?? 50 },
+    { label: "热门程度", value: POPULARITY_ZH[verdict.popularity || "medium"] || verdict.popularity || "稳健热映", pct: LEVEL_PCT[verdict.popularity || "medium"] ?? 62 },
+    { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]     || verdict.theatrical_need,      pct: LEVEL_PCT[verdict.theatrical_need] ?? 50 },
   ];
 
   return (
     <div className="decision-card">
 
-      {/* ① Title */}
-      <div className="dc-section-title">{t("dc.title")}</div>
+      {/* ① 标题 */}
+      <div className="dc-section-title">值不值得看</div>
 
-      {/* ② Score bar */}
+      {/* ② 推荐指数条 */}
       <div className="dc-bar-wrap">
         <div className="dc-bar-anchors">
-          <span>{t("dc.notRecommended")}</span>
+          <span>不推荐</span>
           <span className="dc-bar-score-label" style={{ color: scoreColor }}>
             {score.toFixed(1)}
             <span className="dc-bar-score-desc">{scoreDesc}</span>
           </span>
-          <span>{t("dc.highlyRecommended")}</span>
+          <span>强烈推荐</span>
         </div>
         <div className="dc-bar-track">
           <div className="dc-bar-ball" style={{ left: scorePct }} />
         </div>
       </div>
 
-      {/* ③ Audience tags */}
+      {/* ③ 适合人群 */}
       {(verdict.good_for.length > 0 || verdict.not_good_for.length > 0) && (
         <div className="dc-audience-block">
           {verdict.good_for.length > 0 && (
             <div className="dc-audience-row">
-              <span className="dc-audience-tag good">{t("dc.goodFor")}</span>
+              <span className="dc-audience-tag good">适合</span>
               <div className="dc-pills-row">
                 {verdict.good_for.map((tag, i) => (
                   <span key={i} className="dc-pill good">{tag}</span>
@@ -121,7 +93,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
           )}
           {verdict.not_good_for.length > 0 && (
             <div className="dc-audience-row">
-              <span className="dc-audience-tag not">{t("dc.notGoodFor")}</span>
+              <span className="dc-audience-tag not">不适合</span>
               <div className="dc-pills-row">
                 {verdict.not_good_for.map((tag, i) => (
                   <span key={i} className="dc-pill not">{tag}</span>
@@ -132,7 +104,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
         </div>
       )}
 
-      {/* ④ One-line verdict */}
+      {/* ④ 一句话综合评价 */}
       {verdict.one_line_verdict && (
         <p style={{
           fontSize: "0.84rem",
@@ -145,7 +117,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
         }}>{verdict.one_line_verdict}</p>
       )}
 
-      {/* ⑤ Stats row */}
+      {/* ⑤ 四项指标 — 各带小分数条 */}
       <div className="dc-stats-row">
         {stats.map((s, i) => (
           <div key={i} className="dc-stat-item">
@@ -158,7 +130,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
         ))}
       </div>
 
-      {/* ⑥ English difficulty note */}
+      {/* ⑥ 英语难度说明 */}
       {verdict.english_note && (
         <p style={{
           fontSize: "0.72rem",

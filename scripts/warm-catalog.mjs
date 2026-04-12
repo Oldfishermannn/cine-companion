@@ -91,10 +91,7 @@ async function warmOne({ title, zh, year }) {
   // Step 2 — warm 4 AI endpoints + 1 ratings aggregator. Skip keys already
   // present unless FORCE=1. The ratings endpoint writes its own cache entry
   // via `writeCache(`${id}_ratings`, …)`, so warming it pre-populates baked.json.
-  const baseParams = { id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", director: director || "", actors: actors || "", runtime: runtime || "" };
-
   const endpoints = [
-    // ── Chinese (default) ──
     {
       key: id,
       url: `/api/movie-ai?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", director: director || "", actors: actors || "" })}`,
@@ -117,28 +114,7 @@ async function warmOne({ title, zh, year }) {
     },
     {
       key: `${id}_verdict`,
-      url: `/api/movie-verdict?${new URLSearchParams(baseParams)}`,
-    },
-    // ── English ──
-    {
-      key: `${id}_en`,
-      url: `/api/movie-ai?${new URLSearchParams({ ...baseParams, lang: "en" })}`,
-    },
-    {
-      key: `${id}_post_en`,
-      url: `/api/movie-post?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", lang: "en" })}`,
-    },
-    {
-      key: `${id}_facts_en`,
-      url: `/api/movie-funfacts?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", lang: "en" })}`,
-    },
-    {
-      key: `${id}_breaks_en`,
-      url: `/api/movie-breaks?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", runtime: runtime || "", plot: plot || "", lang: "en" })}`,
-    },
-    {
-      key: `${id}_verdict_en`,
-      url: `/api/movie-verdict?${new URLSearchParams({ ...baseParams, lang: "en" })}`,
+      url: `/api/movie-verdict?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", director: director || "", actors: actors || "", runtime: runtime || "" })}`,
     },
   ];
 

@@ -19,14 +19,10 @@ export async function GET(req: NextRequest) {
   const genre = searchParams.get("genre") || "";
   const plot  = searchParams.get("plot") || "";
 
-  const lang = searchParams.get("lang") || "zh";
-  const isEn = lang === "en";
-
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
-  const cacheKey = isEn ? `${id}_post_en` : `${id}_post`;
   if (id) {
-    const cached = await readCache(cacheKey);
+    const cached = await readCache(`${id}_post`);
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
@@ -37,7 +33,7 @@ export async function GET(req: NextRequest) {
       tools: [
         {
           name: "movie_post",
-          description: isEn ? "Generate post-viewing review content (with spoilers)" : "生成观影后复盘内容（含剧透）",
+          description: "生成观影后复盘内容（含剧透）",
           input_schema: {
             type: "object" as const,
             properties: {
@@ -98,7 +94,7 @@ export async function GET(req: NextRequest) {
                   type: "object",
                   properties: {
                     detail:   { type: "string", description: "彩蛋内容（中文）" },
-                    category: { type: "string", enum: isEn ? ["Homage", "Foreshadowing", "Symbolism", "Easter Egg", "Sequel Hint"] : ["致敬", "伏笔", "隐喻", "彩蛋", "续集线索"] },
+                    category: { type: "string", enum: ["致敬", "伏笔", "隐喻", "彩蛋", "续集线索"] },
                   },
                   required: ["detail", "category"],
                 },
@@ -110,7 +106,7 @@ export async function GET(req: NextRequest) {
                   type: "object",
                   properties: {
                     fact:     { type: "string", description: "花絮内容（中文）" },
-                    category: { type: "string", enum: isEn ? ["Production", "Behind the Scenes", "Adaptation", "Director's Intent", "Ending Analysis"] : ["制作花絮", "幕后秘闻", "原著改编", "导演意图", "结局解析"] },
+                    category: { type: "string", enum: ["制作花絮", "幕后秘闻", "原著改编", "导演意图", "结局解析"] },
                   },
                   required: ["fact", "category"],
                 },
@@ -124,21 +120,7 @@ export async function GET(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: isEn
-            ? `You are an assistant helping moviegoers review films after watching. ALL output must be in English.
-
-Movie: ${title} (${year}), Genre: ${genre}
-Synopsis: ${plot}
-
-Call the movie_post tool to generate post-viewing review content (with spoilers):
-1. Plot summary: Segment by the film's actual narrative structure (2-5 segments). Vary paragraph length — setup: 1-2 sentences; climax/turning points: 5-7 sentences with tension and detail.
-2. Main characters: 3-5 core characters with actor names and character arcs. For zh_name, use the English name (same as name field).
-3. Relationships: Directional relationships between characters, label in 2-4 words (e.g. "father-son", "nemesis", "allies", "lovers")
-4. Easter eggs: Hidden details, homages, foreshadowing worth noting on rewatch
-5. Spoiler fun facts: Behind-the-scenes stories that require plot knowledge to appreciate
-
-Keep it concise, for viewers who have already seen the film.`
-            : `你是帮助中文语境观众复盘英语电影的助手。
+          content: `你是帮助中文语境观众复盘英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
 简介：${plot}
@@ -168,7 +150,7 @@ Keep it concise, for viewers who have already seen the film.`
       spoiler_fun_facts: safeParseJSON(input.spoiler_fun_facts, []),
     };
 
-    if (id) await writeCache(cacheKey, result);
+    if (id) await writeCache(`${id}_post`, result);
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);

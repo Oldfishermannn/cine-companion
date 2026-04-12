@@ -7,7 +7,6 @@ import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, ErrorBanner, CollapsibleLayer, SourceBadge, buildAmcUrl } from "./shared";
 import { track } from "@/lib/analytics";
 import { useLang } from "../../i18n/LangProvider";
-import { VOCAB_CAT_EN, FACT_CAT_EN, MISS_RISK_EN } from "../../i18n/strings";
 
 interface CastMember {
   name: string;
@@ -58,7 +57,7 @@ export function PreMovie({
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
 }: PreMovieProps) {
-  const { lang, t } = useLang();
+  const { t } = useLang();
 
   const imdbScore = data.ratings.imdb
     ? `${data.ratings.imdb}/10`
@@ -155,7 +154,7 @@ export function PreMovie({
               <span className="amc-module-logo">AMC</span>
               <div>
                 <p className="amc-module-title">{data.title}</p>
-                <p className="amc-module-sub">{t("pre.amcSub")}</p>
+                <p className="amc-module-sub">查看场次 & 购票</p>
               </div>
             </div>
             <span className="amc-module-arrow">→</span>
@@ -165,12 +164,12 @@ export function PreMovie({
 
       {/* ── 关键词汇 (collapsible) ── */}
       <CollapsibleLayer
-        title={t("pre.vocabTitle")}
+        title="关键词汇"
         onExpand={() => track("layer_expand", { layer: "关键词汇", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
-            {vocabCount > 0 && <span className="layer-count">{t("pre.vocabCount", { n: vocabCount })}</span>}
+            {vocabCount > 0 && <span className="layer-count">{vocabCount} 词</span>}
           </span>
         }
       >
@@ -202,12 +201,12 @@ export function PreMovie({
 
       {/* ── 幕后花絮 (collapsible) ── */}
       <CollapsibleLayer
-        title={t("pre.factsTitle")}
+        title="幕后花絮"
         onExpand={() => track("layer_expand", { layer: "幕后花絮", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
-            {factsCount > 0 && <span className="layer-count">{t("pre.factsCount", { n: factsCount })}</span>}
+            {factsCount > 0 && <span className="layer-count">{factsCount} 条冷知识</span>}
           </span>
         }
       >
@@ -303,8 +302,8 @@ export function PreMovie({
                           {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
                           <span>
                             {timeRange
-                              ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: lang === "en" ? (MISS_RISK_EN[b.miss_risk] ?? b.miss_risk) : b.miss_risk })
-                              : t("pre.breakInfoNoStart", { d: b.duration, r: lang === "en" ? (MISS_RISK_EN[b.miss_risk] ?? b.miss_risk) : b.miss_risk })}
+                              ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
+                              : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
                           </span>
                         </div>
                         <p className="hint">{b.scene_hint}</p>
@@ -323,7 +322,6 @@ export function PreMovie({
 
 /* ── Fun Facts — show 4 initially, rest behind toggle ── */
 function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
-  const { lang, t } = useLang();
   const [showAll, setShowAll] = React.useState(false);
   const INITIAL = 4;
   const visible = showAll ? facts : facts.slice(0, INITIAL);
@@ -334,7 +332,6 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {visible.map((item, i) => {
           const icon = FACT_ICON[item.category] ?? "🎬";
-          const catDisplay = lang === "en" ? (FACT_CAT_EN[item.category] ?? item.category) : item.category;
           return (
             <div
               key={i}
@@ -343,7 +340,7 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
             >
               <div className="icon">{icon}</div>
               <div className="body">
-                <span className="ed-tag">{catDisplay}</span>
+                <span className="ed-tag">{item.category}</span>
                 <p className="text">{item.fact}</p>
               </div>
             </div>
@@ -371,7 +368,7 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(232,182,97,0.4)"; (e.currentTarget as HTMLElement).style.color = "var(--amber-dim)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--rule)"; (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
         >
-          ▸ {t("pre.moreFacts", { n: hidden })}
+          ▸ 还有 {hidden} 条花絮
         </button>
       )}
     </div>
@@ -380,7 +377,6 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
 
 /* ── Vocab Section — show first 2 categories, rest behind toggle ── */
 function VocabSection({ vocab }: { vocab: VocabItem[] }) {
-  const { lang, t } = useLang();
   const [showAll, setShowAll] = React.useState(false);
   const INITIAL_CATS = 2;
 
@@ -401,12 +397,11 @@ function VocabSection({ vocab }: { vocab: VocabItem[] }) {
     <div>
       {visible.map(cat => {
         const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
-        const catDisplay = lang === "en" ? (VOCAB_CAT_EN[cat] ?? cat) : cat;
         return (
           <div key={cat}>
             <div className="vocab-cat-head">
               <span className="dot" style={{ background: s.dot }} />
-              <span>{catDisplay}</span>
+              <span>{cat}</span>
               <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
             </div>
             <div className="vocab-grid">
@@ -439,7 +434,7 @@ function VocabSection({ vocab }: { vocab: VocabItem[] }) {
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(232,182,97,0.4)"; (e.currentTarget as HTMLElement).style.color = "var(--amber-dim)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--rule)"; (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
         >
-          ▸ {t("pre.moreVocab", { n: hiddenWords, m: hiddenCats })}
+          ▸ 还有 {hiddenWords} 个词汇（{hiddenCats} 个分类）
         </button>
       )}
     </div>

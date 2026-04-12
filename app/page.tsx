@@ -4,8 +4,6 @@ import type { VerdictSummary } from "./HomeClient";
 import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
 import { readCache } from "@/lib/cache";
 import { lookupImdbId } from "@/lib/baked-index";
-import { LangSwitcher } from "./components/LangSwitcher";
-import { MastheadSub } from "./components/MastheadSub";
 
 export const metadata: Metadata = {
   title: "Lights Out — 值不值得看",
@@ -44,20 +42,13 @@ function issueLine(): { vol: string; no: string; month: string; slate: string; d
 async function buildVerdictMap(): Promise<Record<string, VerdictSummary>> {
   const map: Record<string, VerdictSummary> = {};
   const entries = MOVIE_CATALOG.map(m => ({ title: m.title, id: lookupImdbId(m.title) })).filter(e => e.id);
-  // Read both zh and en verdict caches in parallel
-  const [zhResults, enResults] = await Promise.all([
-    Promise.all(entries.map(e => readCache(`${e.id}_verdict`))),
-    Promise.all(entries.map(e => readCache(`${e.id}_verdict_en`))),
-  ]);
+  const results = await Promise.all(entries.map(e => readCache(`${e.id}_verdict`)));
   for (let i = 0; i < entries.length; i++) {
-    const verdict = zhResults[i] as Record<string, unknown> | null;
-    const verdictEn = enResults[i] as Record<string, unknown> | null;
+    const verdict = results[i] as Record<string, unknown> | null;
     if (!verdict) continue;
     map[entries[i].title] = {
       oneLiner: (verdict.one_line_summary as string) || "",
-      oneLinerEn: (verdictEn?.one_line_summary as string) || "",
       goodFor: (verdict.good_for as string[]) || [],
-      goodForEn: (verdictEn?.good_for as string[]) || [],
       score: (verdict.recommendation_score as number) || 0,
       pacing: (verdict.pacing as string) || "mixed",
       englishDifficulty: (verdict.english_difficulty as string) || "medium",
@@ -92,9 +83,10 @@ export default async function Home() {
             </div>
           </div>
           <div className="masthead-right">
-            <LangSwitcher />
             <div className="masthead-date">{issue.date}</div>
-            <MastheadSub />
+            <div className="masthead-sub">
+              不剧透，帮你快速决定值不值得去影院看
+            </div>
           </div>
         </header>
 
