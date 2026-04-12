@@ -470,13 +470,12 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                   onClick={() => { setMode(m); track("tab_switch", { tab: m, title: data?.title }); }}
                   className={`reel-tab ${mode === m ? "active" : ""}`}
                 >
-                  <span className="reel-marker">▸</span>
-                  {m === "pre" ? "Reel I · Pre‧Film" : "Reel II · Post‧Film"}
+                  {m === "pre" ? "观影前" : "观影后"}
                 </button>
               ))}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <Divider />
 
               {mode === "pre" && (

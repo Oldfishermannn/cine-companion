@@ -1002,12 +1002,12 @@ body::after {
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 .reel-tab {
   background: transparent;
   border: none;
-  padding: 16px 24px;
+  padding: 12px 20px;
   font-family: var(--font-mono), monospace;
   font-size: 0.72rem;
   letter-spacing: 0.16em;
