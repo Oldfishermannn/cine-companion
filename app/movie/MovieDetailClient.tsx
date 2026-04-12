@@ -571,15 +571,6 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         </div>
       )}
 
-      {/* Mobile sticky CTA — only when AMC slug exists */}
-      {amcSlug && data && (
-        <div className="sticky-cta">
-          <TicketCTA
-            url={`https://www.amctheatres.com/movies/${amcSlug}`}
-            onClick={() => track("cta_click", { title: data.title, location: "sticky" })}
-          />
-        </div>
-      )}
     </main>
   );
 }

@@ -2260,6 +2260,62 @@ body::after {
   border: 1px solid rgba(235,227,208,0.08);
 }
 
+/* ── AMC inline module ── */
+.amc-module {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.amc-module:hover {
+  border-color: rgba(235,227,208,0.25);
+  background: rgba(235,227,208,0.03);
+}
+.amc-module-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.amc-module-logo {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--vermilion);
+  border: 1px solid var(--vermilion);
+  padding: 3px 7px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+.amc-module-title {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.88rem;
+  color: var(--cream);
+  margin: 0 0 2px;
+  font-weight: 500;
+}
+.amc-module-sub {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+.amc-module-arrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9rem;
+  color: var(--muted);
+  transition: color 0.15s, transform 0.15s;
+}
+.amc-module:hover .amc-module-arrow {
+  color: var(--cream);
+  transform: translateX(3px);
+}
+
 /* ── Ticket CTA ── */
 .ticket-cta {
   display: flex;

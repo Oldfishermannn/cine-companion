@@ -229,12 +229,27 @@ export function PreMovie({
         </section>
         )}
 
-        {/* Ticket CTA */}
+        {/* AMC 购票模块 */}
         {amcUrl && (
-          <TicketCTA
-            url={amcUrl}
-            onClick={() => track("cta_click", { title: data.title, location: "layer1" })}
-          />
+          <section>
+            <SectionLabel>购票 · AMC</SectionLabel>
+            <a
+              href={amcUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="amc-module"
+              onClick={() => track("cta_click", { title: data.title, location: "inline" })}
+            >
+              <div className="amc-module-left">
+                <span className="amc-module-logo">AMC</span>
+                <div>
+                  <p className="amc-module-title">{data.title}</p>
+                  <p className="amc-module-sub">查看场次 & 购票</p>
+                </div>
+              </div>
+              <span className="amc-module-arrow">→</span>
+            </a>
+          </section>
         )}
       </div>
 
