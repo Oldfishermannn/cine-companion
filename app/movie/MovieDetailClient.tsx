@@ -366,58 +366,56 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                 </p>
               )}
 
-              {/* 4. Poster + stats (left) / DecisionCard (right) */}
-              <div className="hero-decision-layout">
-                {/* Left: poster + movie info */}
-                <div className="hero-left-col">
-                  {data.poster ? (
-                    <div className="movie-hero-poster">
-                      <Image
-                        src={data.poster}
-                        alt={data.title}
-                        fill
-                        sizes="140px"
-                        style={{ objectFit: "cover" }}
-                        priority
-                      />
-                    </div>
-                  ) : (
-                    <div className="movie-hero-poster" style={{
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "2.5rem", opacity: 0.2, background: "var(--bg-card)",
-                    }}>🎬</div>
-                  )}
-                  <div className="stat-grid" style={{ marginTop: 14 }}>
-                    {(() => {
-                      const rows: Array<{ label: string; value: string }> = [];
-                      const releasedVal = data.released
-                        ? (lang === "en" ? data.released : zhReleased(data.released))
-                        : data.year;
-                      if (releasedVal) rows.push({ label: "Released", value: releasedVal });
-                      const genreVal = lang === "en" ? (data.genre || "") : tGenre(zhGenre(data.genre));
-                      if (genreVal) rows.push({ label: "Genre", value: genreVal });
-                      const runtimeVal = lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime);
-                      if (runtimeVal) rows.push({ label: "Runtime", value: runtimeVal });
-                      if (data.director) rows.push({ label: "Director", value: data.director });
-                      if (data.actors) rows.push({ label: "Cast", value: data.actors.split(", ").slice(0, 3).join(" · ") });
-                      return rows.map((r, i) => (
-                        <div key={i} className="stat-row">
-                          <span className="stat-label">{r.label}</span>
-                          <span className="stat-dots" />
-                          <span className="stat-value">{r.value}</span>
-                        </div>
-                      ));
-                    })()}
+              {/* 4. Poster + stat grid */}
+              <div className="hero-body">
+                {data.poster ? (
+                  <div className="movie-hero-poster">
+                    <Image
+                      src={data.poster}
+                      alt={data.title}
+                      fill
+                      sizes="140px"
+                      style={{ objectFit: "cover" }}
+                      priority
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="movie-hero-poster" style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "2.5rem", opacity: 0.2, background: "var(--bg-card)",
+                  }}>🎬</div>
+                )}
 
-                {/* Right: Decision Card */}
-                <div className="hero-right-col">
-                  <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+                <div className="stat-grid">
+                  {(() => {
+                    const rows: Array<{ label: string; value: string }> = [];
+                    const releasedVal = data.released
+                      ? (lang === "en" ? data.released : zhReleased(data.released))
+                      : data.year;
+                    if (releasedVal) rows.push({ label: "Released", value: releasedVal });
+                    const genreVal = lang === "en" ? (data.genre || "") : tGenre(zhGenre(data.genre));
+                    if (genreVal) rows.push({ label: "Genre", value: genreVal });
+                    const runtimeVal = lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime);
+                    if (runtimeVal) rows.push({ label: "Runtime", value: runtimeVal });
+                    if (data.director) rows.push({ label: "Director", value: data.director });
+                    if (data.actors) rows.push({ label: "Cast", value: data.actors.split(", ").slice(0, 3).join(" · ") });
+                    return rows.map((r, i) => (
+                      <div key={i} className="stat-row">
+                        <span className="stat-label">{r.label}</span>
+                        <span className="stat-dots" />
+                        <span className="stat-value">{r.value}</span>
+                      </div>
+                    ));
+                  })()}
                 </div>
               </div>
 
-              {/* 5. Synopsis paragraph + expand */}
+              {/* 5. Decision Card — below poster + info */}
+              <div style={{ marginTop: 24 }}>
+                <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+              </div>
+
+              {/* 6. Synopsis paragraph + expand */}
               {(() => {
                 const full = aiContent?.background?.summary || data.zhPlot || data.plot || "";
                 if (!full) return null;
