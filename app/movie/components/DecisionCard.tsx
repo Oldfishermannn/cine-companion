@@ -59,11 +59,6 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
         </div>
       </div>
 
-      {/* Score + verdict */}
-      <div className="dc-top">
-        <p className="dc-verdict">{verdict.one_line_verdict}</p>
-      </div>
-
       {/* Audience pills */}
       <div className="dc-pills-row">
         {verdict.good_for.map((tag, i) => (
@@ -84,13 +79,6 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
         ))}
       </div>
 
-      {/* Credits */}
-      {verdict.credits_detail && (
-        <p className="dc-credits-line">
-          {verdict.has_credits_scene ? "🎬 " : "— "}
-          {verdict.credits_detail}
-        </p>
-      )}
     </div>
   );
 }
