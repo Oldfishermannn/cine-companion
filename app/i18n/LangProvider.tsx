@@ -1,10 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import type { ReactNode } from "react";
 import { STRINGS, GENRE_EN, format, type Lang } from "./strings";
 
-const LS_KEY = "cc_lang";
+const LS_KEY = "lights-out-lang";
 
 interface LangCtx {
   lang: Lang;
@@ -26,8 +26,6 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // Rehydrate from localStorage — default Chinese, switch to English only
-    // if explicitly stored from a previous visit.
     try {
       const stored = localStorage.getItem(LS_KEY);
       if (stored === "en") setLangState("en");
@@ -38,7 +36,6 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
     try { localStorage.setItem(LS_KEY, l); } catch {}
-    // Update <html lang=...> so screen readers + Google know
     if (typeof document !== "undefined") {
       document.documentElement.lang = l === "en" ? "en" : "zh";
     }
@@ -48,38 +45,42 @@ export function LangProvider({ children }: { children: ReactNode }) {
     setLang(lang === "zh" ? "en" : "zh");
   }, [lang, setLang]);
 
+  // Until hydration completes, expose "zh" to all children so the first
+  // client render exactly matches SSR output (prevents duplicate DOM trees
+  // from hydration mismatch). After hydration, `effectiveLang` may flip to
+  // "en" and useEffect-based content swaps will fire cleanly.
+  const effectiveLang = hydrated ? lang : "zh";
+
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>) => {
       const entry = STRINGS[key];
       if (!entry) {
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`[i18n] missing key: ${key}`);
-        }
+        if (process.env.NODE_ENV !== "production") console.warn(`[i18n] missing key: ${key}`);
         return key;
       }
-      return format(entry[lang], vars);
+      return format(entry[effectiveLang], vars);
     },
-    [lang],
+    [effectiveLang],
   );
 
   const title = useCallback(
-    (movie: { title: string; zh: string }) => (lang === "en" ? movie.title : movie.zh),
-    [lang],
+    (movie: { title: string; zh: string }) => (effectiveLang === "en" ? movie.title : movie.zh),
+    [effectiveLang],
   );
 
   const genre = useCallback(
-    (zhGenre: string) => (lang === "en" ? GENRE_EN[zhGenre] ?? zhGenre : zhGenre),
-    [lang],
+    (zhGenre: string) => (effectiveLang === "en" ? GENRE_EN[zhGenre] ?? zhGenre : zhGenre),
+    [effectiveLang],
   );
 
-  // Prevent flash of wrong language: render with SSR default until hydrated.
-  // `suppressHydrationWarning` on the wrapper lets React ignore the text-only
-  // swap once localStorage resolves.
+  const value = useMemo(
+    () => ({ lang: effectiveLang, setLang, toggle, t, title, genre }),
+    [effectiveLang, setLang, toggle, t, title, genre],
+  );
+
   return (
-    <Ctx.Provider value={{ lang, setLang, toggle, t, title, genre }}>
-      <div suppressHydrationWarning data-lang={hydrated ? lang : "zh"} style={{ display: "contents" }}>
-        {children}
-      </div>
+    <Ctx.Provider value={value}>
+      {children}
     </Ctx.Provider>
   );
 }
