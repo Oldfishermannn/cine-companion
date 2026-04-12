@@ -123,7 +123,11 @@ ${runtime ? `时长：${runtime}` : ""}
 2. good_for 和 not_good_for 要具体到观众画像，不要用「所有人」这种无意义标签。
 3. english_difficulty 考虑：对白速度、口音、专业术语、文化梗的多少。
 4. theatrical_need 考虑：视觉特效规模、音效设计、IMAX适配度。如果是对白驱动的文艺片就写low。
-5. recommendation_score 综合考虑影片质量、观众口碑、影院体验价值。不要所有电影都给高分。
+5. recommendation_score 是「值不值得专程去影院看」的综合指数，必须与 theatrical_need 逻辑一致：
+   - theatrical_need=low（流媒体即可）→ score 上限 6.5，通常在 5.0–6.5 区间
+   - theatrical_need=medium（建议影院）→ score 在 6.0–8.0 区间
+   - theatrical_need=high（必须影院）→ score 在 7.5–10.0 区间
+   分数衡量的是「去影院的必要性」，不是电影本身的艺术价值。一部好电影如果流媒体体验无损，score 也应该偏低。
 6. has_credits_scene 请基于你的知识判断。如果电影尚未上映或你不确定，根据同系列/同导演的惯例推测，并在 credits_detail 中注明是推测。
 7. one_line_summary 用于首页展示，要像杂志短评一样精练有态度。示例：「硬科幻解谜，对白密集但值得影院」「轻松约会首选，笑点密集无门槛」`,
         },
