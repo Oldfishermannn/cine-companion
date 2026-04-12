@@ -33,7 +33,7 @@ function fmtReleaseDate(s: string | undefined): string {
 // Runtime fetching of /api/movie for poster discovery was removed — home page
 // now paints posters synchronously with zero network requests on first paint.
 
-type SortMode = "newest" | "oldest" | "rating";
+type SortMode = "newest" | "oldest" | "rating" | "verdict";
 
 const WATCHLIST_KEY = "cine_watchlist";
 
@@ -261,7 +261,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
 }) {
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [sceneFilter, setSceneFilter] = useState<string | null>(null);
-  const [sortMode, setSortMode] = useState<SortMode>("rating");
+  const [sortMode, setSortMode] = useState<SortMode>("verdict");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
   const { t, title: tTitle, genre: tGenre } = useLang();
@@ -303,6 +303,11 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
     if (sceneFilter) list = list.filter(({ movie }) => movieSceneTags[movie.title]?.includes(sceneFilter));
     list.sort((a, b) => {
+      if (sortMode === "verdict") {
+        const sa = verdictMap[a.movie.title]?.score ?? 0;
+        const sb = verdictMap[b.movie.title]?.score ?? 0;
+        return sb - sa;
+      }
       if (sortMode === "rating") {
         const sa = a.movie.imdbScore;
         const sb = b.movie.imdbScore;
@@ -316,7 +321,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sceneFilter, sortMode, catalog, movieSceneTags]);
+  }, [genreFilter, sceneFilter, sortMode, catalog, movieSceneTags, verdictMap]);
 
   const recentReleases = useMemo(() => {
     return catalog
@@ -399,6 +404,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
               {t("home.countSuffix", { n: filterCount })}
             </span>
             {([
+              { mode: "verdict" as SortMode, labelKey: "home.sortByVerdict" },
               { mode: "rating" as SortMode, labelKey: "home.sortByRating" },
               { mode: "newest" as SortMode, labelKey: "home.sortByNewest" },
               { mode: "oldest" as SortMode, labelKey: "home.sortByOldest" },

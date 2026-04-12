@@ -30,6 +30,7 @@ export const STRINGS: StringTable = {
   "home.comingSoon":        { zh: "即将上映",          en: "Coming Soon" },
   "home.filterAll":         { zh: "全部",             en: "All" },
   "home.countSuffix":       { zh: "{n} 部",          en: "{n} films" },
+  "home.sortByVerdict":     { zh: "值得看 ↓",          en: "Worth It ↓" },
   "home.sortByRating":      { zh: "评分最高 ★",       en: "Top Rated ★" },
   "home.sortByNewest":      { zh: "最新上映 ↓",       en: "Newest ↓" },
   "home.sortByOldest":      { zh: "最早上映 ↑",       en: "Oldest ↑" },
