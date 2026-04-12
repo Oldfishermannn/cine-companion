@@ -29,13 +29,13 @@ export async function GET(req: NextRequest) {
       tools: [
         {
           name: "break_times",
-          description: "为电影生成最佳厕所时间点（不错过关键剧情）",
+          description: "为电影生成最佳厕所时间点（不错过关键剧情），包含保守和宽松两种模式",
           input_schema: {
             type: "object" as const,
             properties: {
               breaks: {
                 type: "array",
-                description: "2-3个最佳起身时间点，按时间先后排列",
+                description: "2-3个最佳起身时间点，按时间先后排列（兼容旧格式）",
                 items: {
                   type: "object",
                   properties: {
@@ -48,8 +48,36 @@ export async function GET(req: NextRequest) {
                 },
               },
               best_break: { type: "number", description: "最推荐的那一个break的minute值" },
+              conservative_breaks: {
+                type: "array",
+                description: "保守模式：1-2个最安全时间点，miss_risk必须为\"低\"，宁可少推荐也不推荐有风险的",
+                items: {
+                  type: "object",
+                  properties: {
+                    minute:      { type: "number" },
+                    duration:    { type: "number" },
+                    scene_hint:  { type: "string" },
+                    miss_risk:   { type: "string", enum: ["低"] },
+                  },
+                  required: ["minute", "duration", "scene_hint", "miss_risk"],
+                },
+              },
+              relaxed_breaks: {
+                type: "array",
+                description: "宽松模式：3-4个时间点，包含miss_risk为\"中\"的选项，给喝水多或膀胱小的观众更多选择",
+                items: {
+                  type: "object",
+                  properties: {
+                    minute:      { type: "number" },
+                    duration:    { type: "number" },
+                    scene_hint:  { type: "string" },
+                    miss_risk:   { type: "string", enum: ["低", "中"] },
+                  },
+                  required: ["minute", "duration", "scene_hint", "miss_risk"],
+                },
+              },
             },
-            required: ["breaks", "best_break"],
+            required: ["breaks", "best_break", "conservative_breaks", "relaxed_breaks"],
           },
         },
       ],
@@ -63,8 +91,13 @@ export async function GET(req: NextRequest) {
 片长：${runtimeMin} 分钟
 简介：${plot}
 
-请调用 break_times 工具，基于该电影的典型叙事节奏，推荐 2-3 个最佳时间点。
-- 通常在第一幕结束后（约25-35%处）有一个
+请调用 break_times 工具，基于该电影的典型叙事节奏，同时生成：
+1. breaks（默认列表，2-3个，兼容旧格式）
+2. conservative_breaks（保守模式：只选miss_risk="低"的最安全时机，1-2个）
+3. relaxed_breaks（宽松模式：3-4个，包含miss_risk="中"的选项）
+
+规则：
+- 通常在第一幕结束后（约25-35%处）有一个安全窗口
 - 第二幕中段（约50-60%处）往往有场景过渡
 - 避免建议在高潮前后起身
 - scene_hint 只描述"这是什么类型的场景"，不透露具体情节`,
@@ -75,11 +108,18 @@ export async function GET(req: NextRequest) {
     const toolUse = aiMsg.content.find((b) => b.type === "tool_use");
     if (!toolUse || toolUse.type !== "tool_use") throw new Error("AI did not call tool");
 
-    const input = toolUse.input as { breaks: unknown[]; best_break: number };
+    const input = toolUse.input as {
+      breaks: unknown[];
+      best_break: number;
+      conservative_breaks?: unknown[];
+      relaxed_breaks?: unknown[];
+    };
     const result = {
-      breaks:     Array.isArray(input.breaks) ? input.breaks : [],
-      best_break: typeof input.best_break === "number" ? input.best_break : 0,
-      runtime_min: runtimeMin,
+      breaks:               Array.isArray(input.breaks) ? input.breaks : [],
+      best_break:           typeof input.best_break === "number" ? input.best_break : 0,
+      runtime_min:          runtimeMin,
+      conservative_breaks:  Array.isArray(input.conservative_breaks) ? input.conservative_breaks : undefined,
+      relaxed_breaks:       Array.isArray(input.relaxed_breaks) ? input.relaxed_breaks : undefined,
     };
 
     if (id) await writeCache(`${id}_breaks`, result);

@@ -37,6 +37,8 @@ export interface BreaksContent {
   breaks: BreakItem[];
   best_break: number;
   runtime_min: number;
+  conservative_breaks?: BreakItem[];
+  relaxed_breaks?: BreakItem[];
   cached?: boolean;
 }
 

@@ -93,11 +93,13 @@ export function CollapsibleLayer({
   title,
   defaultOpen = false,
   badge,
+  onExpand,
   children,
 }: {
   title: string;
   defaultOpen?: boolean;
   badge?: React.ReactNode;
+  onExpand?: () => void;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -106,7 +108,7 @@ export function CollapsibleLayer({
       <button
         type="button"
         className="layer-header"
-        onClick={() => setOpen(!open)}
+        onClick={() => { if (!open) onExpand?.(); setOpen(!open); }}
         aria-expanded={open}
       >
         <span className="layer-chevron">{open ? "▾" : "▸"}</span>
@@ -129,13 +131,14 @@ export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" }) {
 }
 
 /* ── Ticket CTA button ── */
-export function TicketCTA({ url, label }: { url: string; label?: string }) {
+export function TicketCTA({ url, label, onClick }: { url: string; label?: string; onClick?: () => void }) {
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="ticket-cta"
+      onClick={onClick}
     >
       {label || "查看 AMC 场次"} ↗
     </a>

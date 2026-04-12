@@ -8,6 +8,7 @@ import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostCo
 import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
 import { Divider, TicketCTA } from "./components/shared";
+import { track } from "@/lib/analytics";
 import { PreMovie } from "./components/PreMovie";
 import { PostMovie } from "./components/PostMovie";
 import { MOVIE_CATALOG } from "../catalog";
@@ -104,6 +105,10 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
     saveHistory({ id: d.id, title: d.title, poster: d.poster, year: d.year });
     setPersonalScores(loadRating(d.id));
 
+    track("page_view", { title: d.title, id: d.id, from_cache: true });
+    if (initialData.verdict) track("decision_card_view", { title: d.title, from_cache: true });
+    if (initialData.breaks) track("break_view", { title: d.title, from_cache: true });
+
     // Cast (sub-second, not in baked cache)
     fetch(`/api/cast?id=${encodeURIComponent(d.id)}`)
       .then(r => r.json())
@@ -178,6 +183,8 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         saveHistory({ id: d.id, title: d.title, poster: d.poster, year: d.year });
         setPersonalScores(loadRating(d.id));
 
+        track("page_view", { title: d.title, id: d.id, from_cache: false });
+
         // Cast with photos
         fetch(`/api/cast?id=${encodeURIComponent(d.id)}`)
           .then(r => r.json())
@@ -214,7 +221,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         const breaksParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", runtime: d.runtime || "", plot: d.plot || "" });
         fetchRetry(`/api/movie-breaks?${breaksParams}`)
           .then(r => r.json())
-          .then(b => { if (!b.error) setBreaksContent(b); else setBreaksError(true); })
+          .then(b => { if (!b.error) { setBreaksContent(b); track("break_view", { title: d.title }); } else setBreaksError(true); })
           .catch(() => setBreaksError(true))
           .finally(() => setBreaksLoading(false));
 
@@ -223,7 +230,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
         fetchRetry(`/api/movie-verdict?${verdictParams}`)
           .then(r => r.json())
-          .then(v => { if (!v.error) setVerdictContent(v); })
+          .then(v => { if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } })
           .catch(() => {})
           .finally(() => setVerdictLoading(false));
       })
@@ -454,7 +461,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               {(["pre", "post"] as const).map(m => (
                 <button
                   key={m}
-                  onClick={() => setMode(m)}
+                  onClick={() => { setMode(m); track("tab_switch", { tab: m, title: data?.title }); }}
                   className={`reel-tab ${mode === m ? "active" : ""}`}
                 >
                   <span className="reel-marker">▸</span>
@@ -563,7 +570,10 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
       {/* Mobile sticky CTA — only when AMC slug exists */}
       {amcSlug && data && (
         <div className="sticky-cta">
-          <TicketCTA url={`https://www.amctheatres.com/movies/${amcSlug}`} />
+          <TicketCTA
+            url={`https://www.amctheatres.com/movies/${amcSlug}`}
+            onClick={() => track("cta_click", { title: data.title, location: "sticky" })}
+          />
         </div>
       )}
     </main>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem, VerdictContent } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, SectionLabel, ErrorBanner, CollapsibleLayer, SourceBadge, TicketCTA } from "./shared";
+import { track } from "@/lib/analytics";
 import { DecisionCard } from "./DecisionCard";
 import { useLang } from "../../i18n/LangProvider";
 
@@ -57,6 +58,7 @@ export function PreMovie({
 }: PreMovieProps) {
   const { t } = useLang();
   const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
+  const [breakMode, setBreakMode] = useState<"conservative" | "relaxed">("conservative");
 
   // Merge OMDb + live data
   const imdbScore = data.ratings.imdb
@@ -196,7 +198,29 @@ export function PreMovie({
             <ErrorBanner message={t("pre.breaksError")} />
           ) : breaksContent ? (
             <div>
-              {breaksContent.breaks.map((b, i) => {
+              {/* Conservative / Relaxed mode toggle — only show when dual data available */}
+              {(breaksContent.conservative_breaks || breaksContent.relaxed_breaks) && (
+                <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+                  {(["conservative", "relaxed"] as const).map(mode => (
+                    <button
+                      key={mode}
+                      type="button"
+                      className={`sort-btn${breakMode === mode ? " active" : ""}`}
+                      onClick={() => setBreakMode(mode)}
+                    >
+                      {mode === "conservative" ? "保守模式" : "宽松模式"}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(() => {
+                const list = breakMode === "conservative" && breaksContent.conservative_breaks
+                  ? breaksContent.conservative_breaks
+                  : breakMode === "relaxed" && breaksContent.relaxed_breaks
+                  ? breaksContent.relaxed_breaks
+                  : breaksContent.breaks;
+                return list;
+              })().map((b, i) => {
                 const isBest = b.minute === breaksContent.best_break;
                 let timeRange = "";
                 if (movieStartTime) {
@@ -244,7 +268,12 @@ export function PreMovie({
         )}
 
         {/* Ticket CTA */}
-        {amcUrl && <TicketCTA url={amcUrl} />}
+        {amcUrl && (
+          <TicketCTA
+            url={amcUrl}
+            onClick={() => track("cta_click", { title: data.title, location: "layer1" })}
+          />
+        )}
       </CollapsibleLayer>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -253,6 +282,7 @@ export function PreMovie({
           ═══════════════════════════════════════════════════════════════ */}
       <CollapsibleLayer
         title="观影前补课"
+        onExpand={() => track("layer_expand", { layer: "观影前补课", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
@@ -406,6 +436,7 @@ export function PreMovie({
           ═══════════════════════════════════════════════════════════════ */}
       <CollapsibleLayer
         title="延伸阅读"
+        onExpand={() => track("layer_expand", { layer: "延伸阅读", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
