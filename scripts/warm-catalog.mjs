@@ -79,7 +79,7 @@ async function warmOne({ title, zh, year }) {
   const movie = await movieRes.json();
   if (movie.error || !movie.id) throw new Error(`no imdb id for ${tag}: ${movie.error || "empty"}`);
 
-  const { id, title: resolvedTitle, year: resolvedYear, genre, plot, runtime } = movie;
+  const { id, title: resolvedTitle, year: resolvedYear, genre, plot, runtime, director, actors } = movie;
   log(`  ${tag} → ${id} (${resolvedTitle})`);
 
   // Bake /api/movie response as `${id}_meta` so the server-component detail
@@ -94,7 +94,7 @@ async function warmOne({ title, zh, year }) {
   const endpoints = [
     {
       key: id,
-      url: `/api/movie-ai?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "" })}`,
+      url: `/api/movie-ai?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", director: director || "", actors: actors || "" })}`,
     },
     {
       key: `${id}_post`,

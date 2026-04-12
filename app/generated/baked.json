@@ -334,81 +334,6 @@
     "best_break": 82,
     "runtime_min": 156
   },
-  "tt7708226": {
-    "vocabulary": [
-      {
-        "word": "MMA legend",
-        "translation": "MMA 传奇人物",
-        "explanation": "MMA 即 Mixed Martial Arts（综合格斗/混合武术）。'legend' 在体育语境中指某领域具有传奇地位的顶尖人物，相当于中文的\"一代宗师\"或\"传奇巨星\"。",
-        "category": "专业术语"
-      },
-      {
-        "word": "the cage",
-        "translation": "格斗笼",
-        "explanation": "MMA 比赛场地的俗称，指被铁丝网或铁笼围住的八角形擂台（也叫 the octagon）。'pulled back into the cage' 意为\"被拉回格斗笼\"，是全片核心意象。",
-        "category": "专业术语"
-      },
-      {
-        "word": "pulled back into",
-        "translation": "被拉回……/被迫重返……",
-        "explanation": "常见短语，表示某人在外力（情感、责任、危机）驱使下不得不回归某种曾经放弃的生活或身份。带有\"身不由己\"的被动含义。",
-        "category": "俚语"
-      },
-      {
-        "word": "commit to",
-        "translation": "全力投入/下定决心做……",
-        "explanation": "表示对某件事做出坚定承诺并付诸行动，含有\"义无反顾\"的语气。'He commits to one final fight' 意为\"他决心打完最后一场\"。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "ONE Championship",
-        "translation": "ONE冠军赛",
-        "explanation": "真实存在的亚洲顶级综合格斗与武术赛事品牌，总部在新加坡，是亚洲最具影响力的搏击联盟，相当于亚洲版 UFC。影片以此为舞台增添真实感。",
-        "category": "人名地名"
-      },
-      {
-        "word": "brutal champion",
-        "translation": "残暴的冠军/凶猛的卫冕冠军",
-        "explanation": "'brutal' 在格斗语境中既指身体上的凶狠、强悍，也暗示手段残忍、毫无怜悯。用来塑造反派强大且令人恐惧的形象。",
-        "category": "专业术语"
-      },
-      {
-        "word": "commercial fisherman",
-        "translation": "商业渔民/职业渔夫",
-        "explanation": "以捕鱼为生计的职业渔民，区别于休闲垂钓（recreational fishing）。在北美沿海（如阿拉斯加、缅因州）是真实存在的高强度体力职业，影片用此职业暗示主角的低调隐居生活。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "reuniting with",
-        "translation": "与……重聚/重新携手",
-        "explanation": "'reunite' 表示分离后再度走到一起，常带有情感温度。'Reuniting with his old coach' 暗示师徒情谊的回归，是体育电影中经典的情感催化剂。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "in danger",
-        "translation": "身陷险境/处于危险之中",
-        "explanation": "固定短语，表示某人面临威胁或危机。此处是触发主角行动的核心动机，是影片整个故事的导火索。",
-        "category": "俚语"
-      },
-      {
-        "word": "Xavier Grau",
-        "translation": "沙维尔·格劳（反派冠军角色名）",
-        "explanation": "影片中的主要反派，现任 ONE Championship 冠军。姓名融合了西班牙/加泰罗尼亚风格（Grau 在加泰罗尼亚语中意为\"灰色\"），暗示角色可能具有欧洲或拉丁裔背景，是主角最终必须面对的终极对手。",
-        "category": "人名地名"
-      }
-    ],
-    "background": {
-      "summary": "《Beast》（2026）是一部融合动作、剧情与体育元素的英语电影。主角 Patton James 曾是综合格斗（MMA）传奇人物，退役后转型为商业渔民，过着平静的生活。然而当兄弟身陷危机，他被迫重返格斗笼，在老教练 Sammy 的帮助下，备战职业格斗联盟 ONE Championship，迎战残暴的现任冠军 Xavier Grau，完成人生中最后一场战斗。影片探讨家庭羁绊、个人救赎与不服输的意志，是一部典型的\"英雄回归\"体育励志故事。",
-      "context": [
-        "MMA（混合武术/综合格斗）是当今全球最流行的搏击运动之一，融合了摔跤、柔术、拳击、踢拳等多种武术，选手在八角形铁笼（the cage/the octagon）中对决，可以用拳击、摔跤、关节技等多种方式取胜。",
-        "ONE Championship 是真实存在的亚洲顶级综合格斗与武术赛事组织，总部位于新加坡，在亚洲影响力极大，相当于亚洲版的 UFC。影片以此为舞台，赋予故事极强的真实感与国际背景。",
-        "影片的\"退役传奇重返赛场\"叙事结构是体育电影的经典母题，与《洛奇》《永无止境》等经典影片一脉相承，北美华人观众可以从这一熟悉的故事框架中快速融入情节。",
-        "商业渔民（commercial fisherman）是美国、加拿大沿海地区常见的底层体力职业，象征主角回归普通人生活，也暗示他离开了昔日的荣耀与聚光灯。这一职业设定强化了角色的落差感与平凡感。"
-      ],
-      "director_note": "影片尚未上映（2026年），导演信息暂未公开披露。根据类型与题材判断，本片风格预计偏向写实派体育动作片，注重角色情感弧线与格斗场面的真实呈现，适合喜爱《永不退缩》《战士》（Warrior, 2011）等MMA题材影片的观众。",
-      "wikipedia": "Beast most often refers to:Animal, a multicellular, eukaryotic organism in the biological kingdom Animalia\nThe Beast (Revelation), one of three beasts described in the Book of Revelation\nMonster, a type of creature found in fiction, folklore, mythology, and religion"
-    }
-  },
   "tt7708226_post": {
     "plot_summary": {
       "theme": "一个男人为保护家人重返战场，最终在血与汗中完成自我和解",
@@ -606,81 +531,6 @@
     ],
     "best_break": 62,
     "runtime_min": 113
-  },
-  "tt26443616": {
-    "vocabulary": [
-      {
-        "word": "consciousness",
-        "translation": "意识；知觉",
-        "explanation": "指人的思维、感知与自我认知的总体状态。影片核心概念即'意识转移'（placing her consciousness into...），理解此词是读懂剧情设定的关键。",
-        "category": "专业术语"
-      },
-      {
-        "word": "robotic",
-        "translation": "机器人的；机械的",
-        "explanation": "形容词，指与机器人相关或具有机器人特征的事物。片中'robotic beaver'即机器海狸，是主角意识的物理载体。",
-        "category": "专业术语"
-      },
-      {
-        "word": "beaver",
-        "translation": "海狸",
-        "explanation": "北美常见的半水栖啮齿动物，以用树枝筑坝闻名，是加拿大的国家象征。在北美文化中形象正面，代表勤劳与智慧。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "uncover",
-        "translation": "揭开；发现；揭露",
-        "explanation": "动词，意为发现或揭露隐藏的事物。影片简介中'uncover mysteries'即'揭开谜团'，常用于悬疑冒险类叙事。",
-        "category": "专业术语"
-      },
-      {
-        "word": "beyond one's imagination",
-        "translation": "超乎想象；难以置信",
-        "explanation": "固定短语，强调某事物超出了正常预期的范围。影片简介原文即使用此短语，是英语中表达惊叹的常见表达。",
-        "category": "俚语"
-      },
-      {
-        "word": "animal lover",
-        "translation": "动物爱好者；爱护动物的人",
-        "explanation": "指对动物有浓厚感情、热衷保护或研究动物的人。是影片主角的核心人物设定标签，在北美文化中也常与环保主义联系在一起。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "Gen Z",
-        "translation": "Z世代",
-        "explanation": "指1997年至2012年间出生的一代人，以数字原住民、网络用语丰富、社会意识强为特征。影片主角19岁，正属于Z世代，其台词风格预计充满该群体特有的表达方式。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "glitch",
-        "translation": "（技术）故障；小差错",
-        "explanation": "源自电子工程领域的俚语，指系统或设备出现的短暂异常。在科技题材动画中极为常见，也被Z世代广泛用于日常口语，如'There's a glitch in the system.'",
-        "category": "俚语"
-      },
-      {
-        "word": "hack into",
-        "translation": "侵入（系统）；破解",
-        "explanation": "动词短语，指通过技术手段非法或非常规地进入某个系统或设备。科技冒险类影片中的高频词，如'hack into the mainframe'（侵入主机）。",
-        "category": "专业术语"
-      },
-      {
-        "word": "wildlife",
-        "translation": "野生动物；野生生物（总称）",
-        "explanation": "指自然状态下生存的动植物的统称，与'animal world'相近但更正式，常出现在自然纪录片与冒险动画的对白和旁白中，如'protecting wildlife habitats'（保护野生动物栖息地）。",
-        "category": "专业术语"
-      }
-    ],
-    "background": {
-      "summary": "《Hoppers》（2026）是一部融合动画、冒险与喜剧元素的英语电影。一位19岁的动物爱好者借助尖端技术，将自己的意识转移到一只机器海狸体内，从而以全新视角深入探索神秘的动物世界，揭开超乎想象的奥秘。影片以轻松幽默的风格包裹严肃的科技与自然主题，适合全年龄段观众。",
-      "context": [
-        "影片涉及'意识转移'（consciousness transfer）这一科幻概念，源自哲学与神经科学领域，北美流行文化中常见于科幻影视（如《阿凡达》《西部世界》），观影前了解相关概念有助于理解剧情逻辑。",
-        "海狸（beaver）是北美极具代表性的本土动物，是加拿大的国家象征，以筑坝改造环境著称。影片选择海狸作为载体，带有鲜明的北美文化色彩。",
-        "影片类型为动画喜剧冒险，对白预计充满北美青少年俚语、动物世界专业词汇以及科技术语，语速较快，北美华人观众需提前熟悉相关词汇。",
-        "影片主角年龄设定为19岁，正处于'Z世代'（Gen Z）文化语境中，台词风格预计带有浓厚的网络用语和流行文化梗，理解这些语言背景有助于捕捉喜剧效果。"
-      ],
-      "director_note": "本片尚未正式上映（预计2026年），目前无导演公开采访信息，以上背景内容均基于官方简介与类型特征进行专业推断，供北美华人观众参考预习使用，不含任何剧透。",
-      "wikipedia": "Hopper or hoppers may refer to:"
-    }
   },
   "tt26443616_post": {
     "plot_summary": {
@@ -1677,82 +1527,6 @@
     "best_break": 50,
     "runtime_min": 90
   },
-  "tt27613895": {
-    "vocabulary": [
-      {
-        "word": "GOAT",
-        "translation": "史上最强者 / 山羊",
-        "explanation": "双关词。作为俚语，GOAT 是 'Greatest Of All Time' 的首字母缩写，用来形容某领域有史以来最伟大的人；同时 goat 本义就是\"山羊\"，指代主角。这个片名一语双关，是整部电影的核心。",
-        "category": "俚语"
-      },
-      {
-        "word": "once-in-a-lifetime shot",
-        "translation": "千载难逢的机会",
-        "explanation": "'Shot' 在口语中常指\"机会、尝试\"，'once-in-a-lifetime' 意为\"一生仅有一次的\"。合在一起表示极为珍贵、不可多得的机会，是北美口语中非常常见的励志表达。",
-        "category": "俚语"
-      },
-      {
-        "word": "join the pros",
-        "translation": "跻身职业联赛 / 成为职业选手",
-        "explanation": "'Pros' 是 'professionals' 的缩写，特指职业运动员或职业队。'Join the pros' 就是从业余晋升到职业级别，是体育题材影视中的高频表达。",
-        "category": "俚语"
-      },
-      {
-        "word": "roarball",
-        "translation": "咆哮球（虚构运动）",
-        "explanation": "电影中虚构的高强度竞技运动名称，由 'roar'（咆哮、怒吼）和 'ball'（球类运动）合成。体现了这项运动的激烈与震撼，是专属于这个动画世界的原创词汇。",
-        "category": "专业术语"
-      },
-      {
-        "word": "high-intensity",
-        "translation": "高强度的",
-        "explanation": "体育和健身领域的常用术语，描述运动或训练的激烈程度极高，体能消耗大。常见搭配如 'high-intensity interval training (HIIT)'，在北美健身文化中家喻户晓。",
-        "category": "专业术语"
-      },
-      {
-        "word": "co-ed",
-        "translation": "男女混合的",
-        "explanation": "'Co-ed' 是 'co-educational' 的缩写，原指男女同校教育，在体育语境中引申为男女混合参赛的运动。这一设定在电影中传达了性别平等与包容的主题。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "full-contact sport",
-        "translation": "全接触运动",
-        "explanation": "体育术语，指允许运动员进行身体直接碰撞和对抗的运动类别，如美式橄榄球、冰球、拳击等。与之相对的是 'non-contact sport'（非接触运动）如游泳、网球。",
-        "category": "专业术语"
-      },
-      {
-        "word": "dominated by",
-        "translation": "由……主宰 / 被……统治",
-        "explanation": "在体育语境中，'dominate' 意为在某领域占据绝对优势、无人能敌。'Dominated by the fastest, fiercest animals' 暗示主角作为小山羊面临着极大的竞争劣势，是 underdog 叙事的关键铺垫。",
-        "category": "俚语"
-      },
-      {
-        "word": "underdog",
-        "translation": "以弱胜强的竞争者 / 黑马",
-        "explanation": "北美体育与流行文化中极高频的词汇，指在竞争中处于劣势、不被看好却奋力拼搏的一方。小山羊在凶猛动物主导的运动中挑战职业赛场，是典型的 underdog 故事。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "fiercest",
-        "translation": "最凶猛的 / 最强悍的",
-        "explanation": "'Fierce' 既可形容动物的凶猛本性，也可在体育竞技语境中形容选手的强悍与攻击性。'Fiercest animals' 在这里同时暗示了对手在体型、天赋上对小山羊的碾压式优势。",
-        "category": "俚语"
-      }
-    ],
-    "background": {
-      "summary": "《GOAT》（2026）是一部动画动作冒险电影。故事讲述一只怀揣大梦想的小山羊，获得了千载难逢的机会，跻身职业联赛，参加一项名为\"咆哮球\"（Roarball）的高强度混性别全接触运动。这项运动由世界上速度最快、最凶猛的动物们主宰，小山羊需要面对重重挑战，证明自己的实力。",
-      "context": [
-        "电影标题\"GOAT\"是英语俚语\"Greatest Of All Time\"（史上最强）的缩写，片名本身就是一个双关语——既指主角是一只山羊（goat），又暗示它立志成为\"史上最强\"。",
-        "电影的核心主题是\"以小博大\"（underdog story），这是北美体育文化和励志电影中极为经典的叙事模式，类似《功夫熊猫》中熊猫阿宝的成长弧线。",
-        "\"全接触运动\"（full-contact sport）在北美文化中指橄榄球（Football）、冰球（Hockey）等允许身体碰撞的激烈运动，电影中的\"Roarball\"正是对这类竞技文化的动画化呈现。",
-        "\"混性别运动\"（co-ed sport）在北美是一个重要的社会议题，代表着性别平等与包容，电影将此设定融入运动规则，传达多元包容的价值观。",
-        "动画电影中\"动物拟人化竞技\"的设定，与《疯狂动物城》（Zootopia, 2016）有异曲同工之妙，北美观众对这类世界观构建十分熟悉且喜爱。"
-      ],
-      "director_note": "本片尚未正式上映（2026年），导演及主创信息暂未公开。根据类型定位，本片面向全年龄段观众，主打励志与热血，适合家庭观影。",
-      "wikipedia": "A goat is a mammal."
-    }
-  },
   "tt27613895_post": {
     "plot_summary": {
       "theme": "渺小不是上限，梦想是一切规则之外的变量",
@@ -2220,130 +1994,6 @@
     ],
     "best_break": 52,
     "runtime_min": 96
-  },
-  "tt33305882": {
-    "vocabulary": [
-      {
-        "word": "Great Awakening",
-        "translation": "大觉醒运动",
-        "explanation": "18世纪30-40年代席卷北美殖民地的基督教福音复兴运动，强调个人悔罪与重生体验，深刻影响了美国的宗教与政治文化格局。片名直接源于此历史事件。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "preacher",
-        "translation": "布道家；传教士",
-        "explanation": "指在教堂或公开场合宣讲宗教教义的人。片中怀特菲尔德是划时代的露天布道家，其演讲风格极具煽动性，常令听众当场痛哭悔罪。",
-        "category": "专业术语"
-      },
-      {
-        "word": "revival",
-        "translation": "（宗教）复兴运动",
-        "explanation": "指宗教热情重新高涨、信徒大量回归或新增的运动。大觉醒运动正是美国历史上最重要的revival之一，片中会频繁出现此词。",
-        "category": "专业术语"
-      },
-      {
-        "word": "sermon",
-        "translation": "布道；讲道",
-        "explanation": "牧师或传教士在宗教集会上发表的演讲，通常以《圣经》内容为核心。怀特菲尔德的sermon以激情澎湃著称，富兰克林甚至专门出版了他的布道集。",
-        "category": "专业术语"
-      },
-      {
-        "word": "congregation",
-        "translation": "会众；教众",
-        "explanation": "聚集在一起礼拜的信徒群体。大觉醒运动打破了传统教堂的congregation边界，使布道成为面向所有人的公开活动。",
-        "category": "专业术语"
-      },
-      {
-        "word": "salvation",
-        "translation": "救赎；得救",
-        "explanation": "基督教核心概念，指灵魂从罪恶中被拯救、得以进入天国的状态。怀特菲尔德的布道主题始终围绕个人salvation展开。",
-        "category": "专业术语"
-      },
-      {
-        "word": "repentance",
-        "translation": "悔罪；悔改",
-        "explanation": "承认并为自己的罪行感到懊悔，是基督教信仰中获得救赎的前提步骤。大觉醒布道会上，听众集体repentance的场面十分震撼。",
-        "category": "专业术语"
-      },
-      {
-        "word": "enlightenment",
-        "translation": "启蒙运动；启蒙思想",
-        "explanation": "17-18世纪欧美兴起的以理性、科学、自由为核心的思想运动。富兰克林是启蒙思想的典型代表，与宗教复兴形成鲜明对照，构成影片的核心张力。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "rationalism",
-        "translation": "理性主义",
-        "explanation": "主张以理性和逻辑而非信仰或权威作为认知基础的哲学立场。富兰克林的世界观即以rationalism为基础，使他与虔诚的怀特菲尔德形成有趣的思想碰撞。",
-        "category": "专业术语"
-      },
-      {
-        "word": "colonial America",
-        "translation": "殖民地时代的美洲",
-        "explanation": "指欧洲列强（主要是英国）在北美建立殖民地的历史时期（约1607-1776年）。影片故事发生在这一时代，社会由严格的阶级与宗教秩序主导。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "itinerant preaching",
-        "translation": "巡回布道",
-        "explanation": "指传教士不固定在一处教堂，而是游走各地公开讲道的传教方式。怀特菲尔德正是通过itinerant preaching将大觉醒运动传播至北美各殖民地。",
-        "category": "专业术语"
-      },
-      {
-        "word": "Methodism",
-        "translation": "循道宗；卫斯理宗",
-        "explanation": "18世纪兴起于英国的基督教新教派别，强调个人虔诚与系统性的信仰操练。怀特菲尔德早年与约翰·卫斯理同属循道宗，后在神学上分道扬镳。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "Calvinism",
-        "translation": "加尔文主义",
-        "explanation": "源自宗教改革家约翰·加尔文的神学体系，核心教义之一是\"预定论\"——上帝预先选定谁将得救。怀特菲尔德是坚定的Calvinist，这是他与卫斯理分裂的根本原因。",
-        "category": "专业术语"
-      },
-      {
-        "word": "founding father",
-        "translation": "开国元勋",
-        "explanation": "特指美国独立建国时期的核心领导人物，如富兰克林、华盛顿、杰斐逊等。片中富兰克林尚处于成为founding father之前的阶段，呈现其鲜为人知的早年面貌。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "pamphlet",
-        "translation": "小册子；宣传单",
-        "explanation": "18世纪最重要的大众传播媒介之一。富兰克林作为印刷商，通过出版怀特菲尔德的布道pamphlet，客观上推动了大觉醒运动的传播，也体现了两人务实的互利关系。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "fervor",
-        "translation": "热情；狂热",
-        "explanation": "指强烈而充满激情的情感状态，常用于描述宗教热忱。Religious fervor（宗教热情）是大觉醒运动最显著的社会特征，影片中必然大量渲染这种集体情绪。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "dissenter",
-        "translation": "不从国教者；异见者",
-        "explanation": "在英国及殖民地语境中，指不接受英国国教（圣公会）权威的新教徒。大觉醒运动吸引了大量dissenter，进一步动摇了传统教会的权威地位。",
-        "category": "专业术语"
-      },
-      {
-        "word": "providence",
-        "translation": "天意；上帝的旨意",
-        "explanation": "基督教神学概念，指上帝对世间万物的主宰与安排。怀特菲尔德坚信自己横渡大西洋传教是providence的指引，而理性主义者富兰克林对此则持审视态度，形成戏剧性张力。",
-        "category": "专业术语"
-      }
-    ],
-    "background": {
-      "summary": "《A Great Awakening》（2026）是一部历史剧情片，聚焦于18世纪美国殖民地时期的宗教复兴运动——\"大觉醒运动\"。影片以著名布道家乔治·怀特菲尔德与美国国父之一本杰明·富兰克林之间跨越信仰鸿沟的真实友谊为主线，展现了宗教热情与启蒙理性在同一个时代激烈碰撞又相互影响的历史图景。这段友谊在历史上确有记载，两人虽在宗教信仰上立场迥异，却彼此尊重、惺惺相惜，令后世称奇。",
-      "context": [
-        "【大觉醒运动 The Great Awakening】：发生于1730-1740年代的北美殖民地，是一场席卷各地的基督教福音复兴运动。它打破了教会的阶级壁垒，强调个人与上帝的直接关系，被历史学家视为凝聚殖民地共同意识、间接推动美国独立革命的重要精神前奏。",
-        "【乔治·怀特菲尔德 George Whitefield（1714-1770）】：英国循道宗传教士，大觉醒运动的核心人物。他以极具感染力的露天布道闻名，曾多次横渡大西洋在北美各地巡回传教，吸引数万人聚集聆听，被誉为18世纪最伟大的布道家之一，也是英语世界早期的\"媒体明星\"式人物。",
-        "【本杰明·富兰克林 Benjamin Franklin（1706-1790）】：博学多才的美国开国元勋，集政治家、科学家、发明家、印刷商于一身。他是典型的启蒙时代理性主义者，并非虔诚的基督徒，却与怀特菲尔德保持了长达数十年的深厚友谊，并在报纸上为怀特菲尔德的布道活动做宣传，还出版了其布道集。",
-        "【殖民地时代的北美社会背景】：影片时代背景为英属北美殖民地，社会阶层分明，清教徒传统根深蒂固，但传统教会权威正面临挑战。大觉醒运动带来的平等主义精神，与后来的独立建国思想遥相呼应，为理解美国的精神基因提供了重要线索。",
-        "【信仰与理性的对话】：影片的核心张力在于：一位用激情与神迹感动万民的布道家，与一位用实验和逻辑探索世界的理性主义者，如何在18世纪的北美成为挚友。这一主题对当代观众思考宗教与科学、信仰与理性的关系依然具有现实意义。"
-      ],
-      "director_note": "本片尚未正式上映（定于2026年），目前公开信息以历史题材戏剧为主，导演及制作团队详情暂未完全披露。影片旨在还原这段鲜为人知却影响深远的历史友谊，有望在北美基督教社群及历史爱好者中引发广泛共鸣。北美华人观众无需有宗教背景，即可从历史与人文角度充分欣赏本片。",
-      "wikipedia": "A Great Awakening is a 2026 American historical drama film directed and written by Joshua Enck. The film follows the friendship between George Whitefield and Benjamin Franklin, and Whitefield's impact during the Great Awakening religious movement."
-    }
   },
   "tt33305882_post": {
     "plot_summary": {
@@ -3072,130 +2722,6 @@
     "best_break": 58,
     "runtime_min": 108
   },
-  "tt31728330": {
-    "vocabulary": [
-      {
-        "word": "housekeeper",
-        "translation": "家政工/管家",
-        "explanation": "指受雇在他人家中负责打扫、整理等家务的工人。在北美，这一职业在豪华公寓或富人社区中十分普遍，本片主角正是以此身份进入故事核心场景。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "high-rise",
-        "translation": "高层建筑/摩天大楼",
-        "explanation": "特指楼层极高的建筑物，在纽约市（尤其曼哈顿）极为常见。封闭的高层建筑是恐怖片的经典舞台，暗示与外界隔绝、难以逃脱。",
-        "category": "专业术语"
-      },
-      {
-        "word": "disappearances",
-        "translation": "失踪事件",
-        "explanation": "复数形式，强调多次、持续性的失踪，是本片核心悬念词汇。在恐怖类型片中常作为驱动情节的关键谜题。",
-        "category": "专业术语"
-      },
-      {
-        "word": "shrouded in mystery",
-        "translation": "笼罩在神秘之中",
-        "explanation": "'shroud'原意为'裹尸布'，引申为'笼罩、遮蔽'，'shrouded in mystery'是英语中描述神秘氛围的固定短语，带有浓厚的悬疑色彩。",
-        "category": "俚语"
-      },
-      {
-        "word": "unaware of",
-        "translation": "对……毫不知情",
-        "explanation": "表示对某事完全不知道，强调主角的无知状态，是恐怖片中制造观众'已知/主角未知'反差张力的常用表达。",
-        "category": "专业术语"
-      },
-      {
-        "word": "community",
-        "translation": "（封闭）社区/住户群体",
-        "explanation": "在本片语境中不仅指地理上的社区，更指高层公寓内形成的封闭社会群体，暗示其内部有不为外人所知的规则与秘密。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "building super",
-        "translation": "楼管/公寓管理员",
-        "explanation": "'super'是'superintendent'的口语缩写，指负责公寓日常维护和管理的人员，在纽约住宅文化中是一个极具代表性的角色，常掌握整栋楼的秘密。",
-        "category": "俚语"
-      },
-      {
-        "word": "doorman",
-        "translation": "门卫/门童",
-        "explanation": "纽约高档公寓的标配人员，负责把守入口、接待访客。在封闭式恐怖故事中，doorman往往是信息守门人或关键目击者。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "penthouse",
-        "translation": "顶层豪华公寓",
-        "explanation": "指位于高层建筑顶部的豪华套房，通常价格极高，居住者非富即贵。在本片高层建筑背景下，penthouse极可能是关键场所。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "foul play",
-        "translation": "谋杀/不法行为/阴谋",
-        "explanation": "常见于犯罪和恐怖语境，指涉及暴力或欺骗的非正常事件，如'police suspect foul play（警方怀疑有谋杀嫌疑）'，是悬疑影片的高频词汇。",
-        "category": "俚语"
-      },
-      {
-        "word": "red flag",
-        "translation": "危险信号/警示迹象",
-        "explanation": "口语中极常用的短语，指某人或某事显示出的警告性迹象。主角在意识到危险之前，观众会先注意到大量'red flags'。",
-        "category": "俚语"
-      },
-      {
-        "word": "cover-up",
-        "translation": "掩盖/包庇",
-        "explanation": "指故意隐瞒真相或罪行的行为，在政治丑闻和犯罪叙事中极为常见。本片失踪事件背后极可能涉及有组织的cover-up。",
-        "category": "俚语"
-      },
-      {
-        "word": "jump scare",
-        "translation": "突然惊吓镜头",
-        "explanation": "恐怖片专业术语，指利用突然出现的画面或声音制造恐惧感的拍摄手法，是Horror类型片的标志性元素，观影时需有心理准备。",
-        "category": "专业术语"
-      },
-      {
-        "word": "dark comedy",
-        "translation": "黑色喜剧",
-        "explanation": "一种以幽默方式处理死亡、犯罪、道德困境等黑暗主题的喜剧风格。本片同时标注Comedy和Horror类型，说明很可能大量运用dark comedy手法。",
-        "category": "专业术语"
-      },
-      {
-        "word": "cult",
-        "translation": "邪教/狂热秘密团体",
-        "explanation": "在恐怖片语境中，'cult'特指有着神秘仪式和极端信仰的封闭团体，是'封闭社区隐藏秘密'类恐怖片的核心词汇之一。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "gaslighting",
-        "translation": "心理操控/煤气灯效应",
-        "explanation": "源自1944年电影《Gaslight》，指通过操控他人的认知使其怀疑自身判断力。本片主角在揭露真相过程中极可能遭受此类精神压迫。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "off the grid",
-        "translation": "与世隔绝/脱离监控体系",
-        "explanation": "原指不接入公共电网，引申为刻意切断与外界联系、不留痕迹地生活。失踪者或隐秘社区成员常被描述为'go off the grid'。",
-        "category": "俚语"
-      },
-      {
-        "word": "NYC",
-        "translation": "纽约市（缩写）",
-        "explanation": "New York City的常用缩写。纽约作为本片背景城市，其高密度居住文化、阶层隔阂与都市匿名性为恐怖叙事提供了真实土壤，是理解本片社会背景的基础常识。",
-        "category": "人名地名"
-      }
-    ],
-    "background": {
-      "summary": "《They Will Kill You》（2026）是一部融合动作、喜剧与恐怖元素的英语电影。故事讲述一名女性在纽约市一栋高层公寓找到了一份家政工作，却对该建筑物神秘的失踪事件历史一无所知。随着她在这个社区中深入，她逐渐发现这里笼罩着重重谜团……",
-      "context": [
-        "本片背景设于纽约市（NYC）高层住宅楼（high-rise），这类建筑在曼哈顿十分常见，居民构成复杂，阶层分明，物业管理层级严格，为故事提供了天然的封闭式恐怖空间。",
-        "影片糅合了'黑色喜剧（dark comedy）'与'社会恐怖（social horror）'的元素，类似《逃出绝命镇（Get Out）》的叙事手法——用日常生活场景包裹深层的恐怖与社会隐喻，北美华人观众可以此作为观影参考框架。",
-        "家政工人（housekeeper）这一身份设定在北美文化语境中具有鲜明的阶级与族裔含义，主角作为'局外人'进入封闭的精英社区，是恐怖片常见的视角切入方式，也呼应了近年好莱坞对'工人阶级视角'的创作关注。",
-        "影片中'失踪事件（disappearances）'这一核心悬念，借鉴了纽约真实的都市传说和高层豪宅中有关'超级富豪神秘消失'的社会新闻，为影片奠定了写实与猎奇并存的基调。",
-        "作为动作、喜剧、恐怖三类型混搭之作，观众可期待节奏上的快速切换：既有惊悚的悬疑氛围，也有黑色幽默的台词，以及肢体动作场面，建议具备一定英语听力基础再尝试无字幕观看。"
-      ],
-      "director_note": "本片尚未正式公映，导演及主创信息暂未完全披露。从类型定位来看，影片刻意将'恐怖'与'喜剧'嫁接，风格上可能接近《惊声尖笑》系列的戏谑感与《寄生虫》的阶级张力，北美华人观众可带着欣赏'类型杂糅'的心态入场，无需执着于单一类型的纯粹性。",
-      "wikipedia": "They Will Kill You is a 2026 action comedy horror film directed by Kirill Sokolov, from a script co-written with Alex Litvak. The film stars Zazie Beetz, Myha'la, Paterson Joseph, Tom Felton, Heather Graham, and Patricia Arquette. Its plot follows an ex-convict who answers an ad to be a housekeeper at a mysterious New York City high-rise, not realizing she is entering a community that has seen a number of disappearances over the years. It’s an international co-production film between South Africa, the United States and Canada."
-    }
-  },
   "tt31728330_post": {
     "plot_summary": {
       "theme": "在光鲜的都市高楼里，阶级与恐惧共生——外来者的眼睛，才能看见本地人视而不见的真相",
@@ -3371,81 +2897,6 @@
     ],
     "best_break": 65,
     "runtime_min": 120
-  },
-  "tt36352591": {
-    "vocabulary": [
-      {
-        "word": "crash (at)",
-        "translation": "临时借住／蹭住",
-        "explanation": "俚语，意为未经正式邀请就住在某人家里或某个地方。例：'She crashed at the villa for the weekend.' 在影片简介中 'crashes at an empty villa' 即指女主角擅自住进了空别墅。",
-        "category": "俚语"
-      },
-      {
-        "word": "villa",
-        "translation": "（意式）别墅／庄园",
-        "explanation": "专指地中海风格的豪华独栋住宅或乡间庄园，在托斯卡纳语境中通常附带葡萄园、花园等，档次远高于普通 house，承载强烈的欧洲上流生活意象。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "posing as",
-        "translation": "冒充／假扮成",
-        "explanation": "固定短语，意为假装自己是另一个人或另一种身份。例：'She was posing as the owner's fiancée.'是影片核心戏剧冲突的关键表达。",
-        "category": "专业术语"
-      },
-      {
-        "word": "fiancée",
-        "translation": "未婚妻",
-        "explanation": "法语借词，特指女性的'未婚妻'（男性未婚夫为 fiancé，少一个 e）。在对白中常与 'engaged'（已订婚）搭配出现，注意与 'girlfriend' 的区别——fiancée 代表已有婚约。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "whirlwind romance",
-        "translation": "闪电式恋情／旋风恋爱",
-        "explanation": "固定短语，形容发展极快、令人措手不及的浪漫关系。RomCom 中高频词，常用于描述在异国短暂相遇却迅速坠入爱河的情节。",
-        "category": "俚语"
-      },
-      {
-        "word": "mistaken identity",
-        "translation": "身份误认",
-        "explanation": "喜剧与悬疑类型中的经典叙事手法术语，指因身份被误认而引发的一系列冲突与误会，是本片情节推进的核心机制。",
-        "category": "专业术语"
-      },
-      {
-        "word": "RomCom",
-        "translation": "爱情喜剧（类型片）",
-        "explanation": "Romantic Comedy 的缩写，北美影视行业及观众日常高频使用的类型标签。了解这一类型的惯用套路（meet-cute 偶遇、误会、和解、大结局表白）有助于欣赏影片节奏。",
-        "category": "专业术语"
-      },
-      {
-        "word": "Tuscany",
-        "translation": "托斯卡纳（意大利大区）",
-        "explanation": "意大利中部著名大区，首府佛罗伦萨（Florence）。以葡萄酒（Chianti）、橄榄油、文艺复兴艺术和连绵起伏的丘陵风光闻名，在西方流行文化中是'浪漫与慢生活'的终极象征。",
-        "category": "人名地名"
-      },
-      {
-        "word": "transform (one's life)",
-        "translation": "彻底改变（某人的）人生",
-        "explanation": "在爱情喜剧语境中，'transform her life' 是标志性的成长弧度（character arc）表达，暗示女主角不仅收获了爱情，更完成了自我蜕变，是北美 RomCom 的核心主题词汇。",
-        "category": "文化背景词"
-      },
-      {
-        "word": "unexpected romance",
-        "translation": "意外的浪漫／不期而至的爱情",
-        "explanation": "'unexpected' 在 RomCom 对白中极为常见，强调爱情的突如其来与命运感。与之搭配的常见短语还有：unexpected connection（意外的缘分）、unexpected feelings（意想不到的感情）等。",
-        "category": "俚语"
-      }
-    ],
-    "background": {
-      "summary": "《你、我与托斯卡纳》（2026）是一部轻松浪漫的爱情喜剧。一位女性阴差阳错地住进了意大利一座空置的豪华别墅，并冒充别墅主人的未婚妻，由此引发一系列啼笑皆非的误会，并意外收获了一段改变她一生的爱情。影片取景于意大利托斯卡纳地区，将异国风情与浪漫喜剧元素完美融合。",
-      "context": [
-        "托斯卡纳（Tuscany）是意大利中部最著名的大区之一，以葡萄园、橄榄树、文艺复兴艺术和慢节奏生活方式著称，是全球公认的浪漫胜地，也是好莱坞爱情片的热门取景地（如《美食、祈祷和恋爱》《在托斯卡纳艳阳下》等）。",
-        "影片核心设定为'冒充身份'（impostor/identity swap），这是西方浪漫喜剧（Romantic Comedy/RomCom）中的经典戏剧冲突手法，配合异国他乡的孤立环境，制造了天然的'将错就错'式浪漫张力。",
-        "北美华人观众需了解：意大利别墅（villa）文化在西方语境中象征度假、上流社会与无忧无虑的生活，villa 不仅是建筑，更承载着'逃离日常'的文化符号意义。",
-        "影片类型为 RomCom（浪漫喜剧），北美院线/流媒体此类影片通常节奏明快、对白俏皮，大量使用英语俚语、双关语和幽默的误会场景，对白语速较快，建议配合字幕观看。"
-      ],
-      "director_note": "影片尚未正式上映（2026年），目前无导演公开信息。根据类型与题材推断，其风格极有可能延续近年北美爱情喜剧的轻盈基调，融合意大利风光与都市女性自我成长叙事，适合轻松观影。",
-      "wikipedia": "You, Me & Tuscany is an upcoming American romantic comedy film directed by Kat Coiro and written by Ryan Engle. The film stars Halle Bailey and Regé-Jean Page. The film takes place in Italy and tells the story of a young cook who squats in an abandoned Tuscan villa owned by a man she barely knows and she meets the owner's cousin."
-    }
   },
   "tt36352591_post": {
     "plot_summary": {
@@ -6048,6 +5499,555 @@
       "imdbVotes": "164",
       "rt": null,
       "metacritic": null
+    }
+  },
+  "tt7708226": {
+    "vocabulary": [
+      {
+        "word": "MMA legend",
+        "translation": "MMA传奇人物",
+        "explanation": "legend在体育语境中特指某一领域中成就卓著、被后人铭记的传奇级运动员，含有极高的敬意与历史地位的意味，相当于中文的'一代宗师'或'传奇'。",
+        "category": "专业术语"
+      },
+      {
+        "word": "commercial fisherman",
+        "translation": "商业渔民／职业捕鱼人",
+        "explanation": "区别于业余垂钓（recreational fishing），commercial fishing指以出售渔获为目的、大规模捕捞的职业行为。影片中主角以此为生，象征其彻底告别格斗台的隐退生活。",
+        "category": "专业术语"
+      },
+      {
+        "word": "pulled back into the cage",
+        "translation": "被拉回格斗笼",
+        "explanation": "cage（铁笼）是MMA比赛场地的核心标志，有别于拳击台（ring）。'pulled back into the cage'是体育电影中典型的'英雄被迫复出'表达，暗含不情愿却身不由己的被动处境。",
+        "category": "专业术语"
+      },
+      {
+        "word": "in danger",
+        "translation": "身处险境／有危险",
+        "explanation": "日常用语，但在动作电影语境中常作为触发主角行动的核心动机，尤其与家人（brother）搭配时，构成'保护家人'这一好莱坞最经典的英雄驱动力。",
+        "category": "俚语"
+      },
+      {
+        "word": "reuniting with",
+        "translation": "与……重聚／重新携手",
+        "explanation": "reunite含有'分离后再度联合'的意涵，在体育电影中常见于主角与昔日教练、队友的重组，承载着岁月流逝与情感重燃的双重叙事功能。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "coach",
+        "translation": "教练",
+        "explanation": "在格斗运动中，coach不仅是技术指导者，更是精神支柱与策略制定者。影片中老教练Sammy的角色是典型的'mentor'（引路人）原型，对主角的心理重建至关重要。",
+        "category": "专业术语"
+      },
+      {
+        "word": "one final fight",
+        "translation": "最后一战",
+        "explanation": "'one final/last fight'是体育励志片中极具感染力的套语，强调这场比赛的终局性与决定性，暗示主角将在此倾尽所有、无路可退。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "ONE Championship",
+        "translation": "ONE冠军赛",
+        "explanation": "真实存在的亚洲顶级综合格斗赛事品牌，总部位于新加坡。影片使用真实赛事名称增强了故事的现实质感，对不熟悉MMA的观众而言可理解为'亚洲版UFC'。",
+        "category": "人名地名"
+      },
+      {
+        "word": "brutal champion",
+        "translation": "残暴的卫冕冠军",
+        "explanation": "brutal在格斗语境中形容对手战斗风格极其凶狠、毫不留情，暗示Xavier Grau是一个以力量和残忍著称的反派型冠军，与主角形成鲜明的价值观对立。",
+        "category": "俚语"
+      },
+      {
+        "word": "commits to",
+        "translation": "下定决心去做／全力投入",
+        "explanation": "commit to表示对某事做出郑重承诺并全力以赴，在格斗电影中常用于描绘主角经历内心挣扎后做出的决定性选择，是人物弧光转折的关键动词短语。",
+        "category": "文化背景词"
+      }
+    ],
+    "background": {
+      "summary": "《Beast》（2026）是一部融合动作、剧情与体育竞技的英语电影，由澳大利亚导演Tyler Atkins执导，好莱坞巨星罗素·克劳（Russell Crowe）主演。故事讲述曾叱咤MMA（综合格斗）擂台的传奇人物帕顿·詹姆斯（Patton James），在退役后以商业捕鱼为生，却因兄弟陷入危机而被迫重返格斗笼。他与老教练萨米重聚，备战人生最后一场大战——在国际顶级格斗赛事\"ONE冠军赛\"中迎战残暴的卫冕冠军哈维尔·格劳（Xavier Grau）。影片探讨了家庭羁绊、英雄暮年与自我救赎等主题，是一部充满热血与情感张力的格斗励志片。",
+      "context": [
+        "MMA（Mixed Martial Arts，综合格斗）是融合拳击、柔术、摔跤、泰拳等多种格斗技术的竞技运动，选手在笼子（Cage/Octagon）内比赛，可站立打击也可地面缠斗，以击倒、提交（对手认输）或裁判判定决出胜负。",
+        "ONE Championship（ONE冠军赛）是亚洲最大的综合格斗赛事组织，总部位于新加坡，在亚洲拥有极高的影响力，被誉为'亚洲UFC'，涵盖MMA、泰拳、踢拳等多个格斗项目。影片将故事背景置于这一真实赛事框架中，增添了极强的现实感。",
+        "影片的'英雄归来'主题（Comeback Story）是好莱坞体育电影的经典叙事结构，从《洛奇》系列到《斗士》（The Fighter），退役或落魄的运动员被迫重返赛场、捍卫家人与尊严，是体育类型片中最能引发共鸣的情感内核。",
+        "Russell Crowe是澳大利亚裔好莱坞巨星，凭借《角斗士》（Gladiator, 2000）荣获奥斯卡最佳男主角。他饰演的'格斗老将'形象与其成名角色高度呼应，令本片充满了meta层面的趣味与张力。",
+        "商业捕鱼（Commercial Fishing）作为主角的退隐生活设定，隐喻着一种远离喧嚣、回归自然的自我放逐，同时也与格斗生涯的残酷形成鲜明对比，是编剧为角色构建内心冲突的重要叙事装置。"
+      ],
+      "director_note": "Tyler Atkins是一位澳大利亚演员兼导演，以独立电影出身，擅长在紧凑的叙事框架内挖掘角色的内心世界。他执导的惊悚剧情片《Boar》（2017）以澳大利亚内陆荒野为背景，展现了对极端环境与人物生存压力的敏锐把控。Atkins的风格注重写实的肢体表演与原生态的场景质感，倾向于通过人物在逆境中的肉身挣扎来传递情感张力——这与《Beast》中格斗竞技的题材高度契合。执导本片是他迄今规模最大的商业项目，与Russell Crowe的合作也标志着其职业生涯的重要跃升。",
+      "wikipedia": "Beast most often refers to:Animal, a multicellular, eukaryotic organism in the biological kingdom Animalia\nThe Beast (Revelation), one of three beasts described in the Book of Revelation\nMonster, a type of creature found in fiction, folklore, mythology, and religion"
+    }
+  },
+  "tt26443616": {
+    "vocabulary": [
+      {
+        "word": "consciousness",
+        "translation": "意识；神志",
+        "explanation": "影片核心科幻概念。指一个人的自我感知、思维与主观体验的总和。片中主角将自身 consciousness 转移进机器海狸体内，是全片剧情的技术前提。发音：/ˈkɒnʃəsnəs/，注意不要漏读中间的 -ious-。",
+        "category": "专业术语"
+      },
+      {
+        "word": "robotic",
+        "translation": "机器人的；机械化的",
+        "explanation": "形容词，源自 robot。片中 robotic beaver 即「机器海狸」，是主角意识的寄居载体。在日常英语中也可形容人的动作或表情「像机器人一样僵硬」，带有轻微贬义或喜剧色彩。",
+        "category": "专业术语"
+      },
+      {
+        "word": "uncover",
+        "translation": "揭开；发现；查明",
+        "explanation": "常见动词，但在悬疑/冒险类影片中高频出现。uncover mysteries 即「揭开谜团」，比 find out 更强调「掀开遮盖物、将隐藏之物暴露于光天化日之下」的动感，语气更正式、戏剧性更强。",
+        "category": "专业术语"
+      },
+      {
+        "word": "beaver",
+        "translation": "海狸",
+        "explanation": "北美常见的半水栖哺乳动物，以用树枝筑水坝闻名，是加拿大国家象征。在英语俚语中 beaver 另有其他含义，但在本片中完全是字面的动物含义。了解海狸的「工程师」形象有助于理解片中机器海狸设定的文化寓意。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "beyond one's imagination",
+        "translation": "超乎想象；难以置信",
+        "explanation": "固定短语，影片简介原文即用此短语（mysteries within the animal world beyond her imagination）。口语和书面语均常见，可替换为 beyond belief / beyond all expectations，程度依次递进。",
+        "category": "专业术语"
+      },
+      {
+        "word": "hopper",
+        "translation": "跳跃者；料斗；蚱蜢（多义词）",
+        "explanation": "影片片名《Hoppers》来源于此词。hop 本义为「单脚跳/小跳」，hopper 可指「爱跳跃的生物」（如兔子、蚱蜢），也可指工业上的「漏斗/料斗」。片名一词双关：字面指动物世界的跳跃生灵，隐喻主角「跳进」另一个躯体与世界的行为。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "fish-out-of-water",
+        "translation": "（喻）格格不入的人；离开熟悉环境后手足无措",
+        "explanation": "英语习语，字面为「离水之鱼」。在影视批评中特指一种喜剧类型：主角被放置在完全陌生的环境/身份中，因不适应而产生笑料。本片主角以人类意识驾驭动物躯体，正是典型的 fish-out-of-water 喜剧设定。",
+        "category": "俚语"
+      },
+      {
+        "word": "gadget",
+        "translation": "小玩意儿；（新奇的）小装置",
+        "explanation": "非正式用语，指各种新奇的科技小设备。冒险喜剧中常见，主角通常依赖各种 gadgets 完成任务。与 device（装置）、technology（技术）相比，gadget 带有「酷炫但有点古怪」的轻松语气，适合动画喜剧的基调。",
+        "category": "俚语"
+      },
+      {
+        "word": "We Bare Bears",
+        "translation": "《我们裸熊》",
+        "explanation": "导演 Daniel Chong 的代表作，卡通频道（Cartoon Network）原创动画剧集（2015—2019）。讲述三只熊（灰熊 Grizz、熊猫 Panda、白北极熊 Ice Bear）在旧金山湾区与人类共同生活的故事。了解此作品有助于预判《Hoppers》的幽默风格与情感基调。",
+        "category": "人名地名"
+      },
+      {
+        "word": "SNL / Saturday Night Live",
+        "translation": "《周六夜现场》",
+        "explanation": "美国历史最悠久的喜剧综艺节目（NBC，1975年至今），以即兴小品、政治讽刺和明星客串著称。本片配音演员 Bobby Moynihan 曾是 SNL 的长期固定卡司（2008—2017），熟悉他的喜剧风格有助于感受其配音角色的幽默层次。",
+        "category": "人名地名"
+      }
+    ],
+    "background": {
+      "summary": "《Hoppers》（2026）是一部动画冒险喜剧，讲述一位19岁的动物爱好者借助尖端技术，将自己的意识\"上传\"进一只机器海狸体内，由此潜入人类从未真正了解的动物世界，揭开一系列超乎想象的神秘谜题。影片将科幻设定与自然探索融为一体，兼具轻松幽默的喜剧节奏与紧张刺激的冒险张力，适合全年龄段观众。",
+      "context": [
+        "影片核心概念源自「意识转移」（consciousness transfer）这一经典科幻命题，观众可联想到《阿凡达》中人类通过生物链接操控异星躯体的设定，帮助快速理解主角「入驻」机器海狸的逻辑。",
+        "海狸（beaver）在北美文化中是极具代表性的动物，以筑坝工程能力著称，是加拿大的国家象征；选择机器海狸作为载体，既呼应动物主题，又暗示工程与科技的结合。",
+        "「机器人躯体＋人类意识」的喜剧碰撞是本片重要的笑点来源：人类的情感与习惯被装进动物尺寸的机械外壳，由此产生大量身份错位的幽默情境，是好莱坞动画常见的「错位喜剧」（fish-out-of-water comedy）手法。",
+        "影片由派拉蒙动画出品，主演 Piper Curda 负责主角的声音表演，喜剧演员 Bobby Moynihan（《周六夜现场》常驻卡司）与 Jon Hamm（《广告狂人》主角）的加盟为影片增添了鲜明的喜剧与戏剧层次。"
+      ],
+      "director_note": "导演 Daniel Chong 是好莱坞动画领域的资深创作者，最广为人知的身份是卡通频道热门动画剧集《我们裸熊》（We Bare Bears，2015—2019）的创作者（creator）兼主创。《我们裸熊》以三只性格迥异的熊在当代都市生活为主线，将温情、荒诞与网络流行文化融合得恰到好处，在全球收获大量粉丝，并衍生出剧场版电影《我们裸熊：电影》（The We Bare Bears Movie，2020）。Daniel Chong 的创作标签鲜明：① 动物拟人化但保留动物本真习性；② 温暖的角色关系与群像刻画；③ 融入大量流行文化梗与网络语言；④ 节奏轻快、对白密集，笑点与感动并重。《Hoppers》是他首次执导大银幕动画长片，延续了其对「动物视角看世界」主题的持续探索，并加入了科幻与悬疑元素，可视为其创作版图的重要拓展。",
+      "wikipedia": "Hopper or hoppers may refer to:"
+    }
+  },
+  "tt27613895": {
+    "vocabulary": [
+      {
+        "word": "GOAT",
+        "translation": "史上最强者",
+        "explanation": "\"Greatest Of All Time\"的首字母缩写，当代体育与流行文化中极常见的俚语，用于形容某领域无可争议的顶尖人物。本片片名同时是山羊（goat）的字面意思，构成精妙双关。",
+        "category": "俚语"
+      },
+      {
+        "word": "the pros",
+        "translation": "职业联赛／职业选手",
+        "explanation": "\"professional（s）\"的口语缩写，在体育语境中特指职业级别的联赛或运动员，与业余（amateur）相对。\"join the pros\"即\"跻身职业圈\"。",
+        "category": "俚语"
+      },
+      {
+        "word": "roarball",
+        "translation": "咆哮球（片中虚构运动）",
+        "explanation": "影片原创词汇，由\"roar\"（咆哮、怒吼）与\"ball\"（球类运动）合成，指片中动物世界的顶级竞技运动，强调其野性、激烈的特质。",
+        "category": "专业术语"
+      },
+      {
+        "word": "high-intensity",
+        "translation": "高强度的",
+        "explanation": "体育与训练领域常用术语，形容运动或比赛节奏快、体力消耗大、对抗激烈。常见搭配如\"high-intensity interval training（HIIT）\"。",
+        "category": "专业术语"
+      },
+      {
+        "word": "full-contact",
+        "translation": "全接触式的",
+        "explanation": "体育术语，指允许运动员对对手身体进行直接、全力身体接触的竞技规则，如橄榄球、冰球等，区别于\"non-contact\"或\"limited-contact\"运动。",
+        "category": "专业术语"
+      },
+      {
+        "word": "co-ed",
+        "translation": "男女混合的",
+        "explanation": "\"co-educational\"的缩略口语形式，在体育语境中指男女运动员同场竞技，不按性别分组。",
+        "category": "俚语"
+      },
+      {
+        "word": "once-in-a-lifetime",
+        "translation": "千载难逢的，一生仅此一次的",
+        "explanation": "固定短语，用于强调某个机会或经历极其罕见、弥足珍贵，在励志类影片中是高频表达。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "underdog",
+        "translation": "以弱胜强的挑战者，不被看好的一方",
+        "explanation": "英语中描述处于劣势、不被外界看好却奋力拼搏的竞争者，是体育电影的经典主题词汇。\"underdog story\"即\"逆袭故事\"。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "dominated",
+        "translation": "主导的，称霸的",
+        "explanation": "此处为形容词用法，指某项运动或领域长期由特定群体占据绝对优势地位。体育评论中极为常用，如\"a league dominated by veteran players\"。",
+        "category": "专业术语"
+      },
+      {
+        "word": "Stephen Curry",
+        "translation": "斯蒂芬·库里",
+        "explanation": "NBA金州勇士队传奇球星，史上公认最伟大的三分射手之一，4届NBA总冠军得主，本身即是\"GOAT级\"运动员的象征人物，其出演使片名双关更具现实呼应。",
+        "category": "人名地名"
+      }
+    ],
+    "background": {
+      "summary": "《GOAT》（2026）是一部动画动作冒险电影，讲述一只怀抱大梦想的小山羊，获得了千载难逢的机会，加入职业联赛参加\"咆哮球\"（roarball）运动。这项运动是一种高强度、混合性别、全接触式的竞技项目，参赛者都是世界上速度最快、最凶猛的动物。影片以体育励志为核心，融合了热血竞技与成长主题，适合全年龄段观众。",
+      "context": [
+        "电影片名\"GOAT\"是英语中\"Greatest Of All Time\"（史上最强）的首字母缩写，是当代体育文化中极为流行的俚语，常用于赞美某一领域的顶尖人物，如篮球界的LeBron James、足球界的梅西等。片名本身形成双关：主角字面上是一只山羊（goat），同时又暗指追求\"GOAT\"地位的主题，这种文字游戏是理解影片精神内核的关键。",
+        "\"Roarball\"是片中虚构的运动项目，名称融合了\"roar\"（咆哮）与\"ball\"（球类运动），暗示这是一项充满野性与力量的竞技。影片设定中，这项运动由动物世界中最强壮、最迅猛的选手主导，小山羊作为\"弱者\"挑战强者的故事结构，呼应了体育电影中经典的\"underdog story\"（以弱胜强的故事）传统。",
+        "主演之一斯蒂芬·库里（Stephen Curry）是NBA金州勇士队的传奇控球后卫，被广泛认为是史上最伟大的射手之一，本身就是\"GOAT级别\"运动员的代表。他的加盟为影片注入了真实的体育精神，也使片名的双关意味更加鲜明。另一主演加布里埃尔·尤尼恩（Gabrielle Union）和凯莱布·麦克劳克林（Caleb McLaughlin，以《怪奇物语》闻名）均为实力派演员，声阵容多元而有活力。",
+        "影片在动画类型上延续了近年来好莱坞将真实体育明星与动画角色结合的潮流，通过拟人化动物竞技的世界观，将现实体育竞技中的压力、偏见与自我突破等主题以更轻盈、老少咸宜的方式呈现出来。"
+      ],
+      "director_note": "本片由泰瑞·迪利海（Tyree Dillihay）与亚当·罗塞特（Adam Rosette）联合执导。亚当·罗塞特在动画领域深耕多年，曾担任Netflix动画系列《坎坷人生》（Tough Love，又名\"Big Mouth\"相关项目）等作品的导演与故事板艺术家，擅长将幽默感与情感深度融入动画叙事。泰瑞·迪利海则在动画短片及儿童内容创作方面积累了丰富经验，注重角色情感的真实表达与节奏把控。两位导演的组合风格倾向于：动作场面高能流畅、角色塑造立体可爱、在轻松氛围中传递真挚的励志主题。这种\"外表热血、内核温情\"的创作路线，与《疯狂动物城》《冲浪企鹅》等口碑动画异曲同工，值得期待。",
+      "wikipedia": "A goat is a mammal."
+    }
+  },
+  "tt33305882": {
+    "vocabulary": [
+      {
+        "word": "awakening",
+        "translation": "觉醒；复兴",
+        "explanation": "在宗教语境中特指信仰的\"复苏\"与\"更新\"，Great Awakening（大觉醒）是北美历史上的专有名词，指18世纪那场席卷殖民地的宗教复兴运动，观看本片时会高频出现。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "preacher",
+        "translation": "布道者；传教士",
+        "explanation": "指在教会或公开场合布道传教的人。与 pastor（牧师，强调职务）或 priest（神父，天主教）有所不同，preacher 更强调\"讲道\"这一行为本身，常带有热情洋溢、感召人心的色彩。",
+        "category": "专业术语"
+      },
+      {
+        "word": "revival",
+        "translation": "（宗教）复兴；振兴运动",
+        "explanation": "在基督教语境中，revival 特指宗教热情的集体重燃，通常伴随大规模的公开布道、集会与皈依浪潮。Great Awakening 即是美国历史上最重要的 revival 运动之一。",
+        "category": "专业术语"
+      },
+      {
+        "word": "sermon",
+        "translation": "布道；讲道词",
+        "explanation": "基督教礼拜中牧师或传教士发表的宗教演讲。怀特菲尔德以其极具戏剧性和感染力的 sermon 著称，能令数万人为之动容落泪。影片中 sermon 场景将是视觉与情感的高潮。",
+        "category": "专业术语"
+      },
+      {
+        "word": "itinerant",
+        "translation": "巡回的；游走各地的",
+        "explanation": "形容不驻扎于固定场所、四处游历传道的人。itinerant preacher（巡回布道师）是大觉醒时代的重要现象，怀特菲尔德正是其中最典型的代表，他巡遍十三殖民地的每一个角落。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "fervor",
+        "translation": "热忱；狂热",
+        "explanation": "强烈而充满激情的情感状态，常与 religious fervor（宗教热情）连用。在影片所呈现的大觉醒运动背景下，这种集体性的情感爆发是理解时代氛围的关键词。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "congregation",
+        "translation": "（教堂的）会众；信众",
+        "explanation": "聚集在一起参加礼拜的信徒群体。与 audience（观众）不同，congregation 强调宗教共同体的归属感。影片中大型户外布道会的群众场面将频繁用到此词。",
+        "category": "专业术语"
+      },
+      {
+        "word": "conversion",
+        "translation": "皈依；（宗教）归信",
+        "explanation": "指一个人改变信仰、接受基督教的精神转变过程。大觉醒运动的核心目标之一便是促成大规模 conversion，这一概念在剧情与人物弧线中具有核心地位。",
+        "category": "专业术语"
+      },
+      {
+        "word": "Deist / Deism",
+        "translation": "自然神论者 / 自然神论",
+        "explanation": "一种相信上帝创造了宇宙但不干预人间事务的哲学立场，18世纪启蒙思想家（如富兰克林、杰斐逊）多持此观点。理解富兰克林的 Deism 是读懂他与怀特菲尔德友谊张力的关键。",
+        "category": "专业术语"
+      },
+      {
+        "word": "ordained",
+        "translation": "（被）授予圣职的；受按立的",
+        "explanation": "指经过教会正式仪式认可，获得传教或主持圣礼资格的神职人员。了解一位传道人是否 ordained 在当时的教会权力结构中至关重要，也是影片潜在的戏剧冲突来源。",
+        "category": "专业术语"
+      },
+      {
+        "word": "providence",
+        "translation": "天意；神意；上帝的眷顾",
+        "explanation": "基督教神学核心词汇，指上帝对世界和人类历史的主权性安排与引导。在殖民地时期，providence 是解释历史事件的主流框架，剧中人物对话中将大量援引这一概念。",
+        "category": "专业术语"
+      },
+      {
+        "word": "pamphlet",
+        "translation": "小册子；传单",
+        "explanation": "18世纪信息传播的主要媒介之一。富兰克林作为出版商，大量印刷并发行怀特菲尔德的布道文本，使其思想得以在殖民地广泛传播，pamphlet 在片中具有重要的叙事功能。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "colony / colonial",
+        "translation": "殖民地 / 殖民时代的",
+        "explanation": "本片背景为英属北美十三殖民地（The Thirteen Colonies），colonial America 指独立战争前的北美社会，理解这一政治地理背景是读懂片中人物处境与行动逻辑的基础。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "George Whitefield",
+        "translation": "乔治·怀特菲尔德",
+        "explanation": "影片主人公之一（1714-1770），英国出生的循道宗传道人，大觉醒运动灵魂人物。其姓氏 Whitefield 英式发音为\"WIT-field\"而非\"WHITE-field\"，是观看英文原声时需要注意的细节。",
+        "category": "人名地名"
+      },
+      {
+        "word": "Benjamin Franklin",
+        "translation": "本杰明·富兰克林",
+        "explanation": "影片主人公之一（1706-1790），美国开国元勋、科学家与出版商。本片聚焦于他鲜少被影视作品深入呈现的一面——与宗教世界的复杂关系，为观众提供了理解这位历史人物的全新视角。",
+        "category": "人名地名"
+      },
+      {
+        "word": "Philadelphia",
+        "translation": "费城（宾夕法尼亚州）",
+        "explanation": "富兰克林的主要活动地，殖民地时期北美最重要的城市之一，大觉醒运动的重要传播节点。怀特菲尔德曾多次赴费城布道，两人的交往即以此地为重要舞台。",
+        "category": "人名地名"
+      },
+      {
+        "word": "eloquence",
+        "translation": "口才；雄辩；辞藻之美",
+        "explanation": "指以语言打动人心的卓越能力。怀特菲尔德被同时代人公认为史上最具 eloquence 的演说家之一，连富兰克林这位理性主义者也在回忆录中盛赞其演讲令人无法抗拒，这一词汇将贯穿全片对他的刻画。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "pivotal",
+        "translation": "关键性的；举足轻重的",
+        "explanation": "形容某事物在历史或局势发展中处于转折点位置，具有决定性意义。影片简介中即以 pivotal 形容大觉醒运动，暗示影片将以宏观历史眼光审视这场运动对美国立国精神的深远影响。",
+        "category": "文化背景词"
+      }
+    ],
+    "background": {
+      "summary": "《A Great Awakening》（2026）是一部历史剧情片，聚焦于18世纪美国殖民地时期一场深刻改变社会面貌的宗教复兴运动——\"大觉醒运动\"（The Great Awakening）。影片以著名布道家乔治·怀特菲尔德（George Whitefield）与美国国父之一本杰明·富兰克林（Benjamin Franklin）之间真实存在的跨越信仰鸿沟的友谊为主线，呈现了一段鲜为人知却影响深远的历史情谊，以及那个时代宗教热情与理性启蒙之间的张力与对话。",
+      "context": [
+        "【大觉醒运动（The Great Awakening）】：18世纪30至40年代席卷北美英属殖民地的一场大规模基督教复兴运动。它打破了传统教会的权威垄断，强调个人与上帝的直接情感联结，催生了平等主义意识，被许多历史学家视为美国独立革命精神的重要思想前奏。",
+        "【乔治·怀特菲尔德（George Whitefield，1714-1770）】：英国卫理公会（Methodist）传教士，大觉醒运动的核心人物之一。他以极具感染力的露天布道闻名，能够同时吸引数万人聆听。他多次往返于英美两地，足迹遍布十三殖民地，是北美殖民时代最具影响力的公众人物之一，堪称历史上最早的\"媒体明星\"式传教士。",
+        "【本杰明·富兰克林（Benjamin Franklin，1706-1790）】：美国开国元勋、科学家、外交家、作家与出版商。富兰克林本人是理性主义者与自然神论者（Deist），对传统宗教保持距离，但他与怀特菲尔德的友谊持续数十年。富兰克林曾亲自出版怀特菲尔德的布道集，并在回忆录中记述了对他布道能力的钦佩，二人的通信往来保存至今，是研究那个时代的珍贵史料。",
+        "【殖民地时代的北美社会背景】：17至18世纪的北美十三殖民地是英国的海外领地，社会结构严格，阶层分明，清教徒伦理与英国国教影响深重。大觉醒运动在这一背景下以\"平等蒙恩\"的神学主张冲击了旧有秩序，对后来的民主思想与独立运动产生了潜移默化的影响。",
+        "【理性与信仰的对话】：影片核心张力在于富兰克林所代表的启蒙理性主义与怀特菲尔德所代表的热烈宗教情感之间的碰撞与共存。这一主题在当代语境下依然具有强烈的现实意义，引发观众对科学与信仰、理性与情感之间关系的深层思考。"
+      ],
+      "director_note": "本片导演信息目前尚未公开（N/A）。从影片的题材定位来看，它延续了近年来好莱坞历史传记类戏剧片（Historical Biopic Drama）的创作潮流，此类影片通常注重史料考证与人物心理刻画并重，以真实书信、日记等一手文献为剧本依据，力求在宏大的历史叙事中呈现私人情感的细腻质感。参考同类佳作如《林肯》（Lincoln, 2012）、《约翰·亚当斯》（John Adams, 2008）的风格，观众可期待本片在服装、布景、光影等方面对18世纪殖民地美洲进行高度还原，并以大量室内对话场景推进人物关系，以户外布道场景呈现时代的群体激情。整体风格预计庄重、深沉，具有浓厚的舞台剧质感。",
+      "wikipedia": "A Great Awakening is a 2026 American historical drama film directed and written by Joshua Enck. The film follows the friendship between George Whitefield and Benjamin Franklin, and Whitefield's impact during the Great Awakening religious movement."
+    }
+  },
+  "tt31728330": {
+    "vocabulary": [
+      {
+        "word": "housekeeper",
+        "translation": "管家 / 家政工人",
+        "explanation": "指受雇于家庭或大型建筑（如酒店、公寓）负责日常清洁、整理等工作的人员。影片女主角的职业身份，暗示她以'局外人'视角进入封闭的上流社区。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "high-rise",
+        "translation": "高层建筑 / 摩天大楼",
+        "explanation": "指楼层极多的高层建筑，在纽约语境下常与豪华公寓、权贵阶层挂钩。影片中是故事发生的核心密闭空间，带有压迫感与神秘氛围。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "disappearances",
+        "translation": "（人口）失踪事件",
+        "explanation": "复数形式强调事件的持续性与规律性，暗示这栋楼里并非个案，而是有组织、成系统的谋害或阴谋。是恐怖类型片的经典悬念钩子。",
+        "category": "专业术语"
+      },
+      {
+        "word": "shrouded in mystery",
+        "translation": "笼罩在神秘之中",
+        "explanation": "'shroud'原指裹尸布，此处作动词用，表示被深深隐藏、掩盖。'shrouded in mystery'是英语中描述神秘事物的固定短语，语气比'mysterious'更为浓重阴郁。",
+        "category": "俚语"
+      },
+      {
+        "word": "community",
+        "translation": "（特指）社群 / 封闭圈子",
+        "explanation": "在此语境中不仅指普通邻里，更暗指一个有内部规则、外人难以进入的封闭精英群体，带有cult（邪教式团体）或秘密组织的隐含意味。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "unaware",
+        "translation": "毫不知情的 / 未察觉的",
+        "explanation": "常见形容词，'be unaware of sth.'意为对某事一无所知。影片简介中用此词点明女主角起初的无辜处境，是恐怖片'无辜者落入陷阱'叙事模式的关键词。",
+        "category": "专业术语"
+      },
+      {
+        "word": "genre-blending",
+        "translation": "类型混搭 / 跨类型融合",
+        "explanation": "影视批评术语，指一部作品同时包含多种电影类型元素。本片融合动作（Action）、喜剧（Comedy）、恐怖（Horror），是当代好莱坞流行的创作手法。",
+        "category": "专业术语"
+      },
+      {
+        "word": "building's history",
+        "translation": "大楼的（黑暗）历史",
+        "explanation": "在恐怖类型片语境中，'a building with history'是一个约定俗成的表达，隐含该场所曾发生过暴力、死亡或诅咒等不可告人之事，类似中文的'凶宅'概念。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "black comedy",
+        "translation": "黑色喜剧",
+        "explanation": "一种以幽默方式处理死亡、暴力、道德败坏等黑暗主题的喜剧形式。本片导演索科洛夫的标志性风格，观众在大笑的同时会感到一丝不寒而栗。",
+        "category": "专业术语"
+      },
+      {
+        "word": "patrician",
+        "translation": "贵族的 / 上流阶层的",
+        "explanation": "源自拉丁语'patricius'（贵族），形容举止或出身高贵的人。在纽约豪华公寓的语境中，常用来描述那些与普通人隔绝的超富阶层居民，与女主角的工人阶级身份形成对比。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "adrenaline-pumping",
+        "translation": "肾上腺素飙升的 / 令人极度兴奋紧张的",
+        "explanation": "口语化描述词，常用于影评，形容动作场面或恐怖段落极度刺激，让观众心跳加速。与本片动作类型元素直接相关。",
+        "category": "俚语"
+      },
+      {
+        "word": "cult following",
+        "translation": "死忠粉群体 / 邪典影迷圈",
+        "explanation": "'cult'在此指对某部小众或非主流作品有极高热情的固定粉丝群体。导演索科洛夫的前作在欧洲已积累了相当的cult following，本片是其进军主流市场的尝试。",
+        "category": "俚语"
+      },
+      {
+        "word": "complicit",
+        "translation": "共谋的 / 同流合污的",
+        "explanation": "形容词，指明知某事不对却参与其中或选择沉默。在影片所探讨的封闭社区语境中，大楼里的其他居民极可能是'complicit'于那些失踪事件的。",
+        "category": "专业术语"
+      },
+      {
+        "word": "red herring",
+        "translation": "（故意设置的）误导线索 / 障眼法",
+        "explanation": "侦探和悬疑类型片术语，指刻意误导观众或角色的假线索。本片融合悬疑元素，观看时留意剧情中的red herring有助于提升观影乐趣。",
+        "category": "俚语"
+      },
+      {
+        "word": "upscale",
+        "translation": "高档的 / 面向富裕阶层的",
+        "explanation": "形容商品或场所定位高端、价格昂贵。'upscale neighborhood/building'在纽约语境下专指上东区、中央公园西等富人区的豪华物业，与女主角的底层身份形成强烈反差。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "claustrophobic",
+        "translation": "（令人感到）幽闭恐惧的 / 压抑密闭的",
+        "explanation": "形容使人感到空间狭小、无处逃脱的氛围。索科洛夫导演擅长在密闭空间内制造张力，影评中常用此词描述其作品的视觉风格。",
+        "category": "专业术语"
+      },
+      {
+        "word": "sinister",
+        "translation": "险恶的 / 不祥的 / 暗藏恶意的",
+        "explanation": "形容表面正常实则藏有恶意的人或环境。影片中那些看似彬彬有礼的上层住户，极可能被描绘为'sinister'角色，外表光鲜内里危险。",
+        "category": "专业术语"
+      },
+      {
+        "word": "NYC high-rise",
+        "translation": "纽约高层公寓楼",
+        "explanation": "'NYC'是New York City的缩写，口语和媒体中极为常用。'NYC high-rise'在美国流行文化中具有特定的文化符号意义，象征财富、权力与隐秘，是本片故事舞台的核心意象。",
+        "category": "人名地名"
+      }
+    ],
+    "background": {
+      "summary": "《They Will Kill You》（2026）是一部融合动作、喜剧与恐怖元素的类型混搭影片。故事讲述一名女性在纽约市一栋高层公寓中谋得管家工作，却逐渐发现这栋大楼背后隐藏着一系列神秘失踪事件，所谓的\"社区\"更是笼罩在重重谜团之中。影片将都市恐怖、黑色幽默与动作场面融为一体，探讨了阶级、权力与隐秘社会圈层等主题。",
+      "context": [
+        "纽约高层豪华公寓文化：在纽约，顶层或高端公寓大楼（如著名的达科他公寓）往往有着神秘甚至阴森的历史传说，是恐怖类型片的经典叙事背景，暗示着阶级隔阂与权贵阶层的隐秘生活。",
+        "失踪与封闭社区题材：影片延续了近年来流行的'封闭精英圈层中的黑暗秘密'叙事脉络，与《逃出绝命镇》《寄生虫》等作品共享相似的阶级凝视视角——底层工作者闯入上流社会后揭露真相。",
+        "管家/家政工人视角：以底层服务者（housekeeper）作为主角切入上流社会的叙事设计，天然带有阶级张力，观众随主角视角逐步揭开表面体面背后的危险。",
+        "类型混搭（Genre-blending）趋势：动作+喜剧+恐怖的组合在近年好莱坞颇为流行，这类影片往往用黑色幽默消解恐惧，同时保持肾上腺素飙升的动作节奏，《恐怖直播》《惊声尖笑》系列均有类似尝试。"
+      ],
+      "director_note": "基里尔·索科洛夫（Kirill Sokolov）是近年来备受瞩目的俄罗斯新生代导演，以极具辨识度的暴力美学与黑色幽默风格著称。其长片处女作《为什么不要杀死你的老板》（Почему я? / Why Don't You Just Die!, 2018）在国际影坛一鸣惊人，以极低成本打造出塔伦蒂诺式的密室暴力喜剧，荣获多项国际电影节奖项，被誉为\"俄罗斯版《低俗小说》\"。第二部作品《三方受害》（Pusher, 2021，又名《Serious People》）延续了其对暴力与荒诞喜剧的迷恋，进一步打磨了快节奏剪辑与夸张肢体动作的视听语言。索科洛夫擅长在狭小封闭空间内制造极度紧张的戏剧冲突，镜头运动充满活力，配色饱和鲜艳，暴力场面既真实残酷又带有滑稽色彩。《They Will Kill You》是其首部好莱坞商业制作，主演阵容涵盖帕特里夏·阿奎特、汤姆·费尔顿与扎齐·比茨等实力派演员，标志着这位东欧奇才正式进军英语市场。",
+      "wikipedia": "They Will Kill You is a 2026 action comedy horror film directed by Kirill Sokolov, from a script co-written with Alex Litvak. The film stars Zazie Beetz, Myha'la, Paterson Joseph, Tom Felton, Heather Graham, and Patricia Arquette. Its plot follows an ex-convict who answers an ad to be a housekeeper at a mysterious New York City high-rise, not realizing she is entering a community that has seen a number of disappearances over the years. It’s an international co-production film between South Africa, the United States and Canada."
+    }
+  },
+  "tt36352591": {
+    "vocabulary": [
+      {
+        "word": "villa",
+        "translation": "（意式）别墅；庄园",
+        "explanation": "在欧洲语境中特指带有庄园或花园的豪华独栋住宅，尤其与意大利贵族文化紧密相关，远不止普通\"别墅\"那么简单，暗含旧世界阶级与奢华生活方式。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "pose as",
+        "translation": "冒充；假扮成",
+        "explanation": "日常高频短语，意为伪装成某人或某种身份。影片核心情节即女主 'posing as the owner's fiancée'（冒充庄园主的未婚妻），是推动故事的关键动作。",
+        "category": "俚语"
+      },
+      {
+        "word": "fiancée",
+        "translation": "（女性）未婚妻",
+        "explanation": "源自法语，专指女性的已订婚伴侣（男性为 fiancé，少一个 e）。在正式英语和浪漫语境中常见，中文字幕有时直译为\"未婚妻\"，需留意与 girlfriend 的区别。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "mistaken identity",
+        "translation": "身份误认；认错人",
+        "explanation": "喜剧与悬疑类型中的经典叙事术语，指角色因被误认为另一人而引发的一系列戏剧性误会，是本片喜剧冲突的核心机制。",
+        "category": "专业术语"
+      },
+      {
+        "word": "crash (at)",
+        "translation": "（非正式）临时借住；蹭住",
+        "explanation": "口语俚语，'crash at someone's place' 意为在某处临时落脚过夜，通常含有未经正式邀请或仓促借住的意味，与影片中女主\"闯入\"别墅的情节呼应。",
+        "category": "俚语"
+      },
+      {
+        "word": "Tuscany",
+        "translation": "托斯卡纳",
+        "explanation": "意大利中部著名大区，首府为佛罗伦萨（Florence）。以奇扬蒂（Chianti）葡萄酒、文艺复兴艺术遗产、锡耶纳古城及如画般的田园丘陵景观闻名，是西方文化中\"浪漫意大利\"的终极象征。",
+        "category": "人名地名"
+      },
+      {
+        "word": "transform",
+        "translation": "彻底改变；使蜕变",
+        "explanation": "在浪漫喜剧语境中，transform 不仅指外在变化，更强调人物内心的成长与自我认知的突破，是该类型影片的核心情感弧线词汇。",
+        "category": "专业术语"
+      },
+      {
+        "word": "unexpected romance",
+        "translation": "意想不到的爱情；不期而遇的浪漫",
+        "explanation": "浪漫喜剧中的标志性表达，强调爱情的偶然性与命运感，通常暗示两人起初关系并不融洽，经历误会与碰撞后才发展出真情。",
+        "category": "专业术语"
+      },
+      {
+        "word": "fish out of water",
+        "translation": "如鱼离水；格格不入的人",
+        "explanation": "英语成语，形容某人处于完全陌生或不适应的环境中，是浪漫喜剧中极常见的人物处境设定，制造喜剧效果的同时也推动人物成长。",
+        "category": "俚语"
+      },
+      {
+        "word": "Regé-Jean Page / Halle Bailey",
+        "translation": "雷吉-让·佩奇 / 哈莉·贝利",
+        "explanation": "两位主演均为近年最具票房号召力的新生代明星：Regé-Jean Page 因《布里杰顿》走红，以迷人的英伦贵族气质著称；Halle Bailey 为歌手兼演员，以出演真人版《小美人鱼》女主角成为全球焦点。",
+        "category": "人名地名"
+      }
+    ],
+    "background": {
+      "summary": "《你、我与托斯卡纳》（2026）是一部浪漫喜剧，讲述一名女性阴差阳错闯入意大利一座空置豪华别墅，冒充庄园主的未婚妻，却在这片金色葡萄园与蓝天白云之间，意外邂逅了一段改变她人生轨迹的爱情故事。影片以意大利托斯卡纳大区为背景，将欺骗与真情、身份错位与自我发现巧妙交织，是一部充满地中海阳光气息的轻盈爱情喜剧。",
+      "context": [
+        "托斯卡纳（Tuscany）位于意大利中部，以葡萄酒庄园、文艺复兴艺术、起伏丘陵与柏树大道闻名全球，是好莱坞浪漫喜剧最钟爱的取景地之一，代表着欧洲精致慢生活与逃离日常的浪漫想象。",
+        "影片采用经典的\"身份误认\"（mistaken identity）喜剧结构，这一手法可追溯至莎士比亚戏剧，在现代浪漫喜剧中屡见不鲜，通常用于制造误会张力、推动两人关系的转变。",
+        "主演 Regé-Jean Page 凭借《布里杰顿》（Bridgerton, 2020）一炮而红，以极具魅力的英伦绅士形象深入人心；Halle Bailey 则以《小美人鱼》（The Little Mermaid, 2023）真人版主演身份备受关注，两人的组合为影片带来强大的粉丝基础与话题效应。",
+        "影片类型属于\"鱼跃龙门式浪漫喜剧\"（fish-out-of-water romantic comedy），女主角置身于完全陌生的欧洲贵族环境中，阶层差异与文化碰撞是喜剧笑点与情感张力的重要来源。",
+        "意大利别墅（villa）文化在西方语境中象征着财富、休闲与旧世界贵族气质，与美国现代都市女性的日常生活形成鲜明对比，这种对比本身即构成影片的叙事动力。"
+      ],
+      "director_note": "导演 Kat Coiro 是好莱坞新生代浪漫喜剧领域最受瞩目的女性导演之一。她执导了詹妮弗·洛佩兹主演的院线浪漫喜剧《爱你，维克多》（Marry Me, 2022），展现出对大女主爱情故事的精准把握，擅长在轻松愉快的氛围中挖掘情感深度。她同样深耕电视领域，曾执导《她与她的她》（She-Hulk: Attorney at Law, 2022）多集，展现出驾驭喜剧节奏与视觉奇观并存的能力。Coiro 的标志性风格包括：对话节奏轻快犀利、女性主体视角突出、善用异域风情取景地烘托情感氛围，以及对爱情中\"真实自我\"主题的持续关注。执导本片，可以期待她将托斯卡纳的视觉美学与都市女性的内心成长融合得恰到好处。",
+      "wikipedia": "You, Me & Tuscany is a 2026 American romantic comedy film directed by Kat Coiro and written by Ryan Engle. The film stars Halle Bailey and Regé-Jean Page. The film takes place in Italy and tells the story of a young cook who squats in an abandoned Tuscan villa owned by a man she barely knows and she meets the owner's cousin."
     }
   }
 }

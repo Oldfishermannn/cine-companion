@@ -25,6 +25,8 @@ export async function GET(req: NextRequest) {
   const year = searchParams.get("year") || "";
   const genre = searchParams.get("genre") || "";
   const plot = searchParams.get("plot") || "";
+  const director = searchParams.get("director") || "";
+  const actors = searchParams.get("actors") || "";
 
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
@@ -83,11 +85,15 @@ export async function GET(req: NextRequest) {
             content: `你是帮助中文语境观众看英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
+${director ? `导演：${director}` : ""}
+${actors ? `主演：${actors}` : ""}
 简介：${plot}
 
 请调用 movie_analysis 工具，完成：
 1. 提取 ${wordCount} 个观看此电影有帮助的英语难词/短语
-2. 提供零剧透的中文背景知识介绍`,
+2. 提供零剧透的中文背景知识介绍
+
+重要：director_note 字段应聚焦于导演的创作风格、代表作、拍摄手法等有价值的信息。${director ? `导演是${director}，请围绕其已知作品和风格展开。` : "如果导演信息不详，请围绕影片的类型特色和风格手法来写，不要写'尚未上映'、'信息暂未公开'等废话。"}`,
           },
         ],
       }),

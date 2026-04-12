@@ -164,6 +164,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         const params = new URLSearchParams({
           id: d.id || "", title: d.title,
           year: d.year || "", genre: d.genre || "", plot: d.plot || "",
+          director: d.director || "", actors: d.actors || "",
         });
         fetchRetry(`/api/movie-ai?${params}`)
           .then(r => r.json())
