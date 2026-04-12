@@ -1978,15 +1978,16 @@ body::after {
   padding: 0;
 }
 
-/* ── Full-bleed score bar ── */
+/* ── Score bar ── */
 .dc-bar-wrap {
   width: 100%;
-  margin-bottom: 22px;
-  padding: 18px 0 10px;
+  margin-bottom: 28px;
+  padding: 26px 0 14px;
 }
 .dc-bar-track {
   position: relative;
-  height: 3px;
+  height: 5px;
+  border-radius: 3px;
   background: linear-gradient(
     to right,
     #ef4444 0%,
@@ -2000,13 +2001,13 @@ body::after {
   position: absolute;
   top: 50%;
   left: 0%;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #fff;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.12), 0 2px 10px rgba(0,0,0,0.6);
-  animation: dc-ball-slide 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.15), 0 3px 14px rgba(0,0,0,0.7);
+  animation: dc-ball-slide 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 @keyframes dc-ball-slide {
   from { left: 0%; }
@@ -2014,80 +2015,58 @@ body::after {
 }
 .dc-bar-label {
   position: absolute;
-  top: -22px;
+  top: -28px;
   left: 0%;
   transform: translateX(-50%);
   font-family: var(--font-mono), monospace;
-  font-size: 0.62rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--dc-color, var(--cream));
-  letter-spacing: 0.06em;
-  animation: dc-ball-slide 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+  letter-spacing: 0.02em;
+  animation: dc-ball-slide 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
   pointer-events: none;
 }
 
-/* Score + verdict */
-.dc-top {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.dc-score-badge {
-  font-family: var(--font-mono), monospace;
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.dc-verdict {
-  font-family: var(--font-body), sans-serif;
-  font-size: 0.88rem;
-  line-height: 1.7;
-  color: var(--cream);
-  margin: 0;
-}
-
-/* Pills — flat single row */
+/* Pills */
 .dc-pills-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 22px;
 }
 .dc-pill {
   font-family: var(--font-body), sans-serif;
-  font-size: 0.7rem;
-  padding: 2px 9px;
-  border-radius: 2px;
+  font-size: 0.84rem;
+  padding: 5px 14px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 .dc-pill.good {
-  background: rgba(235,227,208,0.07);
-  color: rgba(235,227,208,0.85);
+  background: rgba(74,222,128,0.12);
+  color: #86efac;
 }
 .dc-pill.not {
-  background: transparent;
+  background: rgba(235,227,208,0.06);
   color: var(--muted);
 }
 
-/* Stats — inline text strip */
+/* Stats */
 .dc-stats-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   border-top: 1px solid var(--rule);
-  padding-top: 12px;
+  padding-top: 16px;
 }
 .dc-stat-item {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 0 18px 0 0;
-  margin-right: 18px;
+  gap: 5px;
+  padding: 0 20px 0 0;
+  margin-right: 20px;
   border-right: 1px solid var(--rule);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .dc-stat-item:last-child {
   border-right: none;
@@ -2096,16 +2075,16 @@ body::after {
 }
 .dc-stat-label {
   font-family: var(--font-mono), monospace;
-  font-size: 0.5rem;
+  font-size: 0.56rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
 .dc-stat-value {
   font-family: var(--font-body), sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: var(--cream);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Credits — single small line */
