@@ -80,6 +80,7 @@ export async function speak(word: string) {
     const audioUrl = await fetchDictAudio(clean.join(" "));
     if (audioUrl) {
       const audio = new Audio(audioUrl);
+      audio.volume = 0.4;
       audio.play().catch(() => {});
       return;
     }
@@ -91,6 +92,7 @@ export async function speak(word: string) {
   utterance.lang = "en-US";
   utterance.rate = 0.9;
   utterance.pitch = 1.0;
+  utterance.volume = 0.4;
   if (voice) utterance.voice = voice;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
