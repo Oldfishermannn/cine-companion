@@ -1,12 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { VerdictContent } from "../types";
 
 const PACING_ZH: Record<string, string>     = { slow: "慢热", mixed: "张弛有度", fast: "快节奏" };
 const DIFF_ZH: Record<string, string>       = { low: "友好", medium: "中等", high: "较难" };
 const THEATRICAL_ZH: Record<string, string> = { low: "流媒体即可", medium: "建议影院", high: "必须影院" };
 const KNOWLEDGE_ZH: Record<string, string>  = { none: "无需", low: "略知即可", medium: "建议了解", high: "需要补课" };
+
+/** Animate a number from 0 → target over `duration` ms, returns current display value */
+function useCountUp(target: number, duration = 900, delay = 200) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let start: number | null = null;
+    let raf: number;
+    const timeout = setTimeout(() => {
+      const step = (ts: number) => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        // ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setValue(parseFloat((eased * target).toFixed(1)));
+        if (progress < 1) raf = requestAnimationFrame(step);
+        else setValue(target);
+      };
+      raf = requestAnimationFrame(step);
+    }, delay);
+    return () => { clearTimeout(timeout); cancelAnimationFrame(raf); };
+  }, [target, duration, delay]);
+  return value;
+}
 
 export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | null; loading?: boolean }) {
   if (loading) {
@@ -28,37 +51,50 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
 
   if (!verdict) return null;
 
-  const score      = verdict.recommendation_score;
-  const pct        = `${(score / 10) * 100}%`;
-  const scoreColor = score >= 8 ? "#4ade80" : score >= 6 ? "#facc15" : "#f87171";
-  const scoreDesc  = score >= 8 ? "强烈推荐" : score >= 6 ? "值得一看" : "谨慎考虑";
+  return <DecisionCardInner verdict={verdict} />;
+}
+
+function DecisionCardInner({ verdict }: { verdict: VerdictContent }) {
+  const score     = verdict.recommendation_score;
+  const animated  = useCountUp(score, 900, 200);
+  const pct       = `${(animated / 10) * 100}%`;
+
+  // Color interpolates gently: muted red → warm amber → soft green
+  const scoreColor = score >= 8
+    ? "rgba(134,200,130,0.9)"
+    : score >= 6
+    ? "rgba(210,185,120,0.9)"
+    : "rgba(200,120,110,0.9)";
+
+  const scoreDesc = score >= 8 ? "强烈推荐" : score >= 6 ? "值得一看" : "谨慎考虑";
 
   const stats = [
-    { label: "节奏",     value: PACING_ZH[verdict.pacing]                         || verdict.pacing },
-    { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]                || verdict.english_difficulty },
-    { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]             || verdict.theatrical_need },
-    { label: "前置知识", value: KNOWLEDGE_ZH[verdict.prior_knowledge]              || verdict.prior_knowledge },
+    { label: "节奏",     value: PACING_ZH[verdict.pacing]                    || verdict.pacing },
+    { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]           || verdict.english_difficulty },
+    { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]        || verdict.theatrical_need },
+    { label: "前置知识", value: KNOWLEDGE_ZH[verdict.prior_knowledge]         || verdict.prior_knowledge },
   ];
 
   return (
     <div className="decision-card">
 
-      {/* ① 模块标题 — 告诉新用户这是什么 */}
+      {/* ① 标题 */}
       <div className="dc-section-title">值不值得去影院看？</div>
 
-      {/* ② 推荐指数条 — 带两端锚点文字 */}
+      {/* ② 推荐指数条 */}
       <div className="dc-bar-wrap">
         <div className="dc-bar-anchors">
           <span>不推荐</span>
           <span className="dc-bar-score-label" style={{ color: scoreColor }}>
-            {score.toFixed(1)} <span className="dc-bar-score-desc">{scoreDesc}</span>
+            {animated.toFixed(1)}
+            <span className="dc-bar-score-desc">{scoreDesc}</span>
           </span>
           <span>强烈推荐</span>
         </div>
         <div className="dc-bar-track">
           <div
             className="dc-bar-ball"
-            style={{ "--dc-target": pct, "--dc-color": scoreColor } as React.CSSProperties}
+            style={{ "--dc-target": pct } as React.CSSProperties}
           />
         </div>
       </div>
