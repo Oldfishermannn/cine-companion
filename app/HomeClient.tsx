@@ -347,9 +347,20 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
 
   const gridMovies = indexedMovies;
 
-  // Top 4 AMC films become the Editor's Slate — scope is strictly
-  // theater-playing, so the slate is derived, not hand-picked.
-  const editorsSlate = catalog.slice(0, 4);
+  // Editor's Slate — top 4 by verdict recommendation_score (must have a poster).
+  // Falls back to catalog rank order for movies without verdict data.
+  const editorsSlate = useMemo(() => {
+    return [...catalog]
+      .filter(m => m.posterUrl)
+      .sort((a, b) => {
+        const va = verdictMap[a.title]?.score ?? 0;
+        const vb = verdictMap[b.title]?.score ?? 0;
+        if (vb !== va) return vb - va;
+        return a.rank - b.rank;
+      })
+      .slice(0, 4);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog, verdictMap]);
 
   return (
     <>

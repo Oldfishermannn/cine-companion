@@ -126,20 +126,16 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
 
     // Verdict — fetch if missing from baked cache
     if (!initialData.verdict) {
-      console.log("[verdict] no cache, fetching for", d.title);
       setVerdictLoading(true);
       setVerdictError(false);
       const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
       fetchRetry(`/api/movie-verdict?${verdictParams}`)
         .then(r => r.json())
         .then(v => {
-          console.log("[verdict] response:", v);
           if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } else { setVerdictError(true); }
         })
-        .catch((err) => { console.error("[verdict] fetch error:", err); setVerdictError(true); })
+        .catch(() => setVerdictError(true))
         .finally(() => setVerdictLoading(false));
-    } else {
-      console.log("[verdict] loaded from cache for", d.title);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);

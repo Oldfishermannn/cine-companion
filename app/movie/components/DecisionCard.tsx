@@ -104,7 +104,20 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
         </div>
       )}
 
-      {/* ④ 四项指标 — 各带小分数条 */}
+      {/* ④ 一句话综合评价 */}
+      {verdict.one_line_verdict && (
+        <p style={{
+          fontSize: "0.84rem",
+          lineHeight: 1.75,
+          color: "var(--cream)",
+          fontFamily: "var(--font-body), sans-serif",
+          margin: "12px 0 4px",
+          borderLeft: "2px solid var(--amber-dim)",
+          paddingLeft: 10,
+        }}>{verdict.one_line_verdict}</p>
+      )}
+
+      {/* ⑤ 四项指标 — 各带小分数条 */}
       <div className="dc-stats-row">
         {stats.map((s, i) => (
           <div key={i} className="dc-stat-item">
@@ -116,6 +129,42 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
           </div>
         ))}
       </div>
+
+      {/* ⑥ 英语难度说明 */}
+      {verdict.english_note && (
+        <p style={{
+          fontSize: "0.72rem",
+          color: "var(--muted)",
+          fontFamily: "var(--font-mono), monospace",
+          letterSpacing: "0.05em",
+          marginTop: 8,
+        }}>✎ {verdict.english_note}</p>
+      )}
+
+      {/* ⑦ 片尾彩蛋 */}
+      {verdict.credits_detail && (
+        <div style={{
+          marginTop: 12,
+          padding: "7px 10px",
+          background: verdict.has_credits_scene ? "rgba(232,182,97,0.07)" : "rgba(255,255,255,0.03)",
+          border: `1px solid ${verdict.has_credits_scene ? "rgba(232,182,97,0.25)" : "var(--rule)"}`,
+          borderRadius: 4,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 8,
+        }}>
+          <span style={{ fontSize: "0.78rem", flexShrink: 0, marginTop: 1 }}>
+            {verdict.has_credits_scene ? "🎬" : "—"}
+          </span>
+          <p style={{
+            fontSize: "0.76rem",
+            color: verdict.has_credits_scene ? "var(--amber-dim)" : "var(--muted)",
+            fontFamily: "var(--font-body), sans-serif",
+            lineHeight: 1.6,
+            margin: 0,
+          }}>{verdict.credits_detail}</p>
+        </div>
+      )}
 
     </div>
   );

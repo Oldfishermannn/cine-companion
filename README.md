@@ -1,86 +1,109 @@
 # Lights Out
 
-**中文语境观影全程助手** — 观前预习 · 观中辅助 · 观后复盘
+**北美院线 · 华人观影助手** — 帮你快速决定值不值得去影院，然后从观前到观后全程陪同。
 
-🎬 **Live**: [lights-out-cinema.vercel.app](https://lights-out-cinema.vercel.app/)
+🎬 **Live Demo**: [lights-out-cinema.vercel.app](https://lights-out-cinema.vercel.app/)
 
-> 为北美华人观众打造。看英语电影时，再也不用因为听不懂一个词、不了解文化背景而出戏。
+> 核心命题：北美院线 19 部同期上映。哪部值得专程去？哪部等流媒体就够？  
+> Lights Out 用 AI 给出有依据的答案，而不是让你自己去刷评论。
 
 ---
 
-## 功能概览
+## 产品截图
 
-### 观前 — 进影院前做足功课
+首页 Cinéma Nocturne 风格海报网格 → 点击任意电影 → 详情页快速决策卡 + 全程内容。
 
-| 功能 | 说明 |
+---
+
+## 核心功能
+
+### 快速决策卡（差异化功能）
+
+每部电影详情页顶部，一屏内完成观影决策：
+
+| 字段 | 说明 |
 |------|------|
-| **评分聚合** | IMDb · 烂番茄 · Metacritic · 豆瓣，四项评分一屏展示，均可点击跳转原站 |
-| **预告片** | YouTube 自动搜索嵌入，骨架屏占位加载 |
-| **演职表** | 导演 + 主演照片卡片（IMDb 抓取），横向滚动浏览 |
-| **观影前背景** | 世界观、时代背景、原著背景、导演风格——零剧透前置知识 |
-| **幕后花絮** | 4-8 条分类花絮（制作/选角/技术/导演风格），可展开更多，零剧透 |
-| **关键词汇** | Claude AI 生成 10-18 个必懂词汇，按类型分组，附中文释义、语境说明、真人发音 |
-| **厕所时间** | 输入场次时间，AI 推荐 2-3 个最佳起身时段，显示实际钟表时间，含预告片偏移 |
+| **推荐指数** | 4.5–10 分，衡量「值不值得专程去影院」 |
+| **一句话综合评价** | AI 生成的具体判断，不说废话 |
+| **适合 / 不适合人群** | 具体观众画像标签 |
+| **前置知识 / 英语难度 / 节奏 / 热门程度 / 影院必要性** | 五项指标可视化 |
+| **英语难度说明** | 口音/专业术语/文化梗具体说明 |
+| **片尾彩蛋** | 有无 + 出现时机 |
 
-### 观中 — 坐在影院里的辅助工具
+推荐指数与影院必要性强制一致（`theatrical_need=low` 分数上限 6.5，服务端 clamp），不会出现语义矛盾。
 
-| 功能 | 说明 |
-|------|------|
-| **实时查词** | 词典优先：输入即查，返回中文翻译 + 音标 + 语境解释；本片相关词汇自动高亮 |
+### 观前内容
 
-### 观后 — 看完电影再回味一遍
+- **评分聚合**：IMDb · 烂番茄 · Metacritic · 豆瓣，四项一屏，均可点击原站
+- **预告片**：YouTube 自动搜索嵌入
+- **演职表**：导演 + 主演照片卡，横向滚动
+- **背景知识**：世界观 / 时代背景 / 导演风格，零剧透
+- **关键词汇**：8–12 个必懂词汇，中英释义 + 语境说明，按俚语 / 专业术语 / 文化背景词 / 人名地名分组
+- **幕后花絮**：5–6 条精炼花絮（制作/选角/技术/导演风格），展开更多
+- **厕所时间**：AI 推荐最佳起身时段，输入场次时间换算为实际钟表时间
 
-| 功能 | 说明 |
-|------|------|
-| **剧情复盘** | 自适应分段梳理（按实际叙事结构，不套三幕模板），主题引言 |
-| **人物关系** | 角色卡片 + 关系标签，按重要度排序，主角高亮 |
-| **彩蛋 & 隐藏细节** | 致敬 / 伏笔 / 隐喻 / 续集线索分类展示 |
-| **幕后揭秘** | 含剧透的深度花絮 |
-| **五维度评分** | 剧情 / 视觉 / 表演 / 音乐 / 回味，1-5 星，localStorage 持久化 |
+### 观后内容（解锁后可见）
+
+- **剧情分段复盘**：折叠式展示，点击展开，首幕默认打开
+- **彩蛋 & 隐藏细节**：致敬 / 伏笔 / 隐喻 / 续集线索
+- **人物关系**：角色卡片 + 关系标签
+- **五维度打分**：剧情 / 视觉 / 表演 / 音乐 / 回味，localStorage 持久化
 
 ### 首页
 
-| 功能 | 说明 |
-|------|------|
-| **刊头 Masthead** | `LIGHTS OUT` editorial 刊头 + 动态期号（VOL · NO · 月份） |
-| **Search Slate** | 电影拍摄板样式搜索框，支持中英文双向（「沙丘」和「Dune」等价） |
-| **Editor's Choice** | 4 部编辑精选（Project Hail Mary / Dune / Oppenheimer / Reminders of Him），非对称 contact sheet 排版 |
-| **Now Showing** | AMC 院线在映片海报网格，按真实 IMDb 分数排序（实时抓取） |
-| **近期上映** | 14 天内上映的新片横向卡片（带海报缩略图，左右箭头滚动） |
-| **即将上映** | 未来上映日期的影片 |
-| **类型筛选** | 动画 / 科幻 / 爱情 / 恐怖 / 喜剧 / 动作 / 惊悚 / 剧情 |
-| **排序切换** | IMDb 评分 / 最新上映 / 最早上映 |
-| **想看标记** | 收藏按钮，localStorage 持久化 |
+- **Editorial Masthead**：Cinéma Nocturne 风格刊头，动态期号
+- **Editor's Choice**：按推荐指数自动选出 Top 4，非对称海报排版
+- **Now Showing 网格**：19 部 AMC 院线片，支持按「值得看指数 / IMDb评分 / 上映日期」排序
+- **场景筛选标签**：口碑最好 / 轻松不费脑 / 约会首选 / 科幻迷友 / 本周新片，从 AI 数据自动派生
+- **每张海报附一句话摘要**：AI 生成的 18–28 字精炼描述
+- **想看标记**：收藏按钮，localStorage 持久化
+- **Recent / Coming Soon**：近期上映 / 即将上映横向卡片
 
 ---
 
-## 技术栈
+## 技术架构
+
+### 技术栈
 
 ```
-前端      Next.js 16 · React 19 · Tailwind CSS v4 · Turbopack
-字体      Fraunces（display 衬线）· Noto Serif SC（中文衬线）
-          JetBrains Mono（metadata）· Cormorant Garamond（italic 副标）· Outfit（正文）
-AI        Claude Sonnet 4.6（内容生成）· Claude Haiku 4.5（快速查词/翻译）
-数据      OMDb API → IMDb 直接抓取 fallback（Googlebot UA，多段 ld+json 解析）
-院线      AMC Theatres 官网 CDP 实时抓取（一手上映日期）
-评分      OMDb + IMDb 实时补全 + /api/ratings（RT/MC/豆瓣）
-          *新发/未上映片 OMDb 滞后时，自动回落 IMDb 实时抓取*
-发音      dictionaryapi.dev（真人）· Web Speech API（fallback）
-缓存      三级：内存 LRU（200）→ Vercel KV（可选）→ 文件系统
-部署      Vercel
+框架      Next.js 16.2 (App Router) · React 19 · Tailwind CSS v4
+字体      Fraunces · Noto Serif SC · JetBrains Mono · Cormorant Garamond · Outfit
+AI        Claude Sonnet 4.6（内容生成：词汇/背景/花絮/决策卡/观后复盘）
+数据      OMDb API + IMDb 直接抓取 fallback
+院线数据  AMC Theatres 官网 CDP 抓取（一手上映日期）
+评分      OMDb · IMDb · Rotten Tomatoes · Metacritic · 豆瓣
+部署      Vercel（Edge Runtime）
 ```
+
+### 四级缓存系统
+
+```
+Tier 0  app/generated/baked.json   预烘焙（warm-catalog 构建期写入，首屏零延迟）
+Tier 1  内存 LRU（200 条）         同进程命中秒返回
+Tier 2  Vercel KV（可选）          跨实例持久化
+Tier 3  文件系统 cache/            本地开发持久化
+```
+
+19 部 AMC 院线片全量预烘焙：元数据 / AI 内容 / 评分 / 花絮 / 厕所时间 / 决策卡，首次访问无感知延迟。非目录电影走 AI 实时生成（30s），生成后自动缓存。
+
+### 性能特点
+
+- **首屏零网络请求**：海报 URL 和 AI 内容预烘焙在 baked.json，Server Component 直接注入
+- **Server → Client 直传**：Server Component 读缓存，通过 `initialData` prop 传给客户端，跳过二次 fetch
+- **后台预取**：AI 内容就绪后自动拉取观后数据，切 tab 时秒出
+- **Link prefetch**：悬停即预载目标页 JS bundle
 
 ---
 
-## 快速上手
+## 本地运行
 
 ### 环境要求
 
 - Node.js 18+
-- Anthropic API Key（[获取](https://console.anthropic.com/)）
-- OMDb API Key（[获取](https://www.omdbapi.com/apikey.aspx)，免费版够用）
+- Anthropic API Key — [console.anthropic.com](https://console.anthropic.com/)
+- OMDb API Key — [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx)（免费版够用）
 
-### 本地运行
+### 启动步骤
 
 ```bash
 git clone https://github.com/Oldfishermannn/lights-out.git
@@ -97,9 +120,15 @@ OMDB_API_KEY=your_key
 
 ```bash
 npm run dev
+# 打开 http://localhost:3000
 ```
 
-打开 [http://localhost:3000](http://localhost:3000)
+### 预烘焙（可选）
+
+```bash
+# 为所有院线片预生成 AI 内容，写入 baked.json
+FORCE=1 npm run warm-catalog
+```
 
 ---
 
@@ -107,96 +136,68 @@ npm run dev
 
 ```
 app/
-├── page.tsx                    # 首页 Server Component（SEO + metadata）
-├── HomeClient.tsx              # 首页交互（筛选/排序/海报网格/推荐栏）
-├── catalog.ts                  # 院线片目录数据（19 部，AMC 来源）
-├── layout.tsx                  # 全局布局 + 字体加载
-├── globals.css                 # 主题变量 · 响应式 · 动画 · 组件样式
+├── page.tsx                    # 首页 Server Component（服务端预读缓存 + verdictMap）
+├── HomeClient.tsx              # 首页交互（筛选/排序/海报网格）
+├── catalog.ts                  # 院线片目录（19 部，AMC 来源，含预烘焙分数/海报）
+├── globals.css                 # 主题变量 · 组件样式 · 动画
+├── generated/baked.json        # 预烘焙缓存（Tier 0，构建期写入）
 ├── movie/
-│   ├── page.tsx                # 电影详情页 orchestrator
-│   ├── loading.tsx             # 导航过渡骨架屏
+│   ├── page.tsx                # 电影详情 Server Component
+│   ├── MovieDetailClient.tsx   # 客户端状态编排
 │   ├── types.ts                # 共享类型定义
-│   ├── utils.ts                # 工具函数（评分/历史/发音）
 │   └── components/
-│       ├── shared.tsx          # RatingBlock · VocabCard · FactCard · SectionLabel
-│       ├── PreMovie.tsx        # 观前模块（评分/预告片/演职表/背景/花絮/词汇/厕所时间）
-│       ├── DuringMovie.tsx     # 观中模块（实时查词）
-│       ├── PostMovie.tsx       # 观后模块（剧情复盘/人物/彩蛋/评分）
-│       ├── CharacterGraph.tsx  # 人物关系图组件
-│       └── InlineWordLookup.tsx # 内嵌查词组件
-├── watch/page.tsx              # 独立查词页（观影中入口）
+│       ├── DecisionCard.tsx    # 快速决策卡（推荐指数/人群/指标/彩蛋）
+│       ├── PreMovie.tsx        # 观前模块
+│       ├── PostMovie.tsx       # 观后模块
+│       └── shared.tsx          # 通用组件（RatingBlock/VocabCard/CollapsibleLayer）
+├── watch/page.tsx              # 独立查词页
 └── api/
     ├── movie/                  # OMDb 基础数据
-    ├── movie-ai/               # Claude 生成词汇、背景、简介
-    ├── movie-funfacts/         # 幕后花絮
-    ├── movie-breaks/           # 厕所时间推荐
-    ├── movie-post/             # 剧情复盘、人物关系
-    ├── ratings/                # 实时评分抓取（IMDb/RT/MC/豆瓣）
-    ├── trailer/                # YouTube 预告片搜索
-    ├── cast/                   # 演职表照片抓取
-    └── word-lookup/            # 单词查询（Haiku）
+    ├── movie-ai/               # Claude：词汇 + 背景知识
+    ├── movie-verdict/          # Claude：快速决策卡（核心端点）
+    ├── movie-funfacts/         # Claude：幕后花絮
+    ├── movie-breaks/           # Claude：厕所时间
+    ├── movie-post/             # Claude：剧情复盘 + 人物 + 彩蛋
+    ├── ratings/                # 实时评分抓取（RT/MC/豆瓣）
+    ├── trailer/                # YouTube 预告片
+    └── cast/                   # 演职表照片
 
 lib/
-└── cache.ts                    # 三级缓存：内存 LRU → Vercel KV → 文件系统
+├── cache.ts                    # 四级缓存实现
+├── baked-index.ts              # baked.json 标题索引（三级匹配：精确/大小写/关系词）
+└── analytics.ts                # 行为埋点（page_view/tab_switch/cta_click 等）
 
-.claude/commands/
-└── update-amc.md               # /update-amc 院线片目录更新 slash command
+scripts/
+└── warm-catalog.mjs            # 预烘焙脚本（并行生成 19 部 × 7 个端点）
 ```
+
+---
+
+## 设计语言
+
+**Cinéma Nocturne** — 法式影评刊物 × 35mm 胶片 contact sheet × 深夜放映厅
+
+| 元素 | 规格 |
+|------|------|
+| 背景 | `#08080C` 墨黑 |
+| 主强调 | `#E8B661` 琥珀金 |
+| 签名点缀 | `#D94F2A` 朱砂红（全站 ≤ 5 处） |
+| 标题字体 | Fraunces 300（SOFT/WONK 光学轴） |
+| 中文字体 | Noto Serif SC 600 |
+| 代码/索引 | JetBrains Mono，字间距 0.18–0.3em |
+| 视觉氛围 | 胶片颗粒 + 暗角 + 顶部扫描线 |
 
 ---
 
 ## 院线片目录更新
 
-片单来自 AMC Theatres 官网实时抓取（CDP），不依赖 OMDb。
-
-当院线片更新时，在项目目录运行：
+片单来自 AMC Theatres 官网 CDP 实时抓取，运行 `/update-amc` 自动对比 + 更新：
 
 ```
 /update-amc
 ```
 
-自动：抓取 AMC 官网 → 对比现有目录 → 输出差异报告 → 确认后更新 `app/catalog.ts`。
-
----
-
-## 性能策略
-
-- **两阶段加载**：OMDb 基础数据（~2s）先显，AI 内容异步填入（骨架屏占位）
-- **三级缓存**：首次生成约 30s，之后复访秒开（页面标注 ⚡）
-- **预加载**：`<Link prefetch>` 悬停即预载目标页 JS
-- **导航过渡**：`loading.tsx` 骨架屏 + `page-enter` 淡入动画
-- **观后预取**：AI 内容就绪后自动后台拉取观后数据，切 tab 秒开
-- **查词本地优先**：预加载词汇表匹配（0ms）→ 前缀 → Levenshtein 模糊 → API fallback
-
----
-
-## 设计语言 — Cinéma Nocturne
-
-风格参照：Cahiers du Cinéma 法式影评刊物 × 35mm 胶片 contact sheet × 深夜放映厅光漏
-
-**调色板**
-- `--ink #08080C` 墨黑背景
-- `--cream #EBE3D0` 羊皮纸米
-- `--amber #E8B661` 琥珀金（主强调色）
-- `--vermilion #D94F2A` 朱砂红（签名点缀，全站使用 ≤ 5 处——§ 段标、active tab 下划线、搜索指示符）
-- `--wine #6B2C3E` 暗红（hover 底色）
-
-**排版**
-- 刊头用 Fraunces 300 + SOFT/WONK 光学轴
-- 中文大标题 Noto Serif SC 600
-- metadata / 段标 / 期号 / 索引一律 JetBrains Mono，字间距 `0.2–0.3em`
-- 所有 section header 带 `§ 0N ·` 编号前缀
-
-**视觉装饰**
-- 胶片颗粒 `body::before`（opacity 2.8%）+ 暗角 `body::after` radial vignette
-- 顶部固定 1px amber 扫描线（CRT 感）
-- 投影仪光斑：长椭圆金色 6% blur 100px
-- 海报卡：无圆角 editorial 风格 + amber 金线框 + vermilion inner-ring hover
-
-**布局**
-- 首页非对称：1 大海报 + 3 小错位阶梯排列（Editor's Choice 模块）
-- 响应式：`>900px` 非对称布局 / `600–900px` 降级横排 / `<600px` 垂直堆叠
-- 电影详情页 hero 垂直堆叠：mono 索引 → 大号中文标题 → 英文 italic 副标 → poster + stat grid
+自动：抓取 AMC 官网 → 对比现有目录 → 新片中文译名由 Claude Haiku 生成 → 确认后更新 `catalog.ts`。
 
 ---
 
