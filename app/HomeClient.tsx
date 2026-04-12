@@ -9,6 +9,14 @@ import type { CatalogMovie } from "./catalog";
 import { useLang } from "./i18n/LangProvider";
 export type { CatalogMovie };
 
+export type VerdictSummary = {
+  oneLiner: string;
+  goodFor: string[];
+  score: number;
+  pacing: string;
+  englishDifficulty: string;
+};
+
 function parseReleaseDate(s: string): number {
   const d = new Date(s);
   return isNaN(d.getTime()) ? 0 : d.getTime();
@@ -218,11 +226,41 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
    MAIN — HomeClient
    ═══════════════════════════════════════════════ */
 
-export function HomeClient({ catalog, genres }: {
+// Scene tag derivation from verdict data
+type SceneTag = { label: string; key: string };
+
+const SCENE_TAGS: SceneTag[] = [
+  { label: "口碑最好", key: "top-rated" },
+  { label: "轻松不费脑", key: "easy" },
+  { label: "约会首选", key: "date" },
+  { label: "科幻迷友", key: "scifi" },
+  { label: "本周新片", key: "new" },
+];
+
+function deriveSceneTags(
+  movie: CatalogMovie,
+  verdict: VerdictSummary | undefined,
+  nowMs: number,
+): string[] {
+  const tags: string[] = [];
+  if (!verdict) return tags;
+  const gf = verdict.goodFor.join(" ");
+  if (verdict.score >= 8) tags.push("top-rated");
+  if (verdict.pacing === "fast" && verdict.englishDifficulty === "low") tags.push("easy");
+  if (/约会|情侣|恋爱|甜|浪漫/.test(gf)) tags.push("date");
+  if (/科幻|太空|未来|星际/.test(gf) || movie.genre === "科幻") tags.push("scifi");
+  const rel = new Date(movie.released).getTime();
+  if (rel > 0 && nowMs - rel >= 0 && nowMs - rel < 14 * 86400000) tags.push("new");
+  return tags;
+}
+
+export function HomeClient({ catalog, genres, verdictMap = {} }: {
   catalog: CatalogMovie[];
   genres: string[];
+  verdictMap?: Record<string, VerdictSummary>;
 }) {
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
+  const [sceneFilter, setSceneFilter] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
@@ -247,9 +285,23 @@ export function HomeClient({ catalog, genres }: {
   // IMDb sort reads `movie.imdbScore` baked into catalog.ts at build time.
   // No mount-time fetch — the 19 parallel /api/movie calls used to stall
   // initial rendering and waste API quota. Refresh via /update-amc.
+  const now = Date.now();
+  const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
+
+  // Pre-compute scene tags for all movies
+  const movieSceneTags = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const m of catalog) {
+      map[m.title] = deriveSceneTags(m, verdictMap[m.title], now);
+    }
+    return map;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog, verdictMap]);
+
   const indexedMovies = useMemo(() => {
     let list = catalog.map((m, i) => ({ movie: m, origIdx: i }));
     if (genreFilter) list = list.filter(({ movie }) => movie.genre === genreFilter);
+    if (sceneFilter) list = list.filter(({ movie }) => movieSceneTags[movie.title]?.includes(sceneFilter));
     list.sort((a, b) => {
       if (sortMode === "rating") {
         const sa = a.movie.imdbScore;
@@ -264,10 +316,8 @@ export function HomeClient({ catalog, genres }: {
       return sortMode === "newest" ? tb - ta : ta - tb;
     });
     return list;
-  }, [genreFilter, sortMode, catalog]);
+  }, [genreFilter, sceneFilter, sortMode, catalog, movieSceneTags]);
 
-  const now = Date.now();
-  const FOURTEEN_DAYS = 14 * 24 * 60 * 60 * 1000;
   const recentReleases = useMemo(() => {
     return catalog
       .filter(m => {
@@ -285,9 +335,7 @@ export function HomeClient({ catalog, genres }: {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catalog]);
 
-  const filterCount = genreFilter
-    ? catalog.filter(m => m.genre === genreFilter).length
-    : catalog.length;
+  const filterCount = indexedMovies.length;
 
   const gridMovies = indexedMovies;
 
@@ -324,6 +372,18 @@ export function HomeClient({ catalog, genres }: {
                 onClick={() => setGenreFilter(genreFilter === g ? null : g)}
               >
                 {tGenre(g)}
+              </button>
+            ))}
+          </div>
+          {/* Scene tags */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+            {SCENE_TAGS.filter(tag => catalog.some(m => movieSceneTags[m.title]?.includes(tag.key))).map(tag => (
+              <button
+                key={tag.key}
+                className={`scene-pill ${sceneFilter === tag.key ? "active" : ""}`}
+                onClick={() => setSceneFilter(sceneFilter === tag.key ? null : tag.key)}
+              >
+                {tag.label}
               </button>
             ))}
           </div>
@@ -367,6 +427,7 @@ export function HomeClient({ catalog, genres }: {
                 inWatchlist={watchlist.has(movie.title)}
                 onToggleWatchlist={toggleWatchlist}
                 href={movieUrl(movie)}
+                oneLiner={verdictMap[movie.title]?.oneLiner}
               />
             ))}
           </div>
@@ -459,13 +520,14 @@ export function HomeClient({ catalog, genres }: {
    PosterCard — re-skinned
    ───────────────────────────────────────────────── */
 
-function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchlist, href }: {
+function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchlist, href, oneLiner }: {
   movie: CatalogMovie;
   index: number;
   catalogReleased?: string;
   inWatchlist: boolean;
   onToggleWatchlist: (title: string, e: React.MouseEvent) => void;
   href: string;
+  oneLiner?: string;
 }) {
   const { t, title: tTitle } = useLang();
   const displayTitle = tTitle(movie);
@@ -519,6 +581,9 @@ function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchl
         <span className="poster-meta">
           <span className="rel">REL</span> · {fmtReleaseDate(catalogReleased) || movie.year}
         </span>
+        {oneLiner && (
+          <p className="poster-oneliner">{oneLiner}</p>
+        )}
       </div>
     </Link>
   );

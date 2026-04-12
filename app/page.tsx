@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { HomeClient } from "./HomeClient";
+import type { VerdictSummary } from "./HomeClient";
 import { MOVIE_CATALOG, ALL_GENRES } from "./catalog";
+import { readCache } from "@/lib/cache";
+import { lookupImdbId } from "@/lib/baked-index";
 
 export const metadata: Metadata = {
   title: "Lights Out — North America Theater Companion",
@@ -36,8 +39,27 @@ function issueLine(): { vol: string; no: string; month: string; slate: string; d
   return { vol: "Vol. I", no, month, slate, date };
 }
 
-export default function Home() {
+async function buildVerdictMap(): Promise<Record<string, VerdictSummary>> {
+  const map: Record<string, VerdictSummary> = {};
+  const entries = MOVIE_CATALOG.map(m => ({ title: m.title, id: lookupImdbId(m.title) })).filter(e => e.id);
+  const results = await Promise.all(entries.map(e => readCache(`${e.id}_verdict`)));
+  for (let i = 0; i < entries.length; i++) {
+    const verdict = results[i] as Record<string, unknown> | null;
+    if (!verdict) continue;
+    map[entries[i].title] = {
+      oneLiner: (verdict.one_line_summary as string) || "",
+      goodFor: (verdict.good_for as string[]) || [],
+      score: (verdict.recommendation_score as number) || 0,
+      pacing: (verdict.pacing as string) || "mixed",
+      englishDifficulty: (verdict.english_difficulty as string) || "medium",
+    };
+  }
+  return map;
+}
+
+export default async function Home() {
   const issue = issueLine();
+  const verdictMap = await buildVerdictMap();
   return (
     <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--ink)" }}>
       {/* Top editorial bar — the clue that this is a publication */}
@@ -65,7 +87,7 @@ export default function Home() {
           <div className="masthead-right">
             <div className="masthead-date">{issue.date}</div>
             <div className="masthead-sub">
-              北美院线观影助手 · {MOVIE_CATALOG.length} 部在映
+              不剧透，帮你快速决定值不值得去影院看
             </div>
           </div>
         </header>
@@ -86,7 +108,7 @@ export default function Home() {
         </noscript>
 
         {/* Interactive: search slate, editor's slate, AMC grid, strips */}
-        <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} />
+        <HomeClient catalog={MOVIE_CATALOG} genres={ALL_GENRES} verdictMap={verdictMap} />
 
         {/* ── ⑦ COLOPHON ── */}
         <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 72, paddingTop: 24, borderTop: "1px solid var(--rule)" }}>

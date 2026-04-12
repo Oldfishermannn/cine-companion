@@ -630,6 +630,18 @@ body::after {
 }
 .poster-card .poster-meta .rel { color: var(--amber-dim); }
 
+.poster-card .poster-oneliner {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.7rem;
+  color: rgba(235,227,208,0.5);
+  line-height: 1.5;
+  margin: 4px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ── Filter chips — squared, mono, no rounded pills ── */
 .genre-pill {
   padding: 6px 14px;
@@ -652,6 +664,30 @@ body::after {
   border-color: var(--amber);
   background: rgba(232,182,97,0.1);
   color: var(--amber);
+}
+
+/* ── Scene tag pills ── */
+.scene-pill {
+  padding: 4px 12px;
+  border-radius: 0;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.66rem;
+  border: 1px dashed var(--rule);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.04em;
+}
+.scene-pill:hover {
+  border-color: rgba(217,79,42,0.35);
+  color: var(--cream);
+}
+.scene-pill.active {
+  border-color: var(--vermilion);
+  border-style: solid;
+  background: rgba(217,79,42,0.08);
+  color: var(--vermilion);
 }
 
 .sort-btn {
