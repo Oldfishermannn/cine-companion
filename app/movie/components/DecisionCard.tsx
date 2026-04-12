@@ -91,7 +91,7 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
           <LevelDots value={LEVEL_BAR[verdict.pacing] ?? 2} />
         </div>
         <div className="dc-stat">
-          <span className="dc-stat-label">英语</span>
+          <span className="dc-stat-label">英语难度</span>
           <span className="dc-stat-value">{DIFF_ZH[verdict.english_difficulty] || verdict.english_difficulty}</span>
           <LevelDots value={LEVEL_BAR[verdict.english_difficulty] ?? 2} />
         </div>
