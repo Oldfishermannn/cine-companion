@@ -6,7 +6,7 @@ import { readCache } from "@/lib/cache";
 import { lookupImdbId } from "@/lib/baked-index";
 
 export const metadata: Metadata = {
-  title: "Lights Out — North America Theater Companion",
+  title: "Lights Out — 值不值得看",
   description: `北美正在热映 ${MOVIE_CATALOG.length} 部院线电影。词汇预习、背景知识、幕后花絮、厕所时间、观后复盘——北美院线全流程观影陪伴。`,
   openGraph: {
     title: "Lights Out",
