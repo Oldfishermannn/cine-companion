@@ -7,6 +7,7 @@ import { saveRating } from "../utils";
 import { SectionLabel, FactCard, ErrorBanner } from "./shared";
 import { CharacterGraph } from "./CharacterGraph";
 import { useLang } from "../../i18n/LangProvider";
+import { EGG_CAT_EN, SPOILER_CAT_EN } from "../../i18n/strings";
 
 interface PostMovieProps {
   data: MovieData;
@@ -227,7 +228,7 @@ export function PostMovie({
   data, postContent, postLoading, postFromCache, postError,
   postUnlocked, setPostUnlocked, personalScores, setPersonalScores,
 }: PostMovieProps) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {/* Spoiler gate */}
@@ -313,7 +314,7 @@ export function PostMovie({
                       >
                         <div className="icon">{EGG_ICON[egg.category] ?? "🥚"}</div>
                         <div className="body">
-                          <span className="ed-tag">{egg.category}</span>
+                          <span className="ed-tag">{lang === "en" ? (EGG_CAT_EN[egg.category] ?? egg.category) : egg.category}</span>
                           <p className="text">{egg.detail}</p>
                         </div>
                       </div>
@@ -384,7 +385,7 @@ export function PostMovie({
                 const scored = personalScores.filter(s => s > 0);
                 const avg = scored.reduce((a, b) => a + b, 0) / scored.length;
                 // 5-star qualifier text — casual, not AI-form
-                const qualifiers = ["", "还行", "凑合", "挺好", "值得看", "真香"];
+                const qualifiers = ["", t("post.q1"), t("post.q2"), t("post.q3"), t("post.q4"), t("post.q5")];
                 const qualifier = qualifiers[Math.round(avg)] ?? "";
                 return (
                   <>

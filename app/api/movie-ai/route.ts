@@ -28,11 +28,15 @@ export async function GET(req: NextRequest) {
   const director = searchParams.get("director") || "";
   const actors = searchParams.get("actors") || "";
 
+  const lang = searchParams.get("lang") || "zh";
+  const isEn = lang === "en";
+
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
   // Cache hit → instant return
+  const cacheKey = isEn ? `${id}_en` : id;
   if (id) {
-    const cached = await readCache(id);
+    const cached = await readCache(cacheKey);
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
@@ -47,7 +51,7 @@ export async function GET(req: NextRequest) {
         tools: [
           {
             name: "movie_analysis",
-            description: "分析电影词汇和背景知识",
+            description: isEn ? "Analyze movie vocabulary and background knowledge" : "分析电影词汇和背景知识",
             input_schema: {
               type: "object" as const,
               properties: {
@@ -68,7 +72,12 @@ export async function GET(req: NextRequest) {
                       word: { type: "string" },
                       translation: { type: "string" },
                       explanation: { type: "string" },
-                      category: { type: "string", enum: ["俚语", "专业术语", "文化背景词", "人名地名"] },
+                      category: {
+                        type: "string",
+                        enum: isEn
+                          ? ["Slang", "Technical", "Cultural", "Names & Places"]
+                          : ["俚语", "专业术语", "文化背景词", "人名地名"],
+                      },
                     },
                     required: ["word", "translation", "explanation", "category"],
                   },
@@ -82,7 +91,21 @@ export async function GET(req: NextRequest) {
         messages: [
           {
             role: "user",
-            content: `你是帮助中文语境观众看英语电影的助手。
+            content: isEn
+              ? `You are an assistant helping English-speaking moviegoers prepare for films.
+
+Movie: ${title} (${year}), Genre: ${genre}
+${director ? `Director: ${director}` : ""}
+${actors ? `Cast: ${actors}` : ""}
+Synopsis: ${plot}
+
+Call the movie_analysis tool to:
+1. Extract ${wordCount} notable English words/phrases useful for understanding this film (slang, technical terms, cultural references, proper nouns)
+2. Provide spoiler-free background knowledge in English
+
+Important: the director_note field should focus on the director's style, notable works, and filmmaking techniques.${director ? ` The director is ${director} — discuss their known works and style.` : " If director info is unknown, focus on the genre conventions and filmmaking style."}
+All output MUST be in English.`
+              : `你是帮助中文语境观众看英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
 ${director ? `导演：${director}` : ""}
@@ -116,7 +139,7 @@ ${actors ? `主演：${actors}` : ""}
     };
 
     // Save to cache
-    if (id) await writeCache(id, result);
+    if (id) await writeCache(cacheKey, result);
 
     return NextResponse.json(result);
   } catch (err) {

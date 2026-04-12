@@ -47,6 +47,12 @@ export type InitialMovieData = {
   breaks: BreaksContent | null;
   ratings: LiveRatings | null;
   verdict: VerdictContent | null;
+  // English variants (null if not yet warmed)
+  ai_en?: AiContent | null;
+  post_en?: PostContent | null;
+  facts_en?: FunFacts | null;
+  breaks_en?: BreaksContent | null;
+  verdict_en?: VerdictContent | null;
 };
 
 interface Props {
@@ -96,6 +102,31 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
   const [breaksError, setBreaksError] = useState(false);
   const [postError, setPostError] = useState(false);
   const [error, setError] = useState("");
+
+  // ── Bilingual content selection ─────────────────────────────────────────
+  // When user switches language, swap AI content to the matching version.
+  // English content comes from initialData._en fields (server-baked) or will
+  // be fetched on-demand via API with ?lang=en.
+  useEffect(() => {
+    if (!initialData.meta) return;
+    const useEn = lang === "en";
+    // Swap to English variant if available, else keep current (zh)
+    if (useEn) {
+      if (initialData.ai_en)      setAiContent(initialData.ai_en);
+      if (initialData.facts_en)   setFunFacts(initialData.facts_en);
+      if (initialData.breaks_en)  setBreaksContent(initialData.breaks_en);
+      if (initialData.verdict_en) setVerdictContent(initialData.verdict_en);
+      if (initialData.post_en)    setPostContent(initialData.post_en);
+    } else {
+      // Swap back to Chinese
+      if (initialData.ai)      setAiContent(initialData.ai);
+      if (initialData.facts)   setFunFacts(initialData.facts);
+      if (initialData.breaks)  setBreaksContent(initialData.breaks);
+      if (initialData.verdict) setVerdictContent(initialData.verdict);
+      if (initialData.post)    setPostContent(initialData.post);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
   // ── Server-provided fast path ──────────────────────────────────────────
   // When initialData.meta is present we skip the heavy waterfall entirely.
@@ -461,7 +492,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                   onClick={() => { setMode(m); track("tab_switch", { tab: m, title: data?.title }); }}
                   className={`reel-tab ${mode === m ? "active" : ""}`}
                 >
-                  {m === "pre" ? "观影前" : "观影后"}
+                  {m === "pre" ? t("movie.tabPre") : t("movie.tabPost")}
                 </button>
               ))}
             </div>
@@ -524,7 +555,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
             onClick={() => track("affiliate_link_click", { movie: data.title, position: "sticky", platform: "amc" })}
           >
             <span className="sticky-cta-logo">AMC</span>
-            <span className="sticky-cta-text">查看场次 & 购票</span>
+            <span className="sticky-cta-text">{t("movie.stickyCta")}</span>
             <span className="sticky-cta-arrow">→</span>
           </a>
         </div>

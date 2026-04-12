@@ -135,6 +135,77 @@ export const STRINGS: StringTable = {
   "common.collapse":        { zh: "收起",              en: "Collapse" },
   "common.back":            { zh: "返回",              en: "Back" },
   "common.cached":          { zh: "缓存",              en: "Cached" },
+
+  // ── Decision Card ─────────────────────────────────────────────────────
+  "dc.title":               { zh: "值不值得看",         en: "Worth Watching?" },
+  "dc.error":               { zh: "决策卡加载失败，请刷新重试", en: "Failed to load · refresh" },
+  "dc.notRecommended":      { zh: "不推荐",            en: "Skip" },
+  "dc.highlyRecommended":   { zh: "强烈推荐",          en: "Must-See" },
+  "dc.goodFor":             { zh: "适合",              en: "Good For" },
+  "dc.notGoodFor":          { zh: "不适合",            en: "Not For" },
+  "dc.score.high":          { zh: "强烈推荐",          en: "Highly Recommended" },
+  "dc.score.good":          { zh: "值得一看",          en: "Worth Seeing" },
+  "dc.score.ok":            { zh: "可以考虑",          en: "Consider It" },
+  "dc.score.low":           { zh: "流媒体即可",         en: "Stream It" },
+  "dc.stat.knowledge":      { zh: "前置知识",          en: "Prior Knowledge" },
+  "dc.stat.english":        { zh: "英语难度",          en: "English Level" },
+  "dc.stat.pacing":         { zh: "节奏快慢",          en: "Pacing" },
+  "dc.stat.popularity":     { zh: "热门程度",          en: "Popularity" },
+  "dc.stat.theatrical":     { zh: "影院必要",          en: "Theatrical Need" },
+  "dc.pacing.slow":         { zh: "慢热",              en: "Slow Burn" },
+  "dc.pacing.mixed":        { zh: "张弛有度",          en: "Mixed" },
+  "dc.pacing.fast":         { zh: "快节奏",            en: "Fast-Paced" },
+  "dc.diff.low":            { zh: "友好",              en: "Easy" },
+  "dc.diff.medium":         { zh: "中等",              en: "Moderate" },
+  "dc.diff.high":           { zh: "较难",              en: "Challenging" },
+  "dc.theatrical.low":      { zh: "流媒体即可",         en: "Stream It" },
+  "dc.theatrical.medium":   { zh: "建议影院",          en: "Better in Theaters" },
+  "dc.theatrical.high":     { zh: "必须影院",          en: "Must-See in Theaters" },
+  "dc.knowledge.none":      { zh: "无需",              en: "None" },
+  "dc.knowledge.low":       { zh: "略知即可",          en: "Minimal" },
+  "dc.knowledge.medium":    { zh: "建议了解",          en: "Helpful" },
+  "dc.knowledge.high":      { zh: "需要补课",          en: "Required" },
+  "dc.popularity.low":      { zh: "小众冷门",          en: "Niche" },
+  "dc.popularity.medium":   { zh: "稳健热映",          en: "Solid Run" },
+  "dc.popularity.high":     { zh: "现象级爆款",         en: "Blockbuster" },
+
+  // ── Pre-movie extras ──────────────────────────────────────────────────
+  "pre.vocabTitle":         { zh: "关键词汇",          en: "Key Vocabulary" },
+  "pre.factsTitle":         { zh: "幕后花絮",          en: "Behind the Scenes" },
+  "pre.vocabCount":         { zh: "{n} 词",            en: "{n} words" },
+  "pre.factsCount":         { zh: "{n} 条冷知识",       en: "{n} facts" },
+  "pre.moreFacts":          { zh: "▸ 还有 {n} 条花絮",  en: "▸ {n} more facts" },
+  "pre.moreVocab":          { zh: "▸ 还有 {n} 个词汇（{m} 个分类）", en: "▸ {n} more words ({m} categories)" },
+  "pre.amcSub":             { zh: "查看场次 & 购票",     en: "Showtimes & Tickets" },
+
+  // ── Movie detail extras ────────────────────────────────────────────────
+  "movie.tabPre":           { zh: "观影前",            en: "Before" },
+  "movie.tabPost":          { zh: "观影后",            en: "After" },
+  "movie.stickyCta":        { zh: "查看场次 & 购票",     en: "Showtimes & Tickets" },
+
+  // ── Home extras ────────────────────────────────────────────────────────
+  "home.sceneTopRated":     { zh: "口碑最好",          en: "Top Rated" },
+  "home.sceneEasy":         { zh: "轻松不费脑",         en: "Easy Watch" },
+  "home.sceneDate":         { zh: "约会首选",          en: "Date Night" },
+  "home.sceneScifi":        { zh: "科幻迷友",          en: "Sci-Fi Fans" },
+  "home.sceneNew":          { zh: "本周新片",          en: "New This Week" },
+  "home.mastheadSub":       { zh: "不剧透，帮你快速决定值不值得去影院看", en: "No spoilers — quickly decide if it's worth the trip to the theater" },
+
+  // ── Post-movie extras ─────────────────────────────────────────────────
+  "post.q1":                { zh: "还行",              en: "Meh" },
+  "post.q2":                { zh: "凑合",              en: "Fair" },
+  "post.q3":                { zh: "挺好",              en: "Good" },
+  "post.q4":                { zh: "值得看",            en: "Great" },
+  "post.q5":                { zh: "真香",              en: "Masterpiece" },
+  "post.protagonist":       { zh: "主角",              en: "Lead" },
+  "post.supporting":        { zh: "配角",              en: "Supporting" },
+
+  // ── Source badges ─────────────────────────────────────────────────────
+  "badge.data":             { zh: "数据来源",          en: "Data Source" },
+  "badge.ai":               { zh: "AI 整理",           en: "AI Generated" },
+  "badge.inferred":         { zh: "仅供参考",          en: "Estimated" },
+  "badge.official":         { zh: "数据来源：OMDb",     en: "Source: OMDb" },
+  "badge.editorial":        { zh: "编辑整理",          en: "Editorial" },
 };
 
 // Chinese genre label → English. Used only in English mode for grid pills.
@@ -157,6 +228,50 @@ export const GENRE_EN: Record<string, string> = {
   "音乐": "Music",
   "家庭": "Family",
 };
+
+// ── Category translation maps (Chinese AI values → English display) ─────────
+// Used to translate category strings from baked Chinese AI content in English mode.
+
+export const VOCAB_CAT_EN: Record<string, string> = {
+  "俚语": "Slang",
+  "专业术语": "Technical",
+  "文化背景词": "Cultural",
+  "人名地名": "Names & Places",
+};
+
+export const FACT_CAT_EN: Record<string, string> = {
+  "制作花絮": "Production",
+  "幕后秘闻": "Behind the Scenes",
+  "选角故事": "Casting",
+  "原著改编": "Adaptation",
+  "技术亮点": "Technical",
+  "导演风格": "Director's Style",
+};
+
+export const EGG_CAT_EN: Record<string, string> = {
+  "致敬": "Homage",
+  "伏笔": "Foreshadowing",
+  "隐喻": "Symbolism",
+  "彩蛋": "Easter Egg",
+  "续集线索": "Sequel Hint",
+};
+
+export const SPOILER_CAT_EN: Record<string, string> = {
+  "制作花絮": "Production",
+  "幕后秘闻": "Behind the Scenes",
+  "原著改编": "Adaptation",
+  "导演意图": "Director's Intent",
+  "结局解析": "Ending Analysis",
+};
+
+// ── Miss risk translation ───────────────────────────────────────────────────
+export const MISS_RISK_EN: Record<string, string> = {
+  "低": "Low",
+  "中": "Mid",
+};
+
+// ── Rating dimensions translation ───────────────────────────────────────────
+export const RATING_DIMS_EN = ["Story", "Visuals", "Acting", "Music", "Aftertaste"];
 
 /**
  * Format with {placeholder} substitution. Missing placeholders are left intact

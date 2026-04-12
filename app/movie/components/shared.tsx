@@ -5,6 +5,7 @@ import type { VocabItem, FunFactItem } from "../types";
 import { FACT_CATEGORY_ICON, CATEGORY_STYLES } from "../types";
 import { speak, capitalize } from "../utils";
 import { useLang } from "../../i18n/LangProvider";
+import { SPOILER_CAT_EN } from "../../i18n/strings";
 
 export function RatingBlock({ value, label, href }: { value: string | null; label: string; href?: string }) {
   const inner = (
@@ -70,7 +71,9 @@ export function VocabCard({ item, index }: { item: VocabItem; index: number }) {
 }
 
 export function FactCard({ item, index }: { item: FunFactItem; index: number }) {
+  const { lang } = useLang();
   const icon = FACT_CATEGORY_ICON[item.category] ?? "🎬";
+  const catDisplay = lang === "en" ? (SPOILER_CAT_EN[item.category] ?? item.category) : item.category;
 
   return (
     <div
@@ -79,7 +82,7 @@ export function FactCard({ item, index }: { item: FunFactItem; index: number }) 
     >
       <div className="icon">{icon}</div>
       <div className="body">
-        <span className="ed-tag ghost">{item.category}</span>
+        <span className="ed-tag ghost">{catDisplay}</span>
         <p className="text">{item.fact}</p>
       </div>
     </div>
@@ -120,16 +123,17 @@ export function CollapsibleLayer({
   );
 }
 
-/* ── Content Source Badge ── */
+/* ── Content Source Badge ─�� */
 export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" | "official" | "editorial" }) {
-  const labels: Record<string, string> = {
-    data: "数据来源",
-    ai: "AI 整理",
-    inferred: "仅供参考",
-    official: "数据来源：OMDb",
-    editorial: "编辑整理",
+  const { t } = useLang();
+  const keyMap: Record<string, string> = {
+    data: "badge.data",
+    ai: "badge.ai",
+    inferred: "badge.inferred",
+    official: "badge.official",
+    editorial: "badge.editorial",
   };
-  return <span className={`source-badge ${type}`}>{labels[type]}</span>;
+  return <span className={`source-badge ${type}`}>{t(keyMap[type])}</span>;
 }
 
 /* ── Affiliate URL builder ── */
@@ -156,6 +160,7 @@ export function TicketCTA({ amcSlug, movie, position, label }: {
   position: "hero" | "inline" | "sticky";
   label?: string;
 }) {
+  const { t } = useLang();
   const url = buildAmcUrl(amcSlug, { movie, position, source: "detail" });
   return (
     <a
@@ -169,7 +174,7 @@ export function TicketCTA({ amcSlug, movie, position, label }: {
         );
       }}
     >
-      {label || "查看 AMC 场次"} ↗
+      {label || t("movie.stickyCta")} ↗
     </a>
   );
 }

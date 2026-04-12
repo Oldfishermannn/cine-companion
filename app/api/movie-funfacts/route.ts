@@ -19,10 +19,14 @@ export async function GET(req: NextRequest) {
   const genre = searchParams.get("genre") || "";
   const plot  = searchParams.get("plot") || "";
 
+  const lang = searchParams.get("lang") || "zh";
+  const isEn = lang === "en";
+
   if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
 
+  const cacheKey = isEn ? `${id}_facts_en` : `${id}_facts`;
   if (id) {
-    const cached = await readCache(`${id}_facts`);
+    const cached = await readCache(cacheKey);
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
@@ -33,7 +37,7 @@ export async function GET(req: NextRequest) {
       tools: [
         {
           name: "movie_extras",
-          description: "生成电影幕后花絮和轻剧透提示",
+          description: isEn ? "Generate behind-the-scenes fun facts and a first-act hint" : "生成电影幕后花絮和轻剧透提示",
           input_schema: {
             type: "object" as const,
             properties: {
@@ -46,7 +50,9 @@ export async function GET(req: NextRequest) {
                     fact:     { type: "string", description: "花絮内容（中文，严格1-2句话，精炼有料）" },
                     category: {
                       type: "string",
-                      enum: ["制作花絮", "幕后秘闻", "选角故事", "原著改编", "技术亮点", "导演风格"],
+                      enum: isEn
+                        ? ["Production", "Behind the Scenes", "Casting", "Adaptation", "Technical", "Director's Style"]
+                        : ["制作花絮", "幕后秘闻", "选角故事", "原著改编", "技术亮点", "导演风格"],
                     },
                   },
                   required: ["fact", "category"],
@@ -65,7 +71,18 @@ export async function GET(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `你是帮助中文语境观众看英语电影的助手。
+          content: isEn
+            ? `You are an assistant helping moviegoers prepare for films. ALL output must be in English.
+
+Movie: ${title} (${year}), Genre: ${genre}
+Synopsis: ${plot}
+
+Call the movie_extras tool to:
+1. Generate 5-6 interesting behind-the-scenes fun facts (production, filming stories, actor preparation). Absolutely no plot spoilers. Keep each to 1-2 sentences — punchy and specific.
+2. Write a "first act hint" — let the viewer know the general vibe without spoiling key plot points.
+
+Facts should be interesting, specific, and shareable. Avoid vague evaluative language.`
+            : `你是帮助中文语境观众看英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
 简介：${plot}
@@ -91,7 +108,7 @@ export async function GET(req: NextRequest) {
       first_act_hint,
     };
 
-    if (id) await writeCache(`${id}_facts`, result);
+    if (id) await writeCache(cacheKey, result);
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);

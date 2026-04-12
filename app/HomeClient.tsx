@@ -12,7 +12,9 @@ export type { CatalogMovie };
 
 export type VerdictSummary = {
   oneLiner: string;
+  oneLinerEn?: string;
   goodFor: string[];
+  goodForEn?: string[];
   score: number;
   pacing: string;
   englishDifficulty: string;
@@ -132,7 +134,7 @@ function movieUrl(m: CatalogMovie): string {
 
 function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
   const router = useRouter();
-  const { genre: tGenre } = useLang();
+  const { lang, title: tTitle, genre: tGenre } = useLang();
 
   const go = (film: CatalogMovie) => {
     router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}&amc=${encodeURIComponent(film.amc)}`);
@@ -174,8 +176,8 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
             )}
           </div>
           <div className="label">
-            <h2 className="label-zh">{lead.zh}</h2>
-            <p className="label-title">{lead.title}</p>
+            <h2 className="label-zh">{tTitle({ title: lead.title, zh: lead.zh })}</h2>
+            <p className="label-title">{lang === "en" ? "" : lead.title}</p>
             <div className="label-meta">
               {lead.year}<span className="dot">·</span>{noteFor(lead)}
             </div>
@@ -210,8 +212,8 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
                   )}
                 </div>
                 <div className="mini-meta">
-                  <h3 className="mini-zh">{film.zh}</h3>
-                  <p className="mini-title">{film.title}</p>
+                  <h3 className="mini-zh">{tTitle({ title: film.title, zh: film.zh })}</h3>
+                  <p className="mini-title">{lang === "en" ? "" : film.title}</p>
                   <span className="mini-dim">{film.year} · {noteFor(film)}</span>
                 </div>
               </div>
@@ -228,14 +230,15 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
    ═══════════════════════════════════════════════ */
 
 // Scene tag derivation from verdict data
-type SceneTag = { label: string; key: string };
+type SceneTagDef = { i18nKey: string; key: string };
 
-const SCENE_TAGS: SceneTag[] = [
-  { label: "口碑最好", key: "top-rated" },
-  { label: "轻松不费脑", key: "easy" },
-  { label: "约会首选", key: "date" },
-  { label: "科幻迷友", key: "scifi" },
-  { label: "本周新片", key: "new" },
+// Labels resolved at render time via t() — keys here are string table keys
+const SCENE_TAG_DEFS: Array<{ i18nKey: string; key: string }> = [
+  { i18nKey: "home.sceneTopRated", key: "top-rated" },
+  { i18nKey: "home.sceneEasy",     key: "easy" },
+  { i18nKey: "home.sceneDate",     key: "date" },
+  { i18nKey: "home.sceneScifi",    key: "scifi" },
+  { i18nKey: "home.sceneNew",      key: "new" },
 ];
 
 function deriveSceneTags(
@@ -248,8 +251,8 @@ function deriveSceneTags(
   const gf = verdict.goodFor.join(" ");
   if (verdict.score >= 8) tags.push("top-rated");
   if (verdict.pacing === "fast" && verdict.englishDifficulty === "low") tags.push("easy");
-  if (/约会|情侣|恋爱|甜|浪漫/.test(gf)) tags.push("date");
-  if (/科幻|太空|未来|星际/.test(gf) || movie.genre === "科幻") tags.push("scifi");
+  if (/约会|情侣|恋爱|甜|浪漫|date|couple|romantic/i.test(gf)) tags.push("date");
+  if (/科幻|太空|未来|星际|sci-fi|space|future|interstellar/i.test(gf) || /Sci-Fi|科幻/.test(movie.genre)) tags.push("scifi");
   const rel = new Date(movie.released).getTime();
   if (rel > 0 && nowMs - rel >= 0 && nowMs - rel < 14 * 86400000) tags.push("new");
   return tags;
@@ -265,7 +268,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
   const [sortMode, setSortMode] = useState<SortMode>("verdict");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const router = useRouter();
-  const { t, title: tTitle, genre: tGenre } = useLang();
+  const { lang, t, title: tTitle, genre: tGenre } = useLang();
 
   useEffect(() => {
     setWatchlist(loadWatchlist());
@@ -384,13 +387,13 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
         <div style={{ marginBottom: 24 }}>
           {/* Scene tags */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-            {SCENE_TAGS.filter(tag => catalog.some(m => movieSceneTags[m.title]?.includes(tag.key))).map(tag => (
+            {SCENE_TAG_DEFS.filter(tag => catalog.some(m => movieSceneTags[m.title]?.includes(tag.key))).map(tag => (
               <button
                 key={tag.key}
                 className={`scene-pill ${sceneFilter === tag.key ? "active" : ""}`}
                 onClick={() => { track("home_filter_click", { tag: tag.key }); setSceneFilter(sceneFilter === tag.key ? null : tag.key); }}
               >
-                {tag.label}
+                {t(tag.i18nKey)}
               </button>
             ))}
           </div>
@@ -434,7 +437,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
                 inWatchlist={watchlist.has(movie.title)}
                 onToggleWatchlist={toggleWatchlist}
                 href={movieUrl(movie)}
-                oneLiner={verdictMap[movie.title]?.oneLiner}
+                oneLiner={lang === "en" ? (verdictMap[movie.title]?.oneLinerEn || verdictMap[movie.title]?.oneLiner) : verdictMap[movie.title]?.oneLiner}
               />
             ))}
           </div>
