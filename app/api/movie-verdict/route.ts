@@ -129,9 +129,10 @@ ${runtime ? `时长：${runtime}` : ""}
 3. english_difficulty 考虑：对白速度、口音、专业术语、文化梗的多少。
 4. theatrical_need 考虑：视觉特效规模、音效设计、IMAX适配度、**事件型观影价值**（热门IP续集/大制作首映周末氛围、社交话题性——这类电影「错过首映就错过了集体体验」）。如果是对白驱动的文艺片就写low。
 5. recommendation_score 是「值不值得专程去影院看」的综合指数，必须与 theatrical_need 逻辑一致：
-   - theatrical_need=low（流媒体即可）→ score 上限 6.5，通常在 5.0–6.5 区间
-   - theatrical_need=medium（建议影院）→ score 在 6.0–8.0 区间
+   - theatrical_need=low（流媒体即可）→ score 上限 6.5，范围 4.0–6.5；平庸之作给 4–5，还行给 5–6，口碑不错但影院体验无优势给 6–6.5
+   - theatrical_need=medium（建议影院）→ score 在 5.5–8.0 区间
    - theatrical_need=high（必须影院）→ score 在 7.5–10.0 区间
+   分数要有梯度，不要全堆在 6–7。真正值得推荐的和真正建议流媒体的之间要有 2–3 分的明显差距。
    分数衡量的是「去影院的必要性」，包含：视觉音效损耗 + **事件型价值**（热门IP、首映社群氛围、错过就是错过）。一部好文艺片流媒体无损所以分低；但一部热门大IP首映，社群体验本身就是价值，score 应相应偏高。
 6. has_credits_scene 请基于你的知识判断。如果电影尚未上映或你不确定，根据同系列/同导演的惯例推测，并在 credits_detail 中注明是推测。
 7. one_line_summary 用于首页展示，要像杂志短评一样精练有态度。示例：「硬科幻解谜，对白密集但值得影院」「轻松约会首选，笑点密集无门槛」`,
@@ -147,7 +148,8 @@ ${runtime ? `时长：${runtime}` : ""}
     let rawScore = Number(input.recommendation_score) || 7;
     // Enforce score/theatrical_need consistency server-side
     if (theatricalNeed === "low"    && rawScore > 6.5) rawScore = 6.5;
-    if (theatricalNeed === "medium" && rawScore < 6.0) rawScore = 6.0;
+    if (theatricalNeed === "low"    && rawScore < 4.0) rawScore = 4.0;
+    if (theatricalNeed === "medium" && rawScore < 5.5) rawScore = 5.5;
     if (theatricalNeed === "medium" && rawScore > 8.0) rawScore = 8.0;
     if (theatricalNeed === "high"   && rawScore < 7.5) rawScore = 7.5;
     const result = {
