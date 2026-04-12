@@ -1214,8 +1214,12 @@ body::after {
   line-height: 1.85;
   margin: 0;
   padding: 14px 20px;
-  border-left: 2px solid var(--rule);
+  border-left: 2px solid rgba(235,227,208,0.15);
   background: transparent;
+}
+.bg-flow .bg-lead::first-line {
+  color: var(--cream);
+  font-weight: 500;
 }
 .bg-flow .bg-director {
   display: flex;
@@ -1233,6 +1237,10 @@ body::after {
   line-height: 1.8;
   font-family: var(--font-body), sans-serif;
   margin: 0;
+}
+.bg-flow .bg-director p::first-line {
+  color: rgba(235,227,208,0.92);
+  font-weight: 500;
 }
 .bg-flow .bg-spoiler {
   padding-top: 4px;
@@ -1255,9 +1263,9 @@ body::after {
   white-space: nowrap;
 }
 .ed-tag.solid {
-  background: var(--amber);
-  color: var(--ink);
-  border-color: var(--amber);
+  background: rgba(235,227,208,0.12);
+  color: var(--cream);
+  border-color: rgba(235,227,208,0.2);
 }
 .ed-tag.vermilion {
   background: var(--vermilion);
@@ -1324,6 +1332,10 @@ body::after {
   font-size: 0.9rem;
   line-height: 1.8;
   color: rgba(235,227,208,0.82);
+}
+.ed-bullets li span::first-line {
+  color: var(--cream);
+  font-weight: 500;
 }
 .ed-bullets li::before {
   content: "·";
@@ -1483,21 +1495,36 @@ body::after {
   font-weight: 600;
   color: var(--cream);
   letter-spacing: 0.01em;
+  text-decoration: underline;
+  text-decoration-color: rgba(235,227,208,0.25);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 0.2s;
+}
+.vocab-card:hover .word {
+  text-decoration-color: rgba(235,227,208,0.5);
 }
 .vocab-card .trans {
   font-family: var(--font-body), sans-serif;
   font-size: 0.78rem;
-  color: var(--muted);
+  color: rgba(235,227,208,0.6);
   margin-left: 8px;
+  background: rgba(235,227,208,0.05);
+  padding: 1px 6px;
+  border-radius: 2px;
 }
 .vocab-card .explain {
   margin: 12px 0 0;
   padding-top: 12px;
   border-top: 1px solid var(--rule);
   font-family: var(--font-body), sans-serif;
-  font-size: 0.8rem;
-  line-height: 1.75;
-  color: rgba(235,227,208,0.72);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: rgba(235,227,208,0.75);
+}
+.vocab-card .explain::first-line {
+  color: rgba(235,227,208,0.9);
+  font-weight: 500;
 }
 
 /* ── vocab category header (mono strip, no pill) ── */
@@ -1567,6 +1594,10 @@ body::after {
   color: rgba(235,227,208,0.8);
   margin: 0;
 }
+.fact-card .body .text::first-line {
+  color: var(--cream);
+  font-weight: 500;
+}
 @media (max-width: 520px) {
   .fact-card .body { flex-direction: column; gap: 6px; }
   .fact-card .body .ed-tag { margin-top: 0; }
@@ -1633,6 +1664,10 @@ body::after {
   line-height: 1.75;
   color: rgba(235,227,208,0.78);
   margin: 0;
+}
+.break-card .body .hint::first-line {
+  color: rgba(235,227,208,0.92);
+  font-weight: 500;
 }
 .break-card + .break-card { margin-top: 10px; }
 
