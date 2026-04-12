@@ -137,98 +137,6 @@ export function PreMovie({
           )}
         </section>
 
-        {/* Break Calculator */}
-        {(breaksLoading || breaksError || breaksContent) && (
-        <section>
-          <SectionLabel>{t("pre.breaks")}</SectionLabel>
-          <SourceBadge type="inferred" />
-          <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 6, fontFamily: "var(--font-body), sans-serif" }}>
-            {t("pre.breaksHint")}
-          </p>
-
-          {breaksContent && (
-          <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
-            <label className="showtime-main" htmlFor="showtime-input">
-              <span className="q">{t("pre.showtimePrompt")}</span>
-              <div className="showtime-field">
-                <input
-                  id="showtime-input"
-                  type="time"
-                  value={movieStartTime}
-                  onChange={e => setMovieStartTime(e.target.value)}
-                />
-                {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
-              </div>
-            </label>
-            <button
-              type="button"
-              className={`showtime-toggle${includeTrailers ? " on" : ""}`}
-              onClick={() => setIncludeTrailers((v: boolean) => !v)}
-              aria-pressed={includeTrailers}
-            >
-              <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
-              <span className="label">{t("pre.includeTrailers")}</span>
-              <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
-            </button>
-          </div>
-          )}
-
-          {breaksLoading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
-              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
-            </div>
-          ) : breaksError ? (
-            <ErrorBanner message={t("pre.breaksError")} />
-          ) : breaksContent ? (
-            <div>
-              {breaksContent.breaks.map((b, i) => {
-                const isBest = b.minute === breaksContent.best_break;
-                let timeRange = "";
-                if (movieStartTime) {
-                  const [sh, sm] = movieStartTime.split(":").map(Number);
-                  const trailerOffset = includeTrailers ? 25 : 0;
-                  const startMin = sh * 60 + sm + trailerOffset + b.minute;
-                  const endMin = startMin + b.duration;
-                  const fmt = (t: number) => {
-                    const total = Math.floor(t / 60) % 24, m = t % 60;
-                    const period = total >= 12 ? "PM" : "AM";
-                    const h = total % 12 || 12;
-                    return `${h}:${String(m).padStart(2, "0")} ${period}`;
-                  };
-                  timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
-                }
-                return (
-                  <div key={i} className={`break-card${isBest ? " best" : ""}`}>
-                    <div className="timecol">
-                      {timeRange ? (
-                        <div className="time">{timeRange}</div>
-                      ) : (
-                        <>
-                          <div className="minute">{b.minute}</div>
-                          <div className="label">{t("pre.minuteUnit")}</div>
-                        </>
-                      )}
-                    </div>
-                    <div className="body">
-                      <div className="meta">
-                        {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
-                        <span>
-                          {timeRange
-                            ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
-                            : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
-                        </span>
-                      </div>
-                      <p className="hint">{b.scene_hint}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
-        </section>
-        )}
-
         {/* AMC 购票模块 */}
         {amcUrl && (
           <section>
@@ -448,6 +356,100 @@ export function PreMovie({
           ) : null}
         </section>
       </CollapsibleLayer>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          Break Calculator — bottom of page
+          ═══════════════════════════════════════════════════════════════ */}
+      {(breaksLoading || breaksError || breaksContent) && (
+        <section>
+          <SectionLabel>{t("pre.breaks")}</SectionLabel>
+          <SourceBadge type="inferred" />
+          <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 6, fontFamily: "var(--font-body), sans-serif" }}>
+            {t("pre.breaksHint")}
+          </p>
+
+          {breaksContent && (
+            <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
+              <label className="showtime-main" htmlFor="showtime-input">
+                <span className="q">{t("pre.showtimePrompt")}</span>
+                <div className="showtime-field">
+                  <input
+                    id="showtime-input"
+                    type="time"
+                    value={movieStartTime}
+                    onChange={e => setMovieStartTime(e.target.value)}
+                  />
+                  {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
+                </div>
+              </label>
+              <button
+                type="button"
+                className={`showtime-toggle${includeTrailers ? " on" : ""}`}
+                onClick={() => setIncludeTrailers((v: boolean) => !v)}
+                aria-pressed={includeTrailers}
+              >
+                <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+                <span className="label">{t("pre.includeTrailers")}</span>
+                <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
+              </button>
+            </div>
+          )}
+
+          {breaksLoading ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
+              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
+            </div>
+          ) : breaksError ? (
+            <ErrorBanner message={t("pre.breaksError")} />
+          ) : breaksContent ? (
+            <div>
+              {breaksContent.breaks.map((b, i) => {
+                const isBest = b.minute === breaksContent.best_break;
+                let timeRange = "";
+                if (movieStartTime) {
+                  const [sh, sm] = movieStartTime.split(":").map(Number);
+                  const trailerOffset = includeTrailers ? 25 : 0;
+                  const startMin = sh * 60 + sm + trailerOffset + b.minute;
+                  const endMin = startMin + b.duration;
+                  const fmt = (tt: number) => {
+                    const total = Math.floor(tt / 60) % 24, m = tt % 60;
+                    const period = total >= 12 ? "PM" : "AM";
+                    const h = total % 12 || 12;
+                    return `${h}:${String(m).padStart(2, "0")} ${period}`;
+                  };
+                  timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
+                }
+                return (
+                  <div key={i} className={`break-card${isBest ? " best" : ""}`}>
+                    <div className="timecol">
+                      {timeRange ? (
+                        <div className="time">{timeRange}</div>
+                      ) : (
+                        <>
+                          <div className="minute">{b.minute}</div>
+                          <div className="label">{t("pre.minuteUnit")}</div>
+                        </>
+                      )}
+                    </div>
+                    <div className="body">
+                      <div className="meta">
+                        {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
+                        <span>
+                          {timeRange
+                            ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
+                            : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
+                        </span>
+                      </div>
+                      <p className="hint">{b.scene_hint}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </section>
+      )}
     </>
   );
 }
