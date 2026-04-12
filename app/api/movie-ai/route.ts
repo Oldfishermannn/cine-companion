@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   }
 
   const isComplex = /sci-fi|fantasy|history|mystery|thriller|horror/i.test(genre);
-  const wordCount = isComplex ? 18 : 10;
+  const wordCount = isComplex ? 12 : 8;
 
   try {
     const [aiMsg, wiki] = await Promise.all([

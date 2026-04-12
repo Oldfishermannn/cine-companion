@@ -39,11 +39,11 @@ export async function GET(req: NextRequest) {
             properties: {
               fun_facts: {
                 type: "array",
-                description: "6-8条幕后花絮，绝对零剧透，适合观影前阅读",
+                description: "5-6条幕后花絮，绝对零剧透，适合观影前阅读，每条1-2句话，不要冗长",
                 items: {
                   type: "object",
                   properties: {
-                    fact:     { type: "string", description: "花絮内容（中文，1-3句话）" },
+                    fact:     { type: "string", description: "花絮内容（中文，严格1-2句话，精炼有料）" },
                     category: {
                       type: "string",
                       enum: ["制作花絮", "幕后秘闻", "选角故事", "原著改编", "技术亮点", "导演风格"],
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
 简介：${plot}
 
 请调用 movie_extras 工具，完成：
-1. 生成 6-8 条有趣的幕后花絮（制作背景、拍摄故事、演员准备等），绝对不透露任何剧情
+1. 生成 5-6 条有趣的幕后花絮（制作背景、拍摄故事、演员准备等），绝对不透露任何剧情。每条限 1-2 句话，精炼有料，不废话
 2. 写一段"轻剧透提示"，让观众知道大概会看到什么氛围，但不透露关键情节
 
 注意：花絮内容要有趣、具体、适合分享，避免空泛的评价性语言`,

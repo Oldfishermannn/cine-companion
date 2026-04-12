@@ -189,36 +189,7 @@ export function PreMovie({
           ) : aiError ? (
             <ErrorBanner message={t("pre.vocabError")} />
           ) : aiContent ? (
-            <div>
-              {(() => {
-                const groups: Record<string, VocabItem[]> = {};
-                for (const item of aiContent.vocabulary) {
-                  if (!groups[item.category]) groups[item.category] = [];
-                  groups[item.category].push(item);
-                }
-                const ordered = CATEGORY_ORDER.filter(c => groups[c])
-                  .concat(Object.keys(groups).filter(c => !CATEGORY_ORDER.includes(c)));
-                let globalIdx = 0;
-                return ordered.map(cat => {
-                  const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
-                  return (
-                    <div key={cat}>
-                      <div className="vocab-cat-head">
-                        <span className="dot" style={{ background: s.dot }} />
-                        <span>{cat}</span>
-                        <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
-                      </div>
-                      <div className="vocab-grid">
-                        {groups[cat].map(item => {
-                          const idx = globalIdx++;
-                          return <VocabCard key={idx} item={item} index={idx} />;
-                        })}
-                      </div>
-                    </div>
-                  );
-                });
-              })()}
-            </div>
+            <VocabSection vocab={aiContent.vocabulary} />
           ) : null}
         </div>
       </CollapsibleLayer>
@@ -344,26 +315,123 @@ export function PreMovie({
   );
 }
 
-/* ── Fun Facts (all at once) ── */
+/* ── Fun Facts — show 4 initially, rest behind toggle ── */
 function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
+  const [showAll, setShowAll] = React.useState(false);
+  const INITIAL = 4;
+  const visible = showAll ? facts : facts.slice(0, INITIAL);
+  const hidden = facts.length - INITIAL;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {facts.map((item, i) => {
-        const icon = FACT_ICON[item.category] ?? "🎬";
+    <div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {visible.map((item, i) => {
+          const icon = FACT_ICON[item.category] ?? "🎬";
+          return (
+            <div
+              key={i}
+              className="fact-card poster-enter"
+              style={{ "--r": "0deg", animationDelay: `${i * 30}ms` } as React.CSSProperties}
+            >
+              <div className="icon">{icon}</div>
+              <div className="body">
+                <span className="ed-tag">{item.category}</span>
+                <p className="text">{item.fact}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {!showAll && hidden > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          style={{
+            marginTop: 14,
+            background: "none",
+            border: "1px solid var(--rule)",
+            color: "var(--muted)",
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.62rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            padding: "8px 16px",
+            cursor: "pointer",
+            width: "100%",
+            transition: "border-color 0.2s, color 0.2s",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(232,182,97,0.4)"; (e.currentTarget as HTMLElement).style.color = "var(--amber-dim)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--rule)"; (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
+        >
+          ▸ 还有 {hidden} 条花絮
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ── Vocab Section — show first 2 categories, rest behind toggle ── */
+function VocabSection({ vocab }: { vocab: VocabItem[] }) {
+  const [showAll, setShowAll] = React.useState(false);
+  const INITIAL_CATS = 2;
+
+  const groups: Record<string, VocabItem[]> = {};
+  for (const item of vocab) {
+    if (!groups[item.category]) groups[item.category] = [];
+    groups[item.category].push(item);
+  }
+  const ordered = CATEGORY_ORDER.filter(c => groups[c])
+    .concat(Object.keys(groups).filter(c => !CATEGORY_ORDER.includes(c)));
+
+  const visible = showAll ? ordered : ordered.slice(0, INITIAL_CATS);
+  const hiddenCats = ordered.length - INITIAL_CATS;
+  const hiddenWords = ordered.slice(INITIAL_CATS).reduce((n, c) => n + groups[c].length, 0);
+
+  let globalIdx = 0;
+  return (
+    <div>
+      {visible.map(cat => {
+        const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
         return (
-          <div
-            key={i}
-            className="fact-card poster-enter"
-            style={{ "--r": "0deg", animationDelay: `${i * 40}ms` } as React.CSSProperties}
-          >
-            <div className="icon">{icon}</div>
-            <div className="body">
-              <span className="ed-tag">{item.category}</span>
-              <p className="text">{item.fact}</p>
+          <div key={cat}>
+            <div className="vocab-cat-head">
+              <span className="dot" style={{ background: s.dot }} />
+              <span>{cat}</span>
+              <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
+            </div>
+            <div className="vocab-grid">
+              {groups[cat].map(item => {
+                const idx = globalIdx++;
+                return <VocabCard key={idx} item={item} index={idx} />;
+              })}
             </div>
           </div>
         );
       })}
+      {!showAll && hiddenCats > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          style={{
+            marginTop: 14,
+            background: "none",
+            border: "1px solid var(--rule)",
+            color: "var(--muted)",
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.62rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            padding: "8px 16px",
+            cursor: "pointer",
+            width: "100%",
+            transition: "border-color 0.2s, color 0.2s",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(232,182,97,0.4)"; (e.currentTarget as HTMLElement).style.color = "var(--amber-dim)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--rule)"; (e.currentTarget as HTMLElement).style.color = "var(--muted)"; }}
+        >
+          ▸ 还有 {hiddenWords} 个词汇（{hiddenCats} 个分类）
+        </button>
+      )}
     </div>
   );
 }

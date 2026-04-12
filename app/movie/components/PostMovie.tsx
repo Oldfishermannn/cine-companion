@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import type { MovieData, PostContent, FunFactItem } from "../types";
 import { RATING_DIMS, EGG_ICON } from "../types";
 import { saveRating } from "../utils";
@@ -180,6 +180,49 @@ function StarRow({ dim, score, onChange }: { dim: string; score: number; onChang
   );
 }
 
+/* ── Plot Summary — first act open, rest collapsible ── */
+function PlotSummary({ sections, theme }: { sections: { title: string; content: string }[]; theme?: string }) {
+  const [openIdx, setOpenIdx] = useState<number>(0);
+
+  return (
+    <div className="film-stack">
+      {sections.map((s, i) => {
+        const isOpen = openIdx === i;
+        return (
+          <div key={i} className="block" style={{ cursor: "pointer" }} onClick={() => setOpenIdx(isOpen ? -1 : i)}>
+            <div className="act-head" style={{ marginBottom: isOpen ? 14 : 0 }}>
+              <span className="num">{String(i + 1).padStart(2, "0")}</span>
+              <span className="title" style={{ flex: 1 }}>{s.title}</span>
+              <span style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: "0.62rem",
+                color: "var(--muted)",
+                letterSpacing: "0.1em",
+                marginLeft: "auto",
+              }}>{isOpen ? "▾" : "▸"}</span>
+            </div>
+            {isOpen && (
+              <p style={{
+                fontFamily: "var(--font-body), sans-serif",
+                fontSize: "0.95rem",
+                color: "rgba(235,227,208,0.88)",
+                lineHeight: 1.95,
+                margin: 0,
+              }}>{s.content}</p>
+            )}
+          </div>
+        );
+      })}
+      {theme && (
+        <div className="theme-quote">
+          <span className="mark">&ldquo;</span>
+          <p className="text">{theme}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PostMovie({
   data, postContent, postLoading, postFromCache, postError,
   postUnlocked, setPostUnlocked, personalScores, setPersonalScores,
@@ -234,40 +277,19 @@ export function PostMovie({
             <ErrorBanner message={t("post.error")} />
           ) : postContent ? (
             <>
-              {/* ── Plot Summary ── */}
+              {/* ── Plot Summary — acts collapsible ── */}
               <section>
                 <SectionLabel>{t("post.plotSummary")}</SectionLabel>
-                <div className="film-stack">
-                  {(postContent.plot_summary.sections?.length
+                <PlotSummary
+                  sections={postContent.plot_summary.sections?.length
                     ? postContent.plot_summary.sections
                     : [
                         { title: t("post.act1"), content: postContent.plot_summary.act1 ?? "" },
                         { title: t("post.act2"), content: postContent.plot_summary.act2 ?? "" },
                         { title: t("post.act3"), content: postContent.plot_summary.act3 ?? "" },
-                      ].filter(s => s.content)
-                  ).map((s, i) => (
-                    <div key={i} className="block">
-                      <div className="act-head">
-                        <span className="num">{String(i + 1).padStart(2, "0")}</span>
-                        <span className="title">{s.title}</span>
-                      </div>
-                      <p style={{
-                        fontFamily: "var(--font-body), sans-serif",
-                        fontSize: "0.95rem",
-                        color: "rgba(235,227,208,0.88)",
-                        lineHeight: 1.95,
-                        margin: 0,
-                      }}>{s.content}</p>
-                    </div>
-                  ))}
-                  {/* Theme quote */}
-                  {postContent.plot_summary.theme && (
-                    <div className="theme-quote">
-                      <span className="mark">&ldquo;</span>
-                      <p className="text">{postContent.plot_summary.theme}</p>
-                    </div>
-                  )}
-                </div>
+                      ].filter(s => s.content)}
+                  theme={postContent.plot_summary.theme}
+                />
               </section>
 
               {/* ── Characters ── */}
