@@ -64,8 +64,6 @@ export default async function Home() {
     <main className="min-h-screen overflow-x-hidden" style={{ background: "var(--ink)" }}>
       {/* Top editorial bar — the clue that this is a publication */}
       <div className="masthead-bar" />
-      <div className="scanline" />
-      <div className="projector-wash" aria-hidden />
 
       <div className="relative z-10 px-6 pb-20" style={{ maxWidth: 1080, margin: "0 auto" }}>
         {/* ── ① MASTHEAD ── */}
