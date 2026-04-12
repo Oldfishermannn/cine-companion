@@ -7,9 +7,9 @@ const PACING_ZH: Record<string, string> = { slow: "慢热", mixed: "张弛有度
 const DIFF_ZH: Record<string, string> = { low: "友好", medium: "中等", high: "较难" };
 const THEATRICAL_ZH: Record<string, string> = { low: "流媒体即可", medium: "建议影院", high: "必须影院" };
 const KNOWLEDGE_ZH: Record<string, string> = { none: "无需", low: "略知即可", medium: "建议了解", high: "需要补课" };
-const LEVEL_BAR: Record<string, number> = { none: 0, low: 1, medium: 2, high: 3, slow: 1, mixed: 2, fast: 3 };
+const LEVEL_BAR: Record<string, number> = { none: 0, low: 1, medium: 3, high: 5, slow: 1, mixed: 3, fast: 5 };
 
-function LevelDots({ value, max = 3, activeColor }: { value: number; max?: number; activeColor?: string }) {
+function LevelDots({ value, max = 5, activeColor }: { value: number; max?: number; activeColor?: string }) {
   return (
     <span className="dc-dots">
       {Array.from({ length: max }, (_, i) => (
