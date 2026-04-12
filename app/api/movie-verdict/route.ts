@@ -79,6 +79,11 @@ export async function GET(req: NextRequest) {
                 enum: ["low", "medium", "high"],
                 description: "影院观看的必要性（视觉/音效是否值得大银幕）",
               },
+              popularity: {
+                type: "string",
+                enum: ["low", "medium", "high"],
+                description: "当前院线热门程度：low=小众冷门，medium=稳健热映，high=现象级爆款（如超级IP首映、全民话题）",
+              },
               recommendation_score: {
                 type: "number",
                 description: "综合推荐指数，1-10，保留一位小数",
@@ -99,7 +104,7 @@ export async function GET(req: NextRequest) {
             required: [
               "one_line_verdict", "good_for", "not_good_for",
               "prior_knowledge", "pacing", "english_difficulty", "english_note",
-              "theatrical_need", "recommendation_score",
+              "theatrical_need", "popularity", "recommendation_score",
               "has_credits_scene", "credits_detail", "one_line_summary",
             ],
           },
@@ -154,6 +159,7 @@ ${runtime ? `时长：${runtime}` : ""}
       english_difficulty: String(input.english_difficulty || "medium"),
       english_note: String(input.english_note || ""),
       theatrical_need: theatricalNeed,
+      popularity: String(input.popularity || "medium") as "low" | "medium" | "high",
       recommendation_score: rawScore,
       has_credits_scene: Boolean(input.has_credits_scene),
       credits_detail: String(input.credits_detail || ""),

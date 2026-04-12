@@ -7,6 +7,7 @@ const PACING_ZH: Record<string, string>     = { slow: "慢热", mixed: "张弛�
 const DIFF_ZH: Record<string, string>       = { low: "友好", medium: "中等", high: "较难" };
 const THEATRICAL_ZH: Record<string, string> = { low: "流媒体即可", medium: "建议影院", high: "必须影院" };
 const KNOWLEDGE_ZH: Record<string, string>  = { none: "无需", low: "略知即可", medium: "建议了解", high: "需要补课" };
+const POPULARITY_ZH: Record<string, string> = { low: "小众冷门", medium: "稳健热映", high: "现象级爆款" };
 
 // 0–100 percentage for each possible value
 const LEVEL_PCT: Record<string, number> = {
@@ -53,6 +54,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
     { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]        || verdict.english_difficulty,   pct: LEVEL_PCT[verdict.english_difficulty] ?? 50 },
     { label: "节奏快慢", value: PACING_ZH[verdict.pacing]                 || verdict.pacing,               pct: LEVEL_PCT[verdict.pacing] ?? 50 },
     { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]     || verdict.theatrical_need,      pct: LEVEL_PCT[verdict.theatrical_need] ?? 50 },
+    { label: "热门程度", value: POPULARITY_ZH[verdict.popularity || "medium"] || verdict.popularity || "稳健热映", pct: LEVEL_PCT[verdict.popularity || "medium"] ?? 62 },
   ];
 
   return (

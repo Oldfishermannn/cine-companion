@@ -86,6 +86,7 @@ export interface VerdictContent {
   english_difficulty: "low" | "medium" | "high";
   english_note: string;
   theatrical_need: "low" | "medium" | "high";
+  popularity: "low" | "medium" | "high";
   recommendation_score: number;
   has_credits_scene: boolean;
   credits_detail: string;
