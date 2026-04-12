@@ -12,6 +12,10 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
   if (loading) {
     return (
       <div className="decision-card">
+        {/* Score bar skeleton */}
+        <div className="dc-bar-wrap">
+          <div className="dc-bar-track" style={{ opacity: 0.3 }} />
+        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div className="skeleton" style={{ height: 16, width: "70%" }} />
           <div style={{ display: "flex", gap: 6 }}>
@@ -26,7 +30,8 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
   if (!verdict) return null;
 
   const score = verdict.recommendation_score;
-  const scoreColor = score >= 8 ? "var(--amber)" : score >= 6 ? "var(--cream)" : "var(--muted)";
+  const pct = `${(score / 10) * 100}%`;
+  const scoreColor = score >= 8 ? "#4ade80" : score >= 6 ? "var(--cream)" : "#f87171";
 
   const stats = [
     { label: "节奏", value: PACING_ZH[verdict.pacing] || verdict.pacing },
@@ -37,15 +42,29 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
 
   return (
     <div className="decision-card">
-      {/* Score badge + verdict */}
+      {/* ── Full-bleed score bar ── */}
+      <div className="dc-bar-wrap">
+        <div className="dc-bar-track">
+          <div
+            className="dc-bar-ball"
+            style={{ "--dc-target": pct, "--dc-color": scoreColor } as React.CSSProperties}
+          />
+          {/* Score label that follows the ball */}
+          <div
+            className="dc-bar-label"
+            style={{ "--dc-target": pct } as React.CSSProperties}
+          >
+            {score.toFixed(1)}
+          </div>
+        </div>
+      </div>
+
+      {/* Score + verdict */}
       <div className="dc-top">
-        <span className="dc-score-badge" style={{ color: scoreColor }}>
-          {score.toFixed(1)}
-        </span>
         <p className="dc-verdict">{verdict.one_line_verdict}</p>
       </div>
 
-      {/* Audience pills — good + not good in one flat row */}
+      {/* Audience pills */}
       <div className="dc-pills-row">
         {verdict.good_for.map((tag, i) => (
           <span key={i} className="dc-pill good">✓ {tag}</span>
@@ -55,7 +74,7 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
         ))}
       </div>
 
-      {/* Stats — inline text, no boxes */}
+      {/* Stats inline */}
       <div className="dc-stats-row">
         {stats.map((s, i) => (
           <span key={i} className="dc-stat-item">
@@ -65,7 +84,7 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
         ))}
       </div>
 
-      {/* Credits — single small line */}
+      {/* Credits */}
       {verdict.credits_detail && (
         <p className="dc-credits-line">
           {verdict.has_credits_scene ? "🎬 " : "— "}
