@@ -88,6 +88,60 @@ export function FactCard({ item, index }: { item: FunFactItem; index: number }) 
 
 export { CATEGORY_STYLES };
 
+/* ── Collapsible Layer (accordion section) ── */
+export function CollapsibleLayer({
+  title,
+  defaultOpen = false,
+  badge,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  badge?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={`collapsible-layer${open ? " open" : ""}`}>
+      <button
+        type="button"
+        className="layer-header"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+      >
+        <span className="layer-chevron">{open ? "▾" : "▸"}</span>
+        <span className="layer-title">{title}</span>
+        {badge}
+      </button>
+      {open && <div className="layer-body">{children}</div>}
+    </div>
+  );
+}
+
+/* ── Content Source Badge ── */
+export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" }) {
+  const labels: Record<string, string> = {
+    data: "数据来源",
+    ai: "AI 整理",
+    inferred: "仅供参考",
+  };
+  return <span className={`source-badge ${type}`}>{labels[type]}</span>;
+}
+
+/* ── Ticket CTA button ── */
+export function TicketCTA({ url, label }: { url: string; label?: string }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="ticket-cta"
+    >
+      {label || "查看 AMC 场次"} ↗
+    </a>
+  );
+}
+
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="editorial-divider" style={{ margin: "0 0 20px" }}>

@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem, VerdictContent } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
-import { RatingBlock, VocabCard, SectionLabel, ErrorBanner } from "./shared";
+import { RatingBlock, VocabCard, SectionLabel, ErrorBanner, CollapsibleLayer, SourceBadge, TicketCTA } from "./shared";
 import { DecisionCard } from "./DecisionCard";
 import { useLang } from "../../i18n/LangProvider";
 
@@ -75,347 +75,371 @@ export function PreMovie({
 
   const amcUrl = amcSlug ? `https://www.amctheatres.com/movies/${amcSlug}` : null;
 
+  const vocabCount = aiContent ? aiContent.vocabulary.length : 0;
+  const factsCount = funFacts ? funFacts.fun_facts.length : 0;
+
   return (
     <>
-      {/* ── Decision Card ── */}
-      {(verdictContent || verdictLoading) && (
-        <section style={{ marginBottom: 24 }}>
-          <DecisionCard verdict={verdictContent} loading={verdictLoading} />
-        </section>
-      )}
+      {/* ═══════════════════════════════════════════════════════════════
+          Layer 1 — 决策必读 (default open)
+          Decision Card + Ratings + Break Times + Ticket CTA
+          ═══════════════════════════════════════════════════════════════ */}
+      <CollapsibleLayer
+        title="决策必读"
+        defaultOpen
+        badge={<SourceBadge type="ai" />}
+      >
+        {/* Decision Card */}
+        {(verdictContent || verdictLoading) && (
+          <section style={{ marginBottom: 24 }}>
+            <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+          </section>
+        )}
 
-      {/* ── Ratings ── */}
-      <section>
-        <SectionLabel>{t("pre.ratings")}</SectionLabel>
-        <div className="ed-ratings">
-          {ratingsLoading ? (
-            [0,1,2,3].map(i => (
-              <div key={i} className="rating-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <div className="skeleton" style={{ width: 44, height: 20 }} />
-                <div className="skeleton" style={{ width: 32, height: 10 }} />
-              </div>
-            ))
-          ) : (
-            <>
-              {[
-                { value: imdbScore,  label: "IMDb",             href: `https://www.imdb.com/title/${data.id}/` },
-                { value: rtScore,    label: t("pre.rtLabel"),    href: rtUrl },
-                { value: mcScore,    label: "Metacritic",       href: mcUrl },
-                { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
-              ].filter(r => r.value).map((r) => (
-                <div key={r.label} className="rating-item">
-                  <RatingBlock value={r.value} label={r.label} href={r.href} />
+        {/* Ratings */}
+        <section>
+          <SectionLabel>{t("pre.ratings")}</SectionLabel>
+          <div className="ed-ratings">
+            {ratingsLoading ? (
+              [0,1,2,3].map(i => (
+                <div key={i} className="rating-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div className="skeleton" style={{ width: 44, height: 20 }} />
+                  <div className="skeleton" style={{ width: 32, height: 10 }} />
                 </div>
-              ))}
-            </>
-          )}
-        </div>
-        {!ratingsLoading && allEmpty && (
-          <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
-            {t("pre.ratingsEmpty")}
-          </p>
-        )}
-      </section>
-
-      {/* ── Trailer ── */}
-      <section>
-        <SectionLabel>{t("pre.trailer")}</SectionLabel>
-        {trailerUrl ? (
-          <div className="trailer-frame">
-            <iframe
-              src={trailerUrl}
-              title="Trailer"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        ) : (
-          <div className="trailer-frame">
-            <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
-            <div className="trailer-placeholder">
-              <div className="icon">▶</div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* ── Cast ── */}
-      {castMembers.length > 0 && (
-        <CastSection castMembers={castMembers} />
-      )}
-
-      {/* ── Background ── */}
-      <section>
-        <SectionLabel>
-          {t("pre.background")}
-          <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
-        </SectionLabel>
-
-        {aiLoading ? (
-          <div className="film-card">
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[100, 85, 70, 50].map((w, i) => (
-                <div key={i} className="skeleton" style={{ height: 12, width: `${w}%` }} />
-              ))}
-            </div>
-            <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 14, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiGenerating")}</p>
-          </div>
-        ) : aiError ? (
-          <ErrorBanner message={t("pre.aiError")} />
-        ) : aiContent ? (
-          <div className="bg-flow">
-            {/* Summary lead */}
-            {aiContent.background.summary && (
-              <p className="bg-lead">
-                {aiContent.background.summary}
-              </p>
-            )}
-            {/* Context points */}
-            {aiContent.background.context.length > 0 && (
-              <ul className="ed-bullets">
-                {aiContent.background.context.filter((point, i) => {
-                  if (i !== 0) return true;
-                  const summary = aiContent.background.summary || "";
-                  if (!summary) return true;
-                  const overlap = point.slice(0, 30);
-                  return !summary.includes(overlap.slice(0, 20));
-                }).map((point, i) => (
-                  <li key={i}><span>{point}</span></li>
+              ))
+            ) : (
+              <>
+                {[
+                  { value: imdbScore,  label: "IMDb",             href: `https://www.imdb.com/title/${data.id}/` },
+                  { value: rtScore,    label: t("pre.rtLabel"),    href: rtUrl },
+                  { value: mcScore,    label: "Metacritic",       href: mcUrl },
+                  { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
+                ].filter(r => r.value).map((r) => (
+                  <div key={r.label} className="rating-item">
+                    <RatingBlock value={r.value} label={r.label} href={r.href} />
+                  </div>
                 ))}
-              </ul>
+              </>
             )}
-            {/* Director note */}
-            {aiContent.background.director_note && (
-              <div className="bg-director">
-                <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
-                <p>{aiContent.background.director_note}</p>
+          </div>
+          {!ratingsLoading && allEmpty && (
+            <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
+              {t("pre.ratingsEmpty")}
+            </p>
+          )}
+        </section>
+
+        {/* Break Calculator */}
+        {(breaksLoading || breaksError || breaksContent) && (
+        <section>
+          <SectionLabel>{t("pre.breaks")}</SectionLabel>
+          <SourceBadge type="inferred" />
+          <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 6, fontFamily: "var(--font-body), sans-serif" }}>
+            {t("pre.breaksHint")}
+          </p>
+
+          {breaksContent && (
+          <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
+            <label className="showtime-main" htmlFor="showtime-input">
+              <span className="q">{t("pre.showtimePrompt")}</span>
+              <div className="showtime-field">
+                <input
+                  id="showtime-input"
+                  type="time"
+                  value={movieStartTime}
+                  onChange={e => setMovieStartTime(e.target.value)}
+                />
+                {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
               </div>
-            )}
-            {/* Spoiler unlock */}
-            <div className="bg-spoiler">
-              {!spoilerUnlocked ? (
-                <button
-                  className="ed-btn ghost"
-                  onClick={() => setSpoilerUnlocked(true)}
-                >
-                  ▸ {t("pre.spoilerUnlock")}
-                </button>
-              ) : (
-                <div>
-                  <div className="spoiler-strip" style={{ marginBottom: 14 }}>
-                    <span className="sec">※</span>
-                    <span>{t("pre.lightSpoilerWarn")}</span>
-                  </div>
-                  {funFacts?.first_act_hint ? (
-                    <p style={{ color: "rgba(235,227,208,0.82)", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
-                      {funFacts.first_act_hint}
-                    </p>
-                  ) : factsLoading ? (
-                    <div className="skeleton" style={{ height: 48 }} />
-                  ) : aiContent.background.wikipedia ? (
-                    <p style={{ color: "rgba(235,227,208,0.72)", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
-                      {aiContent.background.wikipedia.slice(0, 400)}…
-                    </p>
-                  ) : (
-                    <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body), sans-serif", margin: 0 }}>{t("pre.noHintInfo")}</p>
-                  )}
-                </div>
-              )}
+            </label>
+            <button
+              type="button"
+              className={`showtime-toggle${includeTrailers ? " on" : ""}`}
+              onClick={() => setIncludeTrailers((v: boolean) => !v)}
+              aria-pressed={includeTrailers}
+            >
+              <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
+              <span className="label">{t("pre.includeTrailers")}</span>
+              <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
+            </button>
+          </div>
+          )}
+
+          {breaksLoading ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
+              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
             </div>
-          </div>
-        ) : null}
-      </section>
-
-      {/* ── Fun Facts ── */}
-      <section>
-        <SectionLabel>
-          {t("pre.funFacts")}
-          <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
-          {factsFromCache && (
-            <span className="ed-tag ghost" style={{ marginLeft: 6 }}>{t("pre.cached")}</span>
-          )}
-        </SectionLabel>
-
-        {factsLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: 68 }} />
-            ))}
-          </div>
-        ) : factsError ? (
-          <ErrorBanner message={t("pre.factsError")} />
-        ) : funFacts ? (
-          <CollapsibleFacts facts={funFacts.fun_facts} />
-        ) : null}
-      </section>
-
-      {/* ── Vocabulary ── */}
-      <section>
-        <SectionLabel>
-          {t("pre.vocabulary")}
-          {aiFromCache && (
-            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.cached")}</span>
-          )}
-        </SectionLabel>
-        <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
-          {t("pre.vocabHint")}
-        </p>
-
-        {aiLoading ? (
-          <div className="vocab-grid">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="vocab-card">
-                <div className="row">
-                  <div className="skeleton" style={{ width: 22, height: 22, flexShrink: 0 }} />
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
-                    <div className="skeleton" style={{ height: 12, width: "60%" }} />
-                    <div className="skeleton" style={{ height: 10, width: "40%" }} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : aiError ? (
-          <ErrorBanner message={t("pre.vocabError")} />
-        ) : aiContent ? (
-          <div>
-            {(() => {
-              const groups: Record<string, VocabItem[]> = {};
-              for (const item of aiContent.vocabulary) {
-                if (!groups[item.category]) groups[item.category] = [];
-                groups[item.category].push(item);
-              }
-              const ordered = CATEGORY_ORDER.filter(c => groups[c])
-                .concat(Object.keys(groups).filter(c => !CATEGORY_ORDER.includes(c)));
-              let globalIdx = 0;
-              return ordered.map(cat => {
-                const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
+          ) : breaksError ? (
+            <ErrorBanner message={t("pre.breaksError")} />
+          ) : breaksContent ? (
+            <div>
+              {breaksContent.breaks.map((b, i) => {
+                const isBest = b.minute === breaksContent.best_break;
+                let timeRange = "";
+                if (movieStartTime) {
+                  const [sh, sm] = movieStartTime.split(":").map(Number);
+                  const trailerOffset = includeTrailers ? 25 : 0;
+                  const startMin = sh * 60 + sm + trailerOffset + b.minute;
+                  const endMin = startMin + b.duration;
+                  const fmt = (t: number) => {
+                    const total = Math.floor(t / 60) % 24, m = t % 60;
+                    const period = total >= 12 ? "PM" : "AM";
+                    const h = total % 12 || 12;
+                    return `${h}:${String(m).padStart(2, "0")} ${period}`;
+                  };
+                  timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
+                }
                 return (
-                  <div key={cat}>
-                    <div className="vocab-cat-head">
-                      <span className="dot" style={{ background: s.dot }} />
-                      <span>{cat}</span>
-                      <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
+                  <div key={i} className={`break-card${isBest ? " best" : ""}`}>
+                    <div className="timecol">
+                      {timeRange ? (
+                        <div className="time">{timeRange}</div>
+                      ) : (
+                        <>
+                          <div className="minute">{b.minute}</div>
+                          <div className="label">{t("pre.minuteUnit")}</div>
+                        </>
+                      )}
                     </div>
-                    <div className="vocab-grid">
-                      {groups[cat].map((item) => {
-                        const idx = globalIdx++;
-                        return <VocabCard key={idx} item={item} index={idx} />;
-                      })}
+                    <div className="body">
+                      <div className="meta">
+                        {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
+                        <span>
+                          {timeRange
+                            ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
+                            : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
+                        </span>
+                      </div>
+                      <p className="hint">{b.scene_hint}</p>
                     </div>
                   </div>
                 );
-              });
-            })()}
-          </div>
-        ) : null}
-      </section>
-
-      {/* ── Break Calculator ── */}
-      {(breaksLoading || breaksError || breaksContent) && (
-      <section>
-        <SectionLabel>{t("pre.breaks")}</SectionLabel>
-        <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: -6, fontFamily: "var(--font-body), sans-serif" }}>
-          {t("pre.breaksHint")}
-        </p>
-
-        {breaksContent && (
-        <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
-          <label className="showtime-main" htmlFor="showtime-input">
-            <span className="q">{t("pre.showtimePrompt")}</span>
-            <div className="showtime-field">
-              <input
-                id="showtime-input"
-                type="time"
-                value={movieStartTime}
-                onChange={e => setMovieStartTime(e.target.value)}
-              />
-              {!movieStartTime && <span className="showtime-placeholder">{t("pre.showtimeEmpty")}</span>}
+              })}
             </div>
-          </label>
-          <button
-            type="button"
-            className={`showtime-toggle${includeTrailers ? " on" : ""}`}
-            onClick={() => setIncludeTrailers((v: boolean) => !v)}
-            aria-pressed={includeTrailers}
-          >
-            <span className={`ed-toggle${includeTrailers ? " on" : ""}`} />
-            <span className="label">{t("pre.includeTrailers")}</span>
-            <span className="val">{includeTrailers ? t("pre.trailerPlus") : t("pre.trailerSkip")}</span>
-          </button>
-        </div>
+          ) : null}
+        </section>
         )}
 
-        {breaksLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
-            <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 4, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiAnalyzing")}</p>
-          </div>
-        ) : breaksError ? (
-          <ErrorBanner message={t("pre.breaksError")} />
-        ) : breaksContent ? (
-          <div>
-            {breaksContent.breaks.map((b, i) => {
-              const isBest = b.minute === breaksContent.best_break;
-              let timeRange = "";
-              if (movieStartTime) {
-                const [sh, sm] = movieStartTime.split(":").map(Number);
-                const trailerOffset = includeTrailers ? 25 : 0;
-                const startMin = sh * 60 + sm + trailerOffset + b.minute;
-                const endMin = startMin + b.duration;
-                const fmt = (t: number) => {
-                  const total = Math.floor(t / 60) % 24, m = t % 60;
-                  const period = total >= 12 ? "PM" : "AM";
-                  const h = total % 12 || 12;
-                  return `${h}:${String(m).padStart(2, "0")} ${period}`;
-                };
-                timeRange = `${fmt(startMin)}-${fmt(endMin)}`;
-              }
-              return (
-                <div key={i} className={`break-card${isBest ? " best" : ""}`}>
-                  <div className="timecol">
-                    {timeRange ? (
-                      <div className="time">{timeRange}</div>
+        {/* Ticket CTA */}
+        {amcUrl && <TicketCTA url={amcUrl} />}
+      </CollapsibleLayer>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          Layer 2 — 观影前补课 (default collapsed)
+          Background + Vocabulary
+          ═══════════════════════════════════════════════════════════════ */}
+      <CollapsibleLayer
+        title="观影前补课"
+        badge={
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SourceBadge type="ai" />
+            {vocabCount > 0 && (
+              <span className="layer-count">{vocabCount} 词</span>
+            )}
+          </span>
+        }
+      >
+        {/* Background */}
+        <section>
+          <SectionLabel>
+            {t("pre.background")}
+            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
+          </SectionLabel>
+
+          {aiLoading ? (
+            <div className="film-card">
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[100, 85, 70, 50].map((w, i) => (
+                  <div key={i} className="skeleton" style={{ height: 12, width: `${w}%` }} />
+                ))}
+              </div>
+              <p style={{ color: "var(--muted)", fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 14, fontFamily: "var(--font-mono), monospace" }}>{t("pre.aiGenerating")}</p>
+            </div>
+          ) : aiError ? (
+            <ErrorBanner message={t("pre.aiError")} />
+          ) : aiContent ? (
+            <div className="bg-flow">
+              {aiContent.background.summary && (
+                <p className="bg-lead">
+                  {aiContent.background.summary}
+                </p>
+              )}
+              {aiContent.background.context.length > 0 && (
+                <ul className="ed-bullets">
+                  {aiContent.background.context.filter((point, i) => {
+                    if (i !== 0) return true;
+                    const summary = aiContent.background.summary || "";
+                    if (!summary) return true;
+                    const overlap = point.slice(0, 30);
+                    return !summary.includes(overlap.slice(0, 20));
+                  }).map((point, i) => (
+                    <li key={i}><span>{point}</span></li>
+                  ))}
+                </ul>
+              )}
+              {aiContent.background.director_note && (
+                <div className="bg-director">
+                  <span className="ed-tag solid" style={{ flexShrink: 0 }}>DIR · NOTE</span>
+                  <p>{aiContent.background.director_note}</p>
+                </div>
+              )}
+              <div className="bg-spoiler">
+                {!spoilerUnlocked ? (
+                  <button
+                    className="ed-btn ghost"
+                    onClick={() => setSpoilerUnlocked(true)}
+                  >
+                    ▸ {t("pre.spoilerUnlock")}
+                  </button>
+                ) : (
+                  <div>
+                    <div className="spoiler-strip" style={{ marginBottom: 14 }}>
+                      <span className="sec">※</span>
+                      <span>{t("pre.lightSpoilerWarn")}</span>
+                    </div>
+                    {funFacts?.first_act_hint ? (
+                      <p style={{ color: "rgba(235,227,208,0.82)", fontSize: "0.88rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
+                        {funFacts.first_act_hint}
+                      </p>
+                    ) : factsLoading ? (
+                      <div className="skeleton" style={{ height: 48 }} />
+                    ) : aiContent.background.wikipedia ? (
+                      <p style={{ color: "rgba(235,227,208,0.72)", fontSize: "0.85rem", lineHeight: 1.8, fontFamily: "var(--font-body), sans-serif", margin: 0 }}>
+                        {aiContent.background.wikipedia.slice(0, 400)}…
+                      </p>
                     ) : (
-                      <>
-                        <div className="minute">{b.minute}</div>
-                        <div className="label">{t("pre.minuteUnit")}</div>
-                      </>
+                      <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body), sans-serif", margin: 0 }}>{t("pre.noHintInfo")}</p>
                     )}
                   </div>
-                  <div className="body">
-                    <div className="meta">
-                      {isBest && <span className="ed-tag vermilion">{t("pre.bestBreak")}</span>}
-                      <span>
-                        {timeRange
-                          ? t("pre.breakInfo", { m: b.minute, d: b.duration, r: b.miss_risk })
-                          : t("pre.breakInfoNoStart", { d: b.duration, r: b.miss_risk })}
-                      </span>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        {/* Vocabulary */}
+        <section>
+          <SectionLabel>
+            {t("pre.vocabulary")}
+          </SectionLabel>
+          <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
+            {t("pre.vocabHint")}
+          </p>
+
+          {aiLoading ? (
+            <div className="vocab-grid">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="vocab-card">
+                  <div className="row">
+                    <div className="skeleton" style={{ width: 22, height: 22, flexShrink: 0 }} />
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+                      <div className="skeleton" style={{ height: 12, width: "60%" }} />
+                      <div className="skeleton" style={{ height: 10, width: "40%" }} />
                     </div>
-                    <p className="hint">{b.scene_hint}</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : null}
+              ))}
+            </div>
+          ) : aiError ? (
+            <ErrorBanner message={t("pre.vocabError")} />
+          ) : aiContent ? (
+            <div>
+              {(() => {
+                const groups: Record<string, VocabItem[]> = {};
+                for (const item of aiContent.vocabulary) {
+                  if (!groups[item.category]) groups[item.category] = [];
+                  groups[item.category].push(item);
+                }
+                const ordered = CATEGORY_ORDER.filter(c => groups[c])
+                  .concat(Object.keys(groups).filter(c => !CATEGORY_ORDER.includes(c)));
+                let globalIdx = 0;
+                return ordered.map(cat => {
+                  const s = CATEGORY_STYLES[cat] || { dot: "var(--vermilion)", text: "var(--amber)" };
+                  return (
+                    <div key={cat}>
+                      <div className="vocab-cat-head">
+                        <span className="dot" style={{ background: s.dot }} />
+                        <span>{cat}</span>
+                        <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
+                      </div>
+                      <div className="vocab-grid">
+                        {groups[cat].map((item) => {
+                          const idx = globalIdx++;
+                          return <VocabCard key={idx} item={item} index={idx} />;
+                        })}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          ) : null}
+        </section>
+      </CollapsibleLayer>
 
-        {/* AMC link */}
-        {amcUrl && (
-          <p style={{ textAlign: "center", marginTop: 22, marginBottom: 0 }}>
-            <a
-              href={amcUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ed-btn ghost"
-              style={{ display: "inline-block", textDecoration: "none" }}
-            >
-              {t("pre.amcLink")} ↗
-            </a>
-          </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          Layer 3 — 延伸阅读 (default collapsed)
+          Trailer + Cast + Fun Facts
+          ═══════════════════════════════════════════════════════════════ */}
+      <CollapsibleLayer
+        title="延伸阅读"
+        badge={
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SourceBadge type="ai" />
+            {factsCount > 0 && (
+              <span className="layer-count">{factsCount} 条冷知识</span>
+            )}
+          </span>
+        }
+      >
+        {/* Trailer */}
+        <section>
+          <SectionLabel>{t("pre.trailer")}</SectionLabel>
+          {trailerUrl ? (
+            <div className="trailer-frame">
+              <iframe
+                src={trailerUrl}
+                title="Trailer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="trailer-frame">
+              <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
+              <div className="trailer-placeholder">
+                <div className="icon">▶</div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Cast */}
+        {castMembers.length > 0 && (
+          <CastSection castMembers={castMembers} />
         )}
-      </section>
-      )}
+
+        {/* Fun Facts */}
+        <section>
+          <SectionLabel>
+            {t("pre.funFacts")}
+            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
+          </SectionLabel>
+
+          {factsLoading ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: 68 }} />
+              ))}
+            </div>
+          ) : factsError ? (
+            <ErrorBanner message={t("pre.factsError")} />
+          ) : funFacts ? (
+            <CollapsibleFacts facts={funFacts.fun_facts} />
+          ) : null}
+        </section>
+      </CollapsibleLayer>
     </>
   );
 }

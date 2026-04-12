@@ -7,7 +7,7 @@ import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostContent, VerdictContent } from "./types";
 import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
-import { Divider } from "./components/shared";
+import { Divider, TicketCTA } from "./components/shared";
 import { PreMovie } from "./components/PreMovie";
 import { PostMovie } from "./components/PostMovie";
 import { MOVIE_CATALOG } from "../catalog";
@@ -557,6 +557,13 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               );
             })()}
           </div>
+        </div>
+      )}
+
+      {/* Mobile sticky CTA — only when AMC slug exists */}
+      {amcSlug && data && (
+        <div className="sticky-cta">
+          <TicketCTA url={`https://www.amctheatres.com/movies/${amcSlug}`} />
         </div>
       )}
     </main>

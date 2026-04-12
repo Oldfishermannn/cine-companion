@@ -2099,6 +2099,145 @@ body::after {
   line-height: 1.6;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Collapsible Layer (Phase 2 accordion sections)
+   ═══════════════════════════════════════════════════════════ */
+.collapsible-layer {
+  border-top: 1px solid var(--rule);
+  margin-top: 8px;
+}
+.collapsible-layer:first-child {
+  border-top: none;
+  margin-top: 0;
+}
+
+.layer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 16px 0;
+  text-align: left;
+  transition: opacity 0.15s;
+}
+.layer-header:hover {
+  opacity: 0.85;
+}
+
+.layer-chevron {
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  transition: color 0.15s;
+}
+.collapsible-layer.open .layer-chevron {
+  color: var(--amber-dim);
+}
+
+.layer-title {
+  font-family: var(--font-zh-display), serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+}
+
+.layer-count {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.layer-body {
+  padding: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* ── Source Badge ── */
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.source-badge.data {
+  color: rgba(136,178,142,0.8);
+  background: rgba(136,178,142,0.08);
+  border: 1px solid rgba(136,178,142,0.15);
+}
+.source-badge.ai {
+  color: rgba(232,182,97,0.7);
+  background: rgba(232,182,97,0.06);
+  border: 1px solid rgba(232,182,97,0.12);
+}
+.source-badge.inferred {
+  color: rgba(235,227,208,0.4);
+  background: rgba(235,227,208,0.04);
+  border: 1px solid rgba(235,227,208,0.08);
+}
+
+/* ── Ticket CTA ── */
+.ticket-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 8px;
+  background: rgba(217,79,42,0.08);
+  border: 1px solid rgba(217,79,42,0.2);
+  border-radius: 2px;
+  color: var(--vermilion);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.ticket-cta:hover {
+  background: rgba(217,79,42,0.14);
+  border-color: rgba(217,79,42,0.35);
+}
+
+/* ── Sticky Mobile CTA ── */
+.sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: 12px 20px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: rgba(8,8,12,0.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--rule);
+  display: none;
+}
+@media (max-width: 640px) {
+  .sticky-cta { display: block; }
+}
+.sticky-cta .ticket-cta {
+  margin-top: 0;
+}
+
 /* ── plot summary act head ── */
 .act-head {
   display: flex;
