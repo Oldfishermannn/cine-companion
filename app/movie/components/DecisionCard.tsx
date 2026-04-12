@@ -14,11 +14,11 @@ const LEVEL_PCT: Record<string, number> = {
   slow: 30, mixed: 62, fast: 100,
 };
 
-export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | null; loading?: boolean }) {
+export function DecisionCard({ verdict, loading, error }: { verdict: VerdictContent | null; loading?: boolean; error?: boolean }) {
   if (loading) {
     return (
       <div className="decision-card">
-        <div className="dc-section-title">值不值得去影院看？</div>
+        <div className="dc-section-title">值不值得看</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}>
           <div className="skeleton" style={{ height: 6, width: "100%", borderRadius: 3 }} />
           <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
@@ -28,6 +28,15 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
             {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: 40, width: 64 }} />)}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (error && !verdict) {
+    return (
+      <div className="decision-card" style={{ opacity: 0.5 }}>
+        <div className="dc-section-title">值不值得看</div>
+        <p style={{ marginTop: 10, fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>决策卡加载失败，请刷新重试</p>
       </div>
     );
   }

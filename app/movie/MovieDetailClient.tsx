@@ -82,6 +82,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
   const [postUnlocked, setPostUnlocked] = useState(false);
   const [verdictContent, setVerdictContent] = useState<VerdictContent | null>(initialData.verdict);
   const [verdictLoading, setVerdictLoading] = useState(false);
+  const [verdictError, setVerdictError] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
@@ -125,13 +126,20 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
 
     // Verdict — fetch if missing from baked cache
     if (!initialData.verdict) {
+      console.log("[verdict] no cache, fetching for", d.title);
       setVerdictLoading(true);
+      setVerdictError(false);
       const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
       fetchRetry(`/api/movie-verdict?${verdictParams}`)
         .then(r => r.json())
-        .then(v => { if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } })
-        .catch(() => {})
+        .then(v => {
+          console.log("[verdict] response:", v);
+          if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } else { setVerdictError(true); }
+        })
+        .catch((err) => { console.error("[verdict] fetch error:", err); setVerdictError(true); })
         .finally(() => setVerdictLoading(false));
+    } else {
+      console.log("[verdict] loaded from cache for", d.title);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
@@ -239,11 +247,12 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
 
         // Stage 6: Verdict / Decision Card
         setVerdictLoading(true);
+        setVerdictError(false);
         const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
         fetchRetry(`/api/movie-verdict?${verdictParams}`)
           .then(r => r.json())
-          .then(v => { if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } })
-          .catch(() => {})
+          .then(v => { if (!v.error) { setVerdictContent(v); track("decision_card_view", { title: d.title }); } else { setVerdictError(true); } })
+          .catch((err) => { console.error("[verdict] fetch error:", err); setVerdictError(true); })
           .finally(() => setVerdictLoading(false));
       })
       .catch(() => { setError("__network__"); setLoading(false); });
@@ -437,7 +446,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               {/* 5. Decision Card */}
               <div style={{ marginTop: 0 }}>
                 <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--rule) 30%, var(--rule) 70%, transparent)", margin: "24px 0 20px" }} />
-                <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+                <DecisionCard verdict={verdictContent} loading={verdictLoading} error={verdictError} />
               </div>
             </div>
           </div>
