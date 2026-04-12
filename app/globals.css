@@ -1660,7 +1660,7 @@ body::after {
 .showtime-main {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
   margin-bottom: 10px;
 }
@@ -1670,6 +1670,7 @@ body::after {
   color: var(--cream);
   font-weight: 500;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 .showtime-field {
   position: relative;
@@ -1678,8 +1679,8 @@ body::after {
   justify-content: center;
   border: 1px solid var(--amber);
   background: rgba(232,182,97,0.08);
-  padding: 8px 14px;
-  min-width: 96px;
+  padding: 8px 16px;
+  min-width: 130px;
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s;
@@ -1694,7 +1695,6 @@ body::after {
   background: none;
   border: none;
   outline: none;
-  color: var(--cream);
   font-family: var(--font-mono), monospace;
   font-size: 1rem;
   letter-spacing: 0.06em;
@@ -1703,6 +1703,15 @@ body::after {
   width: 100%;
   padding: 0;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  /* Default: transparent text. When no value is set the custom placeholder
+     sits on top, so hide the native --:-- to prevent overlap. The filled
+     class toggles this to cream when a value exists. */
+  color: transparent;
+}
+.showtime-box.filled .showtime-field input[type="time"] {
+  color: var(--cream);
 }
 .showtime-field .showtime-placeholder {
   position: absolute;
@@ -1716,12 +1725,19 @@ body::after {
   letter-spacing: 0.1em;
   pointer-events: none;
   background: rgba(232,182,97,0.08);
+  z-index: 1;
+}
+/* Hide custom placeholder when native input shows its own --:-- text */
+.showtime-field input[type="time"]:not([value=""]) ~ .showtime-placeholder,
+.showtime-box.filled .showtime-field .showtime-placeholder {
+  display: none;
 }
 .showtime-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
+  margin-top: 4px;
   background: transparent;
   border: 1px dashed var(--rule);
   color: var(--muted);
@@ -1742,7 +1758,7 @@ body::after {
 @media (max-width: 420px) {
   .showtime-main { flex-wrap: wrap; gap: 10px; }
   .showtime-main .q { font-size: 0.95rem; }
-  .showtime-field { flex: 1; min-width: 88px; }
+  .showtime-field { flex: 1; min-width: 120px; }
 }
 
 .ed-toggle {
