@@ -189,15 +189,46 @@ scripts/
 
 ---
 
-## 院线片目录更新
+## Slash Commands
 
-片单来自 AMC Theatres 官网 CDP 实时抓取，运行 `/update-amc` 自动对比 + 更新：
+项目内置两个 Claude Code slash command（`.claude/commands/`），覆盖主要运维操作：
+
+### `/update-amc` — 更新院线片目录
+
+从 AMC Theatres 官网实时抓取最新片单，与 `catalog.ts` 对比生成差异报告，确认后自动更新。
 
 ```
 /update-amc
 ```
 
-自动：抓取 AMC 官网 → 对比现有目录 → 新片中文译名由 Claude Haiku 生成 → 确认后更新 `catalog.ts`。
+**流程：** CDP 爬取 AMC 官网 → 差异报告（新增/下线/日期变更）→ 搜索官方中文译名 → **等待确认** → 写入 `catalog.ts` → 补全 imdbScore/posterUrl → `tsc` 验证 → commit
+
+---
+
+### `/warm` — 预烘焙 AI 内容
+
+为所有院线片预生成 6 类 AI 内容，写入 `app/generated/baked.json`，让首屏访问零延迟。
+
+```
+/warm                   # 跳过已有内容（增量烘焙）
+/warm force             # 强制重烘焙所有内容（修改 prompt 后使用）
+/warm verdict           # 只重烘焙决策卡
+/warm facts             # 只重烘焙幕后花絮
+/warm ai                # 只重烘焙词汇+背景知识
+/warm breaks            # 只重烘焙厕所时间
+```
+
+**前提：** dev server 必须在运行（`npm run dev`），warm 脚本通过 HTTP 调用 API 路由。
+
+**耗时：** 全量约 5–8 分钟（19 部 × 6 端点，串行避免 rate limit）。增量模式跳过已有内容，通常 < 1 分钟。
+
+---
+
+### 推荐工作流
+
+1. 每周运行一次 `/update-amc` 同步最新片单
+2. 新片入库后立即运行 `/warm` 为新片预热
+3. 修改任意 AI prompt 后运行 `/warm force` 刷新对应内容
 
 ---
 
