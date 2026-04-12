@@ -129,6 +129,28 @@ export function PreMovie({
           )}
         </section>
 
+        {/* Trailer */}
+        <section>
+          <SectionLabel>{t("pre.trailer")}</SectionLabel>
+          {trailerUrl ? (
+            <div className="trailer-frame">
+              <iframe
+                src={trailerUrl}
+                title="Trailer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="trailer-frame">
+              <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
+              <div className="trailer-placeholder">
+                <div className="icon">▶</div>
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Break Calculator */}
         {(breaksLoading || breaksError || breaksContent) && (
         <section>
@@ -393,28 +415,6 @@ export function PreMovie({
           </span>
         }
       >
-        {/* Trailer */}
-        <section>
-          <SectionLabel>{t("pre.trailer")}</SectionLabel>
-          {trailerUrl ? (
-            <div className="trailer-frame">
-              <iframe
-                src={trailerUrl}
-                title="Trailer"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : (
-            <div className="trailer-frame">
-              <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
-              <div className="trailer-placeholder">
-                <div className="icon">▶</div>
-              </div>
-            </div>
-          )}
-        </section>
-
         {/* Cast */}
         {castMembers.length > 0 && (
           <CastSection castMembers={castMembers} />
