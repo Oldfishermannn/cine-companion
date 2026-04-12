@@ -2,11 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem, VerdictContent } from "../types";
+import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, SectionLabel, ErrorBanner, CollapsibleLayer, SourceBadge, TicketCTA } from "./shared";
 import { track } from "@/lib/analytics";
-import { DecisionCard } from "./DecisionCard";
 import { useLang } from "../../i18n/LangProvider";
 
 interface CastMember {
@@ -39,8 +38,6 @@ interface PreMovieProps {
   setMovieStartTime: (v: string) => void;
   includeTrailers: boolean;
   setIncludeTrailers: (v: boolean | ((prev: boolean) => boolean)) => void;
-  verdictContent: VerdictContent | null;
-  verdictLoading: boolean;
 }
 
 /* ── Fact category icons ── */
@@ -54,7 +51,6 @@ export function PreMovie({
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
-  verdictContent, verdictLoading,
 }: PreMovieProps) {
   const { t } = useLang();
   const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
@@ -82,20 +78,9 @@ export function PreMovie({
   return (
     <>
       {/* ═══════════════════════════════════════════════════════════════
-          Layer 1 — 决策必读 (default open)
-          Decision Card + Ratings + Break Times + Ticket CTA
+          Layer 1 — Ratings + Trailer + Break Times + Ticket CTA (flat)
           ═══════════════════════════════════════════════════════════════ */}
-      <CollapsibleLayer
-        title="决策必读"
-        defaultOpen
-        badge={<SourceBadge type="ai" />}
-      >
-        {/* Decision Card */}
-        {(verdictContent || verdictLoading) && (
-          <section style={{ marginBottom: 24 }}>
-            <DecisionCard verdict={verdictContent} loading={verdictLoading} />
-          </section>
-        )}
+      <div>
 
         {/* Ratings */}
         <section>
@@ -251,7 +236,7 @@ export function PreMovie({
             onClick={() => track("cta_click", { title: data.title, location: "layer1" })}
           />
         )}
-      </CollapsibleLayer>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           Layer 2 — 观影前补课 (default collapsed)

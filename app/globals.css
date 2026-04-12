@@ -899,6 +899,27 @@ body::after {
 @media (max-width: 640px) {
   .hero-body { grid-template-columns: 108px 1fr; gap: 18px; }
 }
+
+/* Decision layout: [poster+stats] | [DecisionCard] */
+.hero-decision-layout {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .hero-decision-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+.hero-left-col {
+  display: flex;
+  flex-direction: column;
+}
+.hero-right-col {
+  padding-top: 2px;
+}
 .movie-hero-poster {
   width: 140px;
   aspect-ratio: 2/3;
