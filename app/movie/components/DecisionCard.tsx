@@ -40,11 +40,10 @@ export function DecisionCard({ verdict, loading }: { verdict: VerdictContent | n
   const scoreDesc  = score >= 8 ? "强烈推荐" : score >= 6 ? "值得一看" : "谨慎考虑";
 
   const stats = [
-    { label: "节奏",     value: PACING_ZH[verdict.pacing]                 || verdict.pacing,               pct: LEVEL_PCT[verdict.pacing] ?? 50 },
-    { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]        || verdict.english_difficulty,   pct: LEVEL_PCT[verdict.english_difficulty] ?? 50 },
-    { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]     || verdict.theatrical_need,      pct: LEVEL_PCT[verdict.theatrical_need] ?? 50 },
     { label: "前置知识", value: KNOWLEDGE_ZH[verdict.prior_knowledge]      || verdict.prior_knowledge,      pct: LEVEL_PCT[verdict.prior_knowledge] ?? 0 },
-    { label: "片尾彩蛋", value: verdict.has_credits_scene ? "有" : "无",                                    pct: verdict.has_credits_scene ? 100 : 0 },
+    { label: "英语难度", value: DIFF_ZH[verdict.english_difficulty]        || verdict.english_difficulty,   pct: LEVEL_PCT[verdict.english_difficulty] ?? 50 },
+    { label: "节奏快慢", value: PACING_ZH[verdict.pacing]                 || verdict.pacing,               pct: LEVEL_PCT[verdict.pacing] ?? 50 },
+    { label: "影院必要", value: THEATRICAL_ZH[verdict.theatrical_need]     || verdict.theatrical_need,      pct: LEVEL_PCT[verdict.theatrical_need] ?? 50 },
   ];
 
   return (
