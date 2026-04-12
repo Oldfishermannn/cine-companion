@@ -121,24 +121,53 @@ export function CollapsibleLayer({
 }
 
 /* ── Content Source Badge ── */
-export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" }) {
+export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" | "official" | "editorial" }) {
   const labels: Record<string, string> = {
     data: "数据来源",
     ai: "AI 整理",
     inferred: "仅供参考",
+    official: "数据来源：OMDb",
+    editorial: "编辑整理",
   };
   return <span className={`source-badge ${type}`}>{labels[type]}</span>;
 }
 
+/* ── Affiliate URL builder ── */
+export function buildAmcUrl(amcSlug: string, params: {
+  movie: string;
+  position: "hero" | "inline" | "sticky";
+  source?: "detail" | "home";
+}): string {
+  const base = `https://www.amctheatres.com/movies/${amcSlug}`;
+  const utm = new URLSearchParams({
+    utm_source: "lightsout",
+    utm_medium: "referral",
+    utm_campaign: "ticket_cta",
+    utm_content: params.position,
+    utm_term: params.movie,
+  });
+  return `${base}?${utm}`;
+}
+
 /* ── Ticket CTA button ── */
-export function TicketCTA({ url, label, onClick }: { url: string; label?: string; onClick?: () => void }) {
+export function TicketCTA({ amcSlug, movie, position, label }: {
+  amcSlug: string;
+  movie: string;
+  position: "hero" | "inline" | "sticky";
+  label?: string;
+}) {
+  const url = buildAmcUrl(amcSlug, { movie, position, source: "detail" });
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="ticket-cta"
-      onClick={onClick}
+      onClick={() => {
+        import("@/lib/analytics").then(({ track }) =>
+          track("affiliate_link_click", { movie, position, platform: "amc" })
+        );
+      }}
     >
       {label || "查看 AMC 场次"} ↗
     </a>

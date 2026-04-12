@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
-import { RatingBlock, VocabCard, ErrorBanner, CollapsibleLayer, SourceBadge } from "./shared";
+import { RatingBlock, VocabCard, ErrorBanner, CollapsibleLayer, SourceBadge, buildAmcUrl } from "./shared";
 import { track } from "@/lib/analytics";
 import { useLang } from "../../i18n/LangProvider";
 
@@ -70,7 +70,7 @@ export function PreMovie({
   const mcUrl = liveRatings?.mc?.url ?? `https://www.metacritic.com/search/${encodeURIComponent(data.title)}/`;
   const ratingsLoading = liveRatings === null;
   const allEmpty = !imdbScore && !rtScore && !mcScore && !liveRatings?.douban?.score;
-  const amcUrl = amcSlug ? `https://www.amctheatres.com/movies/${amcSlug}` : null;
+  const amcUrl = amcSlug ? buildAmcUrl(amcSlug, { movie: data.title, position: "inline", source: "detail" }) : null;
   const vocabCount = aiContent ? aiContent.vocabulary.length : 0;
   const factsCount = funFacts ? funFacts.fun_facts.length : 0;
 
@@ -102,6 +102,11 @@ export function PreMovie({
             </>
           )}
         </div>
+        {!ratingsLoading && !allEmpty && (
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
+            <SourceBadge type="official" />
+          </div>
+        )}
         {!ratingsLoading && allEmpty && (
           <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
             {t("pre.ratingsEmpty")}
@@ -143,7 +148,7 @@ export function PreMovie({
             target="_blank"
             rel="noopener noreferrer"
             className="amc-module"
-            onClick={() => track("cta_click", { title: data.title, location: "inline" })}
+            onClick={() => track("affiliate_link_click", { movie: data.title, position: "inline", platform: "amc" })}
           >
             <div className="amc-module-left">
               <span className="amc-module-logo">AMC</span>

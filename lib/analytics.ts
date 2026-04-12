@@ -17,7 +17,12 @@ type EventName =
   | "layer_expand"
   | "cta_click"
   | "break_view"
-  | "tab_switch";
+  | "tab_switch"
+  | "affiliate_link_click"
+  | "home_page_view"
+  | "home_card_click"
+  | "home_filter_click"
+  | "home_sort_click";
 
 type EventProps = Record<string, string | number | boolean | null | undefined>;
 

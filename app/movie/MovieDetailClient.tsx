@@ -7,7 +7,7 @@ import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostContent, VerdictContent } from "./types";
 import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
-import { Divider, TicketCTA } from "./components/shared";
+import { Divider, TicketCTA, buildAmcUrl } from "./components/shared";
 import { DecisionCard } from "./components/DecisionCard";
 import { track } from "@/lib/analytics";
 import { PreMovie } from "./components/PreMovie";
@@ -443,6 +443,11 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
               <div style={{ marginTop: 0 }}>
                 <div style={{ height: 1, background: "linear-gradient(to right, transparent, var(--rule) 30%, var(--rule) 70%, transparent)", margin: "24px 0 20px" }} />
                 <DecisionCard verdict={verdictContent} loading={verdictLoading} error={verdictError} />
+                {amcSlug && data && (
+                  <div style={{ marginTop: 16 }}>
+                    <TicketCTA amcSlug={amcSlug} movie={data.title} position="hero" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -509,6 +514,21 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
         </div>
       )}
 
+      {/* ── Mobile Sticky CTA ── */}
+      {amcSlug && data && (
+        <div className="sticky-cta">
+          <a
+            href={buildAmcUrl(amcSlug, { movie: data.title, position: "sticky", source: "detail" })}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("affiliate_link_click", { movie: data.title, position: "sticky", platform: "amc" })}
+          >
+            <span className="sticky-cta-logo">AMC</span>
+            <span className="sticky-cta-text">查看场次 & 购票</span>
+            <span className="sticky-cta-arrow">→</span>
+          </a>
+        </div>
+      )}
     </main>
   );
 }

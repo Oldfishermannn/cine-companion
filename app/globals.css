@@ -2271,6 +2271,16 @@ body::after {
   background: rgba(235,227,208,0.04);
   border: 1px solid rgba(235,227,208,0.08);
 }
+.source-badge.official {
+  color: rgba(136,178,142,0.8);
+  background: rgba(136,178,142,0.08);
+  border: 1px solid rgba(136,178,142,0.15);
+}
+.source-badge.editorial {
+  color: rgba(232,182,97,0.55);
+  background: rgba(232,182,97,0.05);
+  border: 1px solid rgba(232,182,97,0.1);
+}
 
 /* ── AMC inline module ── */
 .amc-module {
@@ -2354,21 +2364,57 @@ body::after {
   border-color: rgba(217,79,42,0.35);
 }
 
-/* ── Sticky CTA (always fixed at bottom) ── */
+/* ── Sticky CTA (mobile only, fixed bottom) ── */
 .sticky-cta {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  padding: 12px 20px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  background: rgba(8,8,12,0.95);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid var(--rule);
+  display: none;
 }
-.sticky-cta .ticket-cta {
-  margin-top: 0;
+@media (max-width: 768px) {
+  .sticky-cta {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background: rgba(8,8,12,0.92);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--rule);
+  }
+  .sticky-cta a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 20px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .sticky-cta a:active {
+    background: rgba(217,79,42,0.1);
+  }
+  .sticky-cta-logo {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--vermilion);
+    border: 1px solid var(--vermilion);
+    padding: 2px 6px;
+    opacity: 0.85;
+  }
+  .sticky-cta-text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.82rem;
+    color: var(--cream);
+    font-weight: 500;
+  }
+  .sticky-cta-arrow {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
 }
 
 /* ── plot summary act head ── */

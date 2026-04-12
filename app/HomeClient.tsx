@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import type { CatalogMovie } from "./catalog";
 import { useLang } from "./i18n/LangProvider";
+import { track } from "@/lib/analytics";
 export type { CatalogMovie };
 
 export type VerdictSummary = {
@@ -266,7 +267,11 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
   const router = useRouter();
   const { t, title: tTitle, genre: tGenre } = useLang();
 
-  useEffect(() => { setWatchlist(loadWatchlist()); }, []);
+  useEffect(() => {
+    setWatchlist(loadWatchlist());
+    track("home_page_view", { count: catalog.length });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleWatchlist = useCallback((title: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -383,7 +388,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
               <button
                 key={tag.key}
                 className={`scene-pill ${sceneFilter === tag.key ? "active" : ""}`}
-                onClick={() => setSceneFilter(sceneFilter === tag.key ? null : tag.key)}
+                onClick={() => { track("home_filter_click", { tag: tag.key }); setSceneFilter(sceneFilter === tag.key ? null : tag.key); }}
               >
                 {tag.label}
               </button>
@@ -409,7 +414,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
               <button
                 key={mode}
                 className={`sort-btn ${sortMode === mode ? "active" : ""}`}
-                onClick={() => setSortMode(mode)}
+                onClick={() => { track("home_sort_click", { mode }); setSortMode(mode); }}
               >
                 {t(labelKey)}
               </button>
@@ -539,6 +544,7 @@ function PosterCard({ movie, index, catalogReleased, inWatchlist, onToggleWatchl
       href={href}
       prefetch={true}
       className="poster-card poster-enter"
+      onClick={() => track("home_card_click", { movie: movie.title, position: index })}
       style={{
         "--r": "0deg",
         animationDelay: `${Math.min(index % 20, 15) * 40}ms`,
