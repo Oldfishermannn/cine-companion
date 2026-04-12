@@ -397,8 +397,6 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                     if (genreVal) rows.push({ label: "Genre", value: genreVal });
                     const runtimeVal = lang === "en" ? (data.runtime || "") : zhRuntime(data.runtime);
                     if (runtimeVal) rows.push({ label: "Runtime", value: runtimeVal });
-                    if (data.director) rows.push({ label: "Director", value: data.director });
-                    if (data.actors) rows.push({ label: "Cast", value: data.actors.split(", ").slice(0, 3).join(" · ") });
                     return rows.map((r, i) => (
                       <div key={i} className="stat-row">
                         <span className="stat-label">{r.label}</span>
@@ -406,6 +404,21 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                         <span className="stat-value">{r.value}</span>
                       </div>
                     ));
+                  })()}
+                  {(() => {
+                    const synopsis = verdictContent?.one_line_summary || data.zhPlot || data.plot || "";
+                    if (!synopsis) return null;
+                    const text = synopsis.length > 80 ? synopsis.slice(0, 80) + "…" : synopsis;
+                    return (
+                      <p style={{
+                        marginTop: 10,
+                        fontSize: "0.78rem",
+                        lineHeight: 1.65,
+                        color: "rgba(235,227,208,0.6)",
+                        fontFamily: "var(--font-body), sans-serif",
+                        letterSpacing: "0.01em",
+                      }}>{text}</p>
+                    );
                   })()}
                 </div>
               </div>
