@@ -75,6 +75,21 @@ export interface PostContent {
   spoiler_fun_facts: Array<{ fact: string; category: string }>;
 }
 
+export interface VerdictContent {
+  one_line_verdict: string;
+  good_for: string[];
+  not_good_for: string[];
+  prior_knowledge: "none" | "low" | "medium" | "high";
+  pacing: "slow" | "mixed" | "fast";
+  english_difficulty: "low" | "medium" | "high";
+  english_note: string;
+  theatrical_need: "low" | "medium" | "high";
+  recommendation_score: number;
+  has_credits_scene: boolean;
+  credits_detail: string;
+  one_line_summary: string;
+}
+
 export interface PersonalRating { imdbId: string; scores: number[]; timestamp: number; }
 
 export const GENRE_ZH: Record<string, string> = {

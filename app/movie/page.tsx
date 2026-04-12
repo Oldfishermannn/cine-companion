@@ -1,7 +1,7 @@
 import { readCache } from "@/lib/cache";
 import { lookupImdbId } from "@/lib/baked-index";
 import MovieDetailClient, { type InitialMovieData } from "./MovieDetailClient";
-import type { MovieData, AiContent, PostContent, FunFacts, BreaksContent, LiveRatings } from "./types";
+import type { MovieData, AiContent, PostContent, FunFacts, BreaksContent, LiveRatings, VerdictContent } from "./types";
 
 /**
  * /movie?q=Title — Server Component
@@ -35,6 +35,7 @@ export default async function MoviePage({
     facts: null,
     breaks: null,
     ratings: null,
+    verdict: null,
   };
 
   // Resolve title → imdbId from baked.json. Catalog movies always hit.
@@ -44,20 +45,22 @@ export default async function MoviePage({
     // Parallel cache reads — each is a synchronous Map.get under the hood
     // (lib/cache reads baked.json at module load), so this resolves in
     // microseconds. No HTTP, no waterfall.
-    const [meta, ai, post, facts, breaks, ratings] = await Promise.all([
+    const [meta, ai, post, facts, breaks, ratings, verdict] = await Promise.all([
       readCache(`${id}_meta`),
       readCache(id),                  // movie-ai response
       readCache(`${id}_post`),
       readCache(`${id}_facts`),
       readCache(`${id}_breaks`),
       readCache(`${id}_ratings`),
+      readCache(`${id}_verdict`),
     ]);
-    initialData.meta    = (meta    as MovieData    | null) ?? null;
-    initialData.ai      = (ai      as AiContent    | null) ?? null;
-    initialData.post    = (post    as PostContent  | null) ?? null;
-    initialData.facts   = (facts   as FunFacts     | null) ?? null;
-    initialData.breaks  = (breaks  as BreaksContent | null) ?? null;
-    initialData.ratings = (ratings as LiveRatings  | null) ?? null;
+    initialData.meta    = (meta    as MovieData       | null) ?? null;
+    initialData.ai      = (ai      as AiContent       | null) ?? null;
+    initialData.post    = (post    as PostContent     | null) ?? null;
+    initialData.facts   = (facts   as FunFacts        | null) ?? null;
+    initialData.breaks  = (breaks  as BreaksContent   | null) ?? null;
+    initialData.ratings = (ratings as LiveRatings     | null) ?? null;
+    initialData.verdict = (verdict as VerdictContent  | null) ?? null;
   }
 
   return (

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostContent } from "./types";
+import type { MovieData, AiContent, LiveRatings, FunFacts, BreaksContent, PostContent, VerdictContent } from "./types";
 import { TITLE_ZH } from "./types";
 import { zhGenre, zhRuntime, zhReleased, saveHistory, loadRating } from "./utils";
 import { Divider } from "./components/shared";
@@ -44,6 +44,7 @@ export type InitialMovieData = {
   facts: FunFacts | null;
   breaks: BreaksContent | null;
   ratings: LiveRatings | null;
+  verdict: VerdictContent | null;
 };
 
 interface Props {
@@ -77,6 +78,8 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
   const [postLoading, setPostLoading] = useState(false);
   const [postFromCache, setPostFromCache] = useState(!!initialData.post);
   const [postUnlocked, setPostUnlocked] = useState(false);
+  const [verdictContent, setVerdictContent] = useState<VerdictContent | null>(initialData.verdict);
+  const [verdictLoading, setVerdictLoading] = useState(false);
   const [personalScores, setPersonalScores] = useState<number[]>([0, 0, 0, 0, 0]);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
   const [castMembers, setCastMembers] = useState<Array<{ name: string; role: string; character?: string; photo: string | null; imdbUrl: string | null }>>([]);
@@ -214,6 +217,15 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
           .then(b => { if (!b.error) setBreaksContent(b); else setBreaksError(true); })
           .catch(() => setBreaksError(true))
           .finally(() => setBreaksLoading(false));
+
+        // Stage 6: Verdict / Decision Card
+        setVerdictLoading(true);
+        const verdictParams = new URLSearchParams({ id: d.id, title: d.title, year: d.year || "", genre: d.genre || "", plot: d.plot || "", director: d.director || "", actors: d.actors || "", runtime: d.runtime || "" });
+        fetchRetry(`/api/movie-verdict?${verdictParams}`)
+          .then(r => r.json())
+          .then(v => { if (!v.error) setVerdictContent(v); })
+          .catch(() => {})
+          .finally(() => setVerdictLoading(false));
       })
       .catch(() => { setError("__network__"); setLoading(false); });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -477,6 +489,8 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
                   setMovieStartTime={setMovieStartTime}
                   includeTrailers={includeTrailers}
                   setIncludeTrailers={setIncludeTrailers}
+                  verdictContent={verdictContent}
+                  verdictLoading={verdictLoading}
                 />
               )}
 

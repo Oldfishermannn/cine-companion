@@ -2,9 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
+import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem, VerdictContent } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
 import { RatingBlock, VocabCard, SectionLabel, ErrorBanner } from "./shared";
+import { DecisionCard } from "./DecisionCard";
 import { useLang } from "../../i18n/LangProvider";
 
 interface CastMember {
@@ -37,6 +38,8 @@ interface PreMovieProps {
   setMovieStartTime: (v: string) => void;
   includeTrailers: boolean;
   setIncludeTrailers: (v: boolean | ((prev: boolean) => boolean)) => void;
+  verdictContent: VerdictContent | null;
+  verdictLoading: boolean;
 }
 
 /* ── Fact category icons ── */
@@ -50,6 +53,7 @@ export function PreMovie({
   liveRatings, funFacts, factsLoading, factsFromCache, factsError,
   breaksContent, breaksLoading, breaksError,
   movieStartTime, setMovieStartTime, includeTrailers, setIncludeTrailers,
+  verdictContent, verdictLoading,
 }: PreMovieProps) {
   const { t } = useLang();
   const [spoilerUnlocked, setSpoilerUnlocked] = useState(false);
@@ -73,6 +77,13 @@ export function PreMovie({
 
   return (
     <>
+      {/* ── Decision Card ── */}
+      {(verdictContent || verdictLoading) && (
+        <section style={{ marginBottom: 24 }}>
+          <DecisionCard verdict={verdictContent} loading={verdictLoading} />
+        </section>
+      )}
+
       {/* ── Ratings ── */}
       <section>
         <SectionLabel>{t("pre.ratings")}</SectionLabel>

@@ -112,6 +112,10 @@ async function warmOne({ title, zh, year }) {
       key: `${id}_ratings`,
       url: `/api/ratings?${new URLSearchParams({ title: resolvedTitle, year: resolvedYear || "", imdbId: id })}`,
     },
+    {
+      key: `${id}_verdict`,
+      url: `/api/movie-verdict?${new URLSearchParams({ id, title: resolvedTitle, year: resolvedYear || "", genre: genre || "", plot: plot || "", director: director || "", actors: actors || "", runtime: runtime || "" })}`,
+    },
   ];
 
   let warmed = 0;
