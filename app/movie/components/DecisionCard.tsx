@@ -46,7 +46,7 @@ export function DecisionCard({ verdict, loading, error }: { verdict: VerdictCont
   const score      = verdict.recommendation_score;
   const scorePct   = `${(score / 10) * 100}%`;
   const scoreColor = score >= 7 ? "var(--amber)" : score >= 5 ? "var(--cream)" : "var(--muted)";
-  const scoreDesc  = score >= 8 ? "强烈推荐" : score >= 6 ? "值得一看" : "谨慎考虑";
+  const scoreDesc  = score >= 8 ? "强烈推荐" : score >= 7 ? "值得一看" : score >= 6 ? "可以考虑" : "流媒体即可";
 
   const stats = [
     { label: "前置知识", value: KNOWLEDGE_ZH[verdict.prior_knowledge]      || verdict.prior_knowledge,      pct: LEVEL_PCT[verdict.prior_knowledge] ?? 0 },
