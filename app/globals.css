@@ -2169,15 +2169,39 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   Pre-Movie layout
+   ═══════════════════════════════════════════════════════════ */
+.pre-movie {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.pre-section {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.pre-section:last-child {
+  border-bottom: none;
+}
+.pre-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
    Collapsible Layer (Phase 2 accordion sections)
    ═══════════════════════════════════════════════════════════ */
 .collapsible-layer {
   border-top: 1px solid var(--rule);
-  margin-top: 8px;
+  margin-top: 0;
 }
 .collapsible-layer:first-child {
   border-top: none;
-  margin-top: 0;
 }
 
 .layer-header {
@@ -2225,10 +2249,7 @@ body::after {
 }
 
 .layer-body {
-  padding: 0 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
+  padding: 0 0 20px;
 }
 
 /* ── Source Badge ── */

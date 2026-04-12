@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { MovieData, AiContent, LiveRatings, FunFacts, FunFactItem, BreaksContent, VocabItem } from "../types";
 import { CATEGORY_ORDER, CATEGORY_STYLES } from "../types";
-import { RatingBlock, VocabCard, SectionLabel, ErrorBanner, CollapsibleLayer, SourceBadge, TicketCTA } from "./shared";
+import { RatingBlock, VocabCard, ErrorBanner, CollapsibleLayer, SourceBadge } from "./shared";
 import { track } from "@/lib/analytics";
 import { useLang } from "../../i18n/LangProvider";
 
@@ -40,11 +40,16 @@ interface PreMovieProps {
   setIncludeTrailers: (v: boolean | ((prev: boolean) => boolean)) => void;
 }
 
-/* ── Fact category icons ── */
 const FACT_ICON: Record<string, string> = {
   "制作花絮": "🎥", "幕后秘闻": "🔍", "选角故事": "🌟",
   "原著改编": "📖", "技术亮点": "⚡", "导演风格": "🎬",
 };
+
+function PreLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="pre-label">{children}</p>
+  );
+}
 
 export function PreMovie({
   data, amcSlug, castMembers, trailerUrl, aiContent, aiLoading, aiFromCache, aiError,
@@ -54,142 +59,122 @@ export function PreMovie({
 }: PreMovieProps) {
   const { t } = useLang();
 
-  // Merge OMDb + live data
   const imdbScore = data.ratings.imdb
     ? `${data.ratings.imdb}/10`
     : (liveRatings?.imdb?.score ? `${liveRatings.imdb.score}/10` : null);
-  const rtScore = data.ratings.rt
-    ?? liveRatings?.rt?.tomatometer
-    ?? null;
+  const rtScore = data.ratings.rt ?? liveRatings?.rt?.tomatometer ?? null;
   const mcRaw = data.ratings.metacritic ?? liveRatings?.mc?.metascore;
   const mcNum = mcRaw !== undefined && mcRaw !== null ? parseInt(String(mcRaw), 10) : NaN;
   const mcScore = !isNaN(mcNum) && mcNum >= 1 && mcNum <= 100 ? `${mcNum}/100` : null;
-  const rtUrl  = liveRatings?.rt?.url ?? `https://www.rottentomatoes.com/search?search=${encodeURIComponent(data.title)}`;
-  const mcUrl  = liveRatings?.mc?.url ?? `https://www.metacritic.com/search/${encodeURIComponent(data.title)}/`;
+  const rtUrl = liveRatings?.rt?.url ?? `https://www.rottentomatoes.com/search?search=${encodeURIComponent(data.title)}`;
+  const mcUrl = liveRatings?.mc?.url ?? `https://www.metacritic.com/search/${encodeURIComponent(data.title)}/`;
   const ratingsLoading = liveRatings === null;
   const allEmpty = !imdbScore && !rtScore && !mcScore && !liveRatings?.douban?.score;
-
   const amcUrl = amcSlug ? `https://www.amctheatres.com/movies/${amcSlug}` : null;
-
   const vocabCount = aiContent ? aiContent.vocabulary.length : 0;
   const factsCount = funFacts ? funFacts.fun_facts.length : 0;
 
   return (
-    <>
-      {/* ═══════════════════════════════════════════════════════════════
-          Layer 1 — Ratings + Trailer + Break Times + Ticket CTA (flat)
-          ═══════════════════════════════════════════════════════════════ */}
-      <div>
+    <div className="pre-movie">
 
-        {/* Ratings */}
-        <section>
-          <SectionLabel>{t("pre.ratings")}</SectionLabel>
-          <div className="ed-ratings">
-            {ratingsLoading ? (
-              [0,1,2,3].map(i => (
-                <div key={i} className="rating-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                  <div className="skeleton" style={{ width: 44, height: 20 }} />
-                  <div className="skeleton" style={{ width: 32, height: 10 }} />
-                </div>
-              ))
-            ) : (
-              <>
-                {[
-                  { value: imdbScore,  label: "IMDb",             href: `https://www.imdb.com/title/${data.id}/` },
-                  { value: rtScore,    label: t("pre.rtLabel"),    href: rtUrl },
-                  { value: mcScore,    label: "Metacritic",       href: mcUrl },
-                  { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
-                ].filter(r => r.value).map((r) => (
-                  <div key={r.label} className="rating-item">
-                    <RatingBlock value={r.value} label={r.label} href={r.href} />
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-          {!ratingsLoading && allEmpty && (
-            <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
-              {t("pre.ratingsEmpty")}
-            </p>
-          )}
-        </section>
-
-        {/* Trailer */}
-        <section>
-          <SectionLabel>{t("pre.trailer")}</SectionLabel>
-          {trailerUrl ? (
-            <div className="trailer-frame">
-              <iframe
-                src={trailerUrl}
-                title="Trailer"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+      {/* ── 评分 ── */}
+      <div className="pre-section">
+        <PreLabel>{t("pre.ratings")}</PreLabel>
+        <div className="ed-ratings">
+          {ratingsLoading ? (
+            [0,1,2,3].map(i => (
+              <div key={i} className="rating-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div className="skeleton" style={{ width: 44, height: 20 }} />
+                <div className="skeleton" style={{ width: 32, height: 10 }} />
+              </div>
+            ))
           ) : (
-            <div className="trailer-frame">
-              <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
-              <div className="trailer-placeholder">
-                <div className="icon">▶</div>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Cast — below trailer */}
-        {castMembers.length > 0 && (
-          <CastSection castMembers={castMembers} />
-        )}
-
-        {/* AMC 购票模块 */}
-        {amcUrl && (
-          <section>
-            <SectionLabel>购票 · AMC</SectionLabel>
-            <a
-              href={amcUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="amc-module"
-              onClick={() => track("cta_click", { title: data.title, location: "inline" })}
-            >
-              <div className="amc-module-left">
-                <span className="amc-module-logo">AMC</span>
-                <div>
-                  <p className="amc-module-title">{data.title}</p>
-                  <p className="amc-module-sub">查看场次 & 购票</p>
+            <>
+              {[
+                { value: imdbScore,  label: "IMDb",          href: `https://www.imdb.com/title/${data.id}/` },
+                { value: rtScore,    label: t("pre.rtLabel"), href: rtUrl },
+                { value: mcScore,    label: "Metacritic",    href: mcUrl },
+                { value: liveRatings?.douban?.score ? `${liveRatings.douban.score}/10` : null, label: t("pre.doubanLabel"), href: liveRatings?.douban?.url ?? undefined },
+              ].filter(r => r.value).map(r => (
+                <div key={r.label} className="rating-item">
+                  <RatingBlock value={r.value} label={r.label} href={r.href} />
                 </div>
-              </div>
-              <span className="amc-module-arrow">→</span>
-            </a>
-          </section>
+              ))}
+            </>
+          )}
+        </div>
+        {!ratingsLoading && allEmpty && (
+          <p style={{ color: "var(--muted)", fontSize: "0.72rem", textAlign: "center", marginTop: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono), monospace" }}>
+            {t("pre.ratingsEmpty")}
+          </p>
         )}
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          Layer 2 — 观影前补课 (default collapsed)
-          Background + Vocabulary
-          ═══════════════════════════════════════════════════════════════ */}
+      {/* ── 预告片 ── */}
+      <div className="pre-section">
+        <PreLabel>{t("pre.trailer")}</PreLabel>
+        {trailerUrl ? (
+          <div className="trailer-frame">
+            <iframe
+              src={trailerUrl}
+              title="Trailer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : (
+          <div className="trailer-frame">
+            <div className="skeleton" style={{ position: "absolute", inset: 0 }} />
+            <div className="trailer-placeholder"><div className="icon">▶</div></div>
+          </div>
+        )}
+      </div>
+
+      {/* ── 演职表 ── */}
+      {castMembers.length > 0 && (
+        <div className="pre-section">
+          <PreLabel>{t("pre.cast")}</PreLabel>
+          <CastSection castMembers={castMembers} />
+        </div>
+      )}
+
+      {/* ── AMC 购票 ── */}
+      {amcUrl && (
+        <div className="pre-section">
+          <a
+            href={amcUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="amc-module"
+            onClick={() => track("cta_click", { title: data.title, location: "inline" })}
+          >
+            <div className="amc-module-left">
+              <span className="amc-module-logo">AMC</span>
+              <div>
+                <p className="amc-module-title">{data.title}</p>
+                <p className="amc-module-sub">查看场次 & 购票</p>
+              </div>
+            </div>
+            <span className="amc-module-arrow">→</span>
+          </a>
+        </div>
+      )}
+
+      {/* ── 关键词汇 (collapsible) ── */}
       <CollapsibleLayer
         title="关键词汇"
         onExpand={() => track("layer_expand", { layer: "关键词汇", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
-            {vocabCount > 0 && (
-              <span className="layer-count">{vocabCount} 词</span>
-            )}
+            {vocabCount > 0 && <span className="layer-count">{vocabCount} 词</span>}
           </span>
         }
       >
-        {/* Vocabulary */}
-        <section>
-          <SectionLabel>
-            {t("pre.vocabulary")}
-          </SectionLabel>
-          <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16, marginTop: -8, fontFamily: "var(--font-mono), monospace" }}>
+        <div className="pre-section" style={{ paddingTop: 0 }}>
+          <p style={{ color: "var(--muted)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16, fontFamily: "var(--font-mono), monospace" }}>
             {t("pre.vocabHint")}
           </p>
-
           {aiLoading ? (
             <div className="vocab-grid">
               {[...Array(8)].map((_, i) => (
@@ -227,7 +212,7 @@ export function PreMovie({
                         <span className="count">{groups[cat].length.toString().padStart(2, "0")}</span>
                       </div>
                       <div className="vocab-grid">
-                        {groups[cat].map((item) => {
+                        {groups[cat].map(item => {
                           const idx = globalIdx++;
                           return <VocabCard key={idx} item={item} index={idx} />;
                         })}
@@ -238,60 +223,44 @@ export function PreMovie({
               })()}
             </div>
           ) : null}
-        </section>
+        </div>
       </CollapsibleLayer>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          Layer 3 — 延伸阅读 (default collapsed)
-          Trailer + Cast + Fun Facts
-          ═══════════════════════════════════════════════════════════════ */}
+      {/* ── 幕后花絮 (collapsible) ── */}
       <CollapsibleLayer
-        title="延伸阅读"
-        onExpand={() => track("layer_expand", { layer: "延伸阅读", title: data.title })}
+        title="幕后花絮"
+        onExpand={() => track("layer_expand", { layer: "幕后花絮", title: data.title })}
         badge={
           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <SourceBadge type="ai" />
-            {factsCount > 0 && (
-              <span className="layer-count">{factsCount} 条冷知识</span>
-            )}
+            {factsCount > 0 && <span className="layer-count">{factsCount} 条冷知识</span>}
           </span>
         }
       >
-        {/* Fun Facts */}
-        <section>
-          <SectionLabel>
-            {t("pre.funFacts")}
-            <span className="ed-tag ghost" style={{ marginLeft: 10 }}>{t("pre.zeroSpoiler")}</span>
-          </SectionLabel>
-
+        <div className="pre-section" style={{ paddingTop: 0 }}>
           {factsLoading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="skeleton" style={{ height: 68 }} />
-              ))}
+              {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 68 }} />)}
             </div>
           ) : factsError ? (
             <ErrorBanner message={t("pre.factsError")} />
           ) : funFacts ? (
             <CollapsibleFacts facts={funFacts.fun_facts} />
           ) : null}
-        </section>
+        </div>
       </CollapsibleLayer>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          Break Calculator — collapsible, bottom of page
-          ═══════════════════════════════════════════════════════════════ */}
+      {/* ── 厕所时间 (collapsible) ── */}
       {(breaksLoading || breaksError || breaksContent) && (
         <CollapsibleLayer
           title={t("pre.breaks")}
           onExpand={() => track("layer_expand", { layer: "breaks", title: data.title })}
           badge={<SourceBadge type="inferred" />}
         >
-          <section>
-            <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, marginTop: 0, fontFamily: "var(--font-body), sans-serif" }}>
+          <div className="pre-section" style={{ paddingTop: 0 }}>
+            <p style={{ color: "var(--muted)", fontSize: "0.82rem", lineHeight: 1.7, marginBottom: 18, fontFamily: "var(--font-body), sans-serif" }}>
               {t("pre.breaksHint")}
             </p>
-
             {breaksContent && (
               <div className={`showtime-box${movieStartTime ? " filled" : ""}`}>
                 <label className="showtime-main" htmlFor="showtime-input">
@@ -318,7 +287,6 @@ export function PreMovie({
                 </button>
               </div>
             )}
-
             {breaksLoading ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: 92 }} />)}
@@ -372,24 +340,18 @@ export function PreMovie({
                 })}
               </div>
             ) : null}
-          </section>
+          </div>
         </CollapsibleLayer>
       )}
-    </>
+    </div>
   );
 }
 
-/* ── Collapsible Fun Facts ── */
+/* ── Fun Facts (all at once) ── */
 function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
-  const { t } = useLang();
-  const [expanded, setExpanded] = useState(false);
-  const LIMIT = 4;
-  const visible = expanded ? facts : facts.slice(0, LIMIT);
-  const hasMore = facts.length > LIMIT;
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {visible.map((item, i) => {
+      {facts.map((item, i) => {
         const icon = FACT_ICON[item.category] ?? "🎬";
         return (
           <div
@@ -405,15 +367,6 @@ function CollapsibleFacts({ facts }: { facts: FunFactItem[] }) {
           </div>
         );
       })}
-      {hasMore && !expanded && (
-        <button
-          className="ed-btn ghost"
-          onClick={() => setExpanded(true)}
-          style={{ marginTop: 4 }}
-        >
-          ▾ {t("pre.expandMore", { n: facts.length - LIMIT })}
-        </button>
-      )}
     </div>
   );
 }
@@ -427,54 +380,49 @@ function CastSection({ castMembers }: { castMembers: CastMember[] }) {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const check = () => {
-      setShowFade(el.scrollWidth - el.scrollLeft - el.clientWidth > 10);
-    };
+    const check = () => setShowFade(el.scrollWidth - el.scrollLeft - el.clientWidth > 10);
     check();
     el.addEventListener("scroll", check, { passive: true });
     return () => el.removeEventListener("scroll", check);
   }, [castMembers]);
 
   return (
-    <section>
-      <SectionLabel>{t("pre.cast")}</SectionLabel>
-      <div style={{ position: "relative" }}>
-        <div ref={scrollRef} style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
-          {castMembers.map((m, i) => (
-            <a
-              key={i}
-              href={m.imdbUrl ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ flexShrink: 0, width: 104, textDecoration: "none" }}
-            >
-              <div className={`cast-frame${m.role === "director" ? " director" : ""}`}>
-                {m.photo ? (
-                  <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="104px" />
-                ) : (
-                  <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                    <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
-                    <span style={{ color: "var(--muted)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.08em" }}>{m.name}</span>
-                  </div>
-                )}
-                <div className="cast-caption">
-                  <p className="name">{m.name}</p>
-                  <p className="role">
-                    {m.role === "director" ? t("pre.roleDirector") : m.character || t("pre.roleActor")}
-                  </p>
+    <div style={{ position: "relative" }}>
+      <div ref={scrollRef} style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+        {castMembers.map((m, i) => (
+          <a
+            key={i}
+            href={m.imdbUrl ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ flexShrink: 0, width: 104, textDecoration: "none" }}
+          >
+            <div className={`cast-frame${m.role === "director" ? " director" : ""}`}>
+              {m.photo ? (
+                <Image src={m.photo} alt={m.name} fill style={{ objectFit: "cover" }} sizes="104px" />
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                  <span style={{ fontSize: "1.6rem", opacity: 0.3 }}>{m.role === "director" ? "🎬" : "👤"}</span>
+                  <span style={{ color: "var(--muted)", fontSize: "0.58rem", textAlign: "center", padding: "0 6px", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.08em" }}>{m.name}</span>
                 </div>
+              )}
+              <div className="cast-caption">
+                <p className="name">{m.name}</p>
+                <p className="role">
+                  {m.role === "director" ? t("pre.roleDirector") : m.character || t("pre.roleActor")}
+                </p>
               </div>
-            </a>
-          ))}
-        </div>
-        {showFade && (
-          <div style={{
-            position: "absolute", top: 0, right: 0, bottom: 8, width: 40,
-            background: "linear-gradient(to left, var(--ink) 0%, transparent 100%)",
-            pointerEvents: "none",
-          }} />
-        )}
+            </div>
+          </a>
+        ))}
       </div>
-    </section>
+      {showFade && (
+        <div style={{
+          position: "absolute", top: 0, right: 0, bottom: 8, width: 40,
+          background: "linear-gradient(to left, var(--ink) 0%, transparent 100%)",
+          pointerEvents: "none",
+        }} />
+      )}
+    </div>
   );
 }
