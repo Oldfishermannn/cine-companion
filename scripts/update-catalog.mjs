@@ -58,16 +58,20 @@ function parseCatalog(content) {
   const body = bodyMatch[1];
 
   const items = [];
-  // imdbScore trailing field is optional (either `number` or `null`) so old
-  // or manually-edited entries without a score still parse correctly.
+  // imdbScore and posterUrl trailing fields are both optional — tolerates
+  // old entries without a score / poster and future additions.
   const linePattern =
-    /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*zh:\s*"((?:[^"\\]|\\.)*)",\s*year:\s*"([^"]+)",\s*released:\s*"([^"]+)",\s*genre:\s*"([^"]+)",\s*amc:\s*"([^"]+)",\s*rank:\s*(\d+)(?:,\s*imdbScore:\s*(null|-?\d+(?:\.\d+)?))?\s*\}/g;
+    /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*zh:\s*"((?:[^"\\]|\\.)*)",\s*year:\s*"([^"]+)",\s*released:\s*"([^"]+)",\s*genre:\s*"([^"]+)",\s*amc:\s*"([^"]+)",\s*rank:\s*(\d+)(?:,\s*imdbScore:\s*(null|-?\d+(?:\.\d+)?))?(?:,\s*posterUrl:\s*(null|"(?:[^"\\]|\\.)*"))?\s*\}/g;
 
   for (const m of body.matchAll(linePattern)) {
     const imdbRaw = m[8];
+    const posterRaw = m[9];
     const imdbScore = imdbRaw === undefined || imdbRaw === "null"
       ? null
       : parseFloat(imdbRaw);
+    const posterUrl = posterRaw === undefined || posterRaw === "null"
+      ? null
+      : posterRaw.slice(1, -1).replace(/\\"/g, '"');
     items.push({
       title: m[1].replace(/\\"/g, '"'),
       zh: m[2].replace(/\\"/g, '"'),
@@ -77,6 +81,7 @@ function parseCatalog(content) {
       amc: m[6],
       rank: parseInt(m[7], 10),
       imdbScore,
+      posterUrl,
     });
   }
   if (items.length === 0) {
@@ -192,26 +197,44 @@ async function fetchOmdbGenre(title) {
 }
 
 // ── Claude Haiku: generate Chinese name ────────────────────────────────────
+// Fallback to the original English title when Haiku can't produce a clean
+// Chinese name — previously, refusal text like "我无法找到..." leaked into
+// the catalog.
 async function generateZhName(client, title) {
   try {
     const r = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 80,
+      max_tokens: 40,
       messages: [
         {
           role: "user",
-          content: `给电影《${title}》一个地道的中文译名。优先使用豆瓣/维基百科的官方译名；如果是续集，参照前作译名格式；没有官方译名则自然翻译。只返回译名本身，不要任何解释、标点或引号包裹。`,
+          content: `任务：为电影《${title}》生成一个中文译名，最多 12 个汉字。
+规则：
+1. 优先豆瓣/维基的官方译名；续集参照前作格式
+2. 冷门片用自然音译或字面翻译
+3. 只输出译名本身，禁止任何解释、道歉、标点包裹、英文
+4. 若无法判断，直接输出原英文标题（如 "Busboys"），不要解释
+示例：
+Oppenheimer → 奥本海默
+The Brutalist → 粗野派
+Busboys → Busboys`,
         },
       ],
     });
     const first = r.content[0];
     if (first.type !== "text") return title;
-    return first.text
+    const cleaned = first.text
       .trim()
       .replace(/^[《"'「『]/, "")
       .replace(/[》"'」』]$/, "")
       .split("\n")[0]
-      .trim() || title;
+      .trim();
+
+    // Reject refusal / explanation text — fall back to English title
+    if (!cleaned) return title;
+    if (cleaned.length > 30) return title;
+    if (/无法|我需要|我查询|没有找到|不确定|可能是|抱歉/.test(cleaned)) return title;
+    return cleaned;
   } catch (e) {
     console.error(`[update-catalog] Claude error for "${title}":`, e.message);
     return title;
@@ -260,6 +283,7 @@ function writeCatalog(movies, scrapedAt) {
     // Keep at most one decimal — matches IMDb display format
     return Number.isInteger(s) ? `${s}.0` : String(s);
   };
+  const fmtPoster = (p) => (p ? JSON.stringify(p) : "null");
 
   const lines = movies.map((m) => {
     const t = pad(JSON.stringify(m.title) + ",", maxTitle + 1);
@@ -269,7 +293,7 @@ function writeCatalog(movies, scrapedAt) {
     const g = pad(JSON.stringify(m.genre) + ",", maxGenre + 1);
     const a = pad(JSON.stringify(m.amc) + ",", maxAmc + 1);
     const rk = padLeft(String(m.rank), maxRank) + ",";
-    return `  { title: ${t} zh: ${z} year: ${y} released: ${r} genre: ${g} amc: ${a} rank: ${rk} imdbScore: ${fmtScore(m.imdbScore)} },`;
+    return `  { title: ${t} zh: ${z} year: ${y} released: ${r} genre: ${g} amc: ${a} rank: ${rk} imdbScore: ${fmtScore(m.imdbScore)}, posterUrl: ${fmtPoster(m.posterUrl)} },`;
   });
 
   const content = `export interface CatalogMovie {
@@ -283,6 +307,10 @@ function writeCatalog(movies, scrapedAt) {
   /** Baked IMDb rating — precomputed so homepage sorts with zero network cost.
    *  Refresh via /update-amc (runs IMDb scrape for every title and rewrites this field). */
   imdbScore: number | null;
+  /** Baked poster URL (OMDb / IMDb, already upscaled to _V1_QL90_UX1200_.jpg).
+   *  Precomputed so the homepage + editor slate paint posters with zero network cost.
+   *  Refresh via \`npm run bake-posters\` (standalone) or \`/update-amc\` (for new movies). */
+  posterUrl: string | null;
 }
 
 // 数据来源：amctheatres.com/movies CDP 实时抓取，${scrapedAt}
@@ -384,6 +412,7 @@ async function main() {
         amc: s.slug,
         rank: 0, // filled below
         imdbScore,
+        posterUrl: null, // filled later by bake-posters --skip-existing
       });
       console.error(`  → zh="${zh}" genre="${genre}" imdbScore=${imdbScore ?? "null"}`);
     }
