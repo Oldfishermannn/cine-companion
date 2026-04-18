@@ -27,6 +27,11 @@ const ROOT       = path.resolve(__dirname, "..");
 const BAKED_PATH = path.join(ROOT, "app/generated/baked.json");
 const BASE_URL   = process.env.BASE_URL || "http://localhost:3000";
 const FORCE      = process.env.FORCE === "1";
+// Gemini free tier + AI SDK internal retries can burst past 15 RPM, so throttle
+// conservatively. 12s between AI calls keeps us at ≤5 RPM even if SDK retries.
+// Override via THROTTLE_MS=0 when switching to paid tier / another provider.
+const THROTTLE_MS = parseInt(process.env.THROTTLE_MS ?? "12000", 10);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ── Logging ─────────────────────────────────────────────────────────────────
 const log = (...a) => console.log(`[warm-catalog]`, ...a);
@@ -58,7 +63,9 @@ try {
   const probe = await fetch(`${BASE_URL}/api/movie?q=test`, {
     signal: AbortSignal.timeout(5000),
   });
-  if (!probe.ok && probe.status !== 400) throw new Error(`status ${probe.status}`);
+  // Accept any non-5xx status — 404 "Movie not found" is a healthy response
+  // for the probe query and shouldn't abort warming.
+  if (probe.status >= 500) throw new Error(`status ${probe.status}`);
 } catch (e) {
   console.error(`[warm-catalog] dev server not reachable at ${BASE_URL} — start it with "npm run dev" first`);
   console.error(`  details: ${e.message}`);
@@ -146,18 +153,29 @@ async function warmOne({ title, zh, year }) {
   let skipped = 0;
   for (const { key, url } of endpoints) {
     if (!FORCE && baked[key]) { skipped++; continue; }
-    try {
-      const res = await fetch(`${BASE_URL}${url}`, { signal: AbortSignal.timeout(90_000) });
-      if (!res.ok) { warn(`    ${key} → HTTP ${res.status}`); continue; }
-      const body = await res.json();
-      if (body.error) { warn(`    ${key} → ${body.error}`); continue; }
-      // Strip `cached` flag added by routes so the baked record is canonical
-      delete body.cached;
-      baked[key] = body;
-      warmed++;
-    } catch (e) {
-      warn(`    ${key} → ${e.message}`);
+    // Retry once on 500 — Gemini free tier bursts above 15 RPM land as 500s.
+    let ok = false;
+    for (let attempt = 1; attempt <= 2 && !ok; attempt++) {
+      try {
+        const res = await fetch(`${BASE_URL}${url}`, { signal: AbortSignal.timeout(90_000) });
+        if (res.status >= 500) {
+          if (attempt === 1) { await sleep(90_000); continue; }
+          warn(`    ${key} → HTTP ${res.status}`); break;
+        }
+        if (!res.ok) { warn(`    ${key} → HTTP ${res.status}`); break; }
+        const body = await res.json();
+        if (body.error) { warn(`    ${key} → ${body.error}`); break; }
+        // Strip `cached` flag added by routes so the baked record is canonical
+        delete body.cached;
+        baked[key] = body;
+        warmed++;
+        ok = true;
+      } catch (e) {
+        warn(`    ${key} → ${e.message}`);
+        break;
+      }
     }
+    if (THROTTLE_MS > 0) await sleep(THROTTLE_MS);
   }
   return { warmed, skipped };
 }

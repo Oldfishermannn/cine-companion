@@ -6,7 +6,7 @@
  * Input:  /tmp/amc-movies.json (from scrape-amc.mjs)
  * Output: rewrites app/catalog.ts if changed
  *
- * Env: ANTHROPIC_API_KEY (required for zh name generation), OMDB_API_KEY (optional)
+ * Env: GEMINI_API_KEY (required for zh name generation), OMDB_API_KEY (optional)
  *
  * Exit codes:
  *   0 — success (may or may not have changes)
@@ -19,7 +19,24 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import Anthropic from "@anthropic-ai/sdk";
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
+
+// Alias GEMINI_API_KEY → GOOGLE_GENERATIVE_AI_API_KEY (what AI SDK reads)
+if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY && process.env.GEMINI_API_KEY) {
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY = process.env.GEMINI_API_KEY;
+}
+
+const GEMINI_MODEL = "gemini-2.5-flash";
+
+async function geminiText(prompt, maxTokens) {
+  const { text } = await generateText({
+    model: google(GEMINI_MODEL),
+    prompt,
+    maxOutputTokens: maxTokens,
+  });
+  return text.trim();
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CATALOG_PATH = path.resolve(__dirname, "../app/catalog.ts");
@@ -196,19 +213,14 @@ async function fetchOmdbGenre(title) {
   }
 }
 
-// ── Claude Haiku: generate Chinese name ────────────────────────────────────
-// Fallback to the original English title when Haiku can't produce a clean
+// ── Gemini: generate Chinese name ──────────────────────────────────────────
+// Fallback to the original English title when the model can't produce a clean
 // Chinese name — previously, refusal text like "我无法找到..." leaked into
 // the catalog.
-async function generateZhName(client, title) {
+async function generateZhName(title) {
   try {
-    const r = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 40,
-      messages: [
-        {
-          role: "user",
-          content: `任务：为电影《${title}》生成一个中文译名，最多 12 个汉字。
+    const text = await geminiText(
+      `任务：为电影《${title}》生成一个中文译名，最多 12 个汉字。
 规则：
 1. 优先豆瓣/维基的官方译名；续集参照前作格式
 2. 冷门片用自然音译或字面翻译
@@ -218,13 +230,9 @@ async function generateZhName(client, title) {
 Oppenheimer → 奥本海默
 The Brutalist → 粗野派
 Busboys → Busboys`,
-        },
-      ],
-    });
-    const first = r.content[0];
-    if (first.type !== "text") return title;
-    const cleaned = first.text
-      .trim()
+      40
+    );
+    const cleaned = text
       .replace(/^[《"'「『]/, "")
       .replace(/[》"'」』]$/, "")
       .split("\n")[0]
@@ -236,28 +244,19 @@ Busboys → Busboys`,
     if (/无法|我需要|我查询|没有找到|不确定|可能是|抱歉/.test(cleaned)) return title;
     return cleaned;
   } catch (e) {
-    console.error(`[update-catalog] Claude error for "${title}":`, e.message);
+    console.error(`[update-catalog] Gemini error for "${title}":`, e.message);
     return title;
   }
 }
 
-// ── Claude Haiku: infer genre from title (fallback when OMDb misses) ───────
-async function inferGenreFromTitle(client, title) {
+// ── Gemini: infer genre from title (fallback when OMDb misses) ─────────────
+async function inferGenreFromTitle(title) {
   try {
-    const r = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 20,
-      messages: [
-        {
-          role: "user",
-          content: `电影《${title}》最可能属于哪一个类型？只从这个列表选一个并只返回那两个字：动画 科幻 爱情 恐怖 喜剧 动作 惊悚 剧情 运动`,
-        },
-      ],
-    });
-    const first = r.content[0];
-    if (first.type !== "text") return "剧情";
+    const txt = await geminiText(
+      `电影《${title}》最可能属于哪一个类型？只从这个列表选一个并只返回那两个字：动画 科幻 爱情 恐怖 喜剧 动作 惊悚 剧情 运动`,
+      20
+    );
     const allowed = new Set(["动画", "科幻", "爱情", "恐怖", "喜剧", "动作", "惊悚", "剧情", "运动"]);
-    const txt = first.text.trim();
     for (const g of allowed) if (txt.includes(g)) return g;
     return "剧情";
   } catch {
@@ -315,7 +314,7 @@ function writeCatalog(movies, scrapedAt) {
 
 // 数据来源：amctheatres.com/movies CDP 实时抓取，${scrapedAt}
 // IMDb 分数：刻入本文件，首页直接按 imdbScore 本地排序，不再 mount 时并发 fetch。
-// 自动更新：launchd 每日拉取 AMC 官网，新片 zh 译名由 Claude Haiku 生成；
+// 自动更新：launchd 每日拉取 AMC 官网，新片 zh 译名由 Gemini 2.5 Flash 生成；
 //          新片的 imdbScore 从 OMDb/IMDb 实时抓取；老片 imdbScore 保持继承。
 //          rank 保持既有顺序，新片追加末尾；运行 /update-amc 可手动重排评分
 export const MOVIE_CATALOG: CatalogMovie[] = [
@@ -389,18 +388,17 @@ async function main() {
     process.exit(0);
   }
 
-  // 6. Generate zh + genre for new movies via Claude
+  // 6. Generate zh + genre for new movies via Gemini
   if (added.length > 0) {
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error(`[update-catalog] ANTHROPIC_API_KEY required to translate new movies.`);
+    if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.error(`[update-catalog] GEMINI_API_KEY required to translate new movies.`);
       process.exit(1);
     }
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     for (const s of added) {
       console.error(`[update-catalog] New movie: ${s.title}`);
-      const zh = await generateZhName(client, s.title);
+      const zh = await generateZhName(s.title);
       let genre = await fetchOmdbGenre(s.title);
-      if (!genre) genre = await inferGenreFromTitle(client, s.title);
+      if (!genre) genre = await inferGenreFromTitle(s.title);
       const imdbScore = await resolveImdbScore(s.title);
       const year = (s.date.match(/(\d{4})/) || ["2026"])[1];
       merged.push({

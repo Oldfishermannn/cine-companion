@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { jsonrepair } from "jsonrepair";
 import { readCache, writeCache } from "@/lib/cache";
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+import { generateStructured } from "@/lib/ai";
 
 function safeParseJSON(val: unknown, fallback: unknown) {
   if (typeof val !== "string") return val ?? fallback;
@@ -30,77 +28,64 @@ export async function GET(req: NextRequest) {
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
-  try {
-    const aiMsg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 2048,
-      tools: [
-        {
-          name: "movie_extras",
-          description: isEn ? "Generate behind-the-scenes fun facts and a first-act hint" : "生成电影幕后花絮和轻剧透提示",
-          input_schema: {
-            type: "object" as const,
-            properties: {
-              fun_facts: {
-                type: "array",
-                description: "5-6条幕后花絮，绝对零剧透，适合观影前阅读，每条1-2句话，不要冗长",
-                items: {
-                  type: "object",
-                  properties: {
-                    fact:     { type: "string", description: "花絮内容（中文，严格1-2句话，精炼有料）" },
-                    category: {
-                      type: "string",
-                      enum: isEn
-                        ? ["Production", "Behind the Scenes", "Casting", "Adaptation", "Technical", "Director's Style"]
-                        : ["制作花絮", "幕后秘闻", "选角故事", "原著改编", "技术亮点", "导演风格"],
-                    },
-                  },
-                  required: ["fact", "category"],
-                },
-              },
-              first_act_hint: {
-                type: "string",
-                description: "轻剧透提示：用2-3句话描述第一幕的氛围/情境，不透露关键情节，帮助观众调整心理预期",
-              },
+  const schema = {
+    type: "object",
+    properties: {
+      fun_facts: {
+        type: "array",
+        description: "5-6条幕后花絮，绝对零剧透，适合观影前阅读，每条1-2句话，不要冗长",
+        items: {
+          type: "object",
+          properties: {
+            fact:     { type: "string", description: "花絮内容（中文，严格1-2句话，精炼有料）" },
+            category: {
+              type: "string",
+              enum: isEn
+                ? ["Production", "Behind the Scenes", "Casting", "Adaptation", "Technical", "Director's Style"]
+                : ["制作花絮", "幕后秘闻", "选角故事", "原著改编", "技术亮点", "导演风格"],
             },
-            required: ["fun_facts", "first_act_hint"],
           },
+          required: ["fact", "category"],
         },
-      ],
-      tool_choice: { type: "any" },
-      messages: [
-        {
-          role: "user",
-          content: isEn
-            ? `You are an assistant helping moviegoers prepare for films. ALL output must be in English.
+      },
+      first_act_hint: {
+        type: "string",
+        description: "轻剧透提示：用2-3句话描述第一幕的氛围/情境，不透露关键情节，帮助观众调整心理预期",
+      },
+    },
+    required: ["fun_facts", "first_act_hint"],
+  };
+
+  const prompt = isEn
+    ? `You are an assistant helping moviegoers prepare for films. ALL output must be in English.
 
 Movie: ${title} (${year}), Genre: ${genre}
 Synopsis: ${plot}
 
-Call the movie_extras tool to:
+Produce a JSON object matching the schema:
 1. Generate 5-6 interesting behind-the-scenes fun facts (production, filming stories, actor preparation). Absolutely no plot spoilers. Keep each to 1-2 sentences — punchy and specific.
 2. Write a "first act hint" — let the viewer know the general vibe without spoiling key plot points.
 
 Facts should be interesting, specific, and shareable. Avoid vague evaluative language.`
-            : `你是帮助中文语境观众看英语电影的助手。
+    : `你是帮助中文语境观众看英语电影的助手。
 
 电影：${title}（${year}），类型：${genre}
 简介：${plot}
 
-请调用 movie_extras 工具，完成：
+请生成符合 schema 的 JSON，完成：
 1. 生成 5-6 条有趣的幕后花絮（制作背景、拍摄故事、演员准备等），绝对不透露任何剧情。每条限 1-2 句话，精炼有料，不废话
 2. 写一段"轻剧透提示"，让观众知道大概会看到什么氛围，但不透露关键情节
 
-注意：花絮内容要有趣、具体、适合分享，避免空泛的评价性语言`,
-        },
-      ],
+注意：花絮内容要有趣、具体、适合分享，避免空泛的评价性语言`;
+
+  try {
+    const input = await generateStructured<Record<string, unknown>>({
+      prompt,
+      schema,
+      maxTokens: 2048,
     });
 
-    const toolUse = aiMsg.content.find((b) => b.type === "tool_use");
-    if (!toolUse || toolUse.type !== "tool_use") throw new Error("AI did not call tool");
-
-    const input      = toolUse.input as Record<string, unknown>;
-    const fun_facts  = safeParseJSON(input.fun_facts, []);
+    const fun_facts      = safeParseJSON(input.fun_facts, []);
     const first_act_hint = typeof input.first_act_hint === "string" ? input.first_act_hint : "";
 
     const result = {

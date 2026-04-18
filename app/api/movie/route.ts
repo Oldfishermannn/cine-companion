@@ -1,62 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { generateSimpleText } from "@/lib/ai";
 
 const GOOGLEBOT_UA = "Googlebot/2.1 (+http://www.google.com/bot.html)";
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // 检测是否含中文字符
 function hasChinese(s: string) {
   return /[\u4e00-\u9fff]/.test(s);
 }
 
-// 中文片名 → 英文原名（用 haiku 快速翻译）
+// 中文片名 → 英文原名
 async function translateToEnglishTitle(chineseTitle: string): Promise<string> {
   try {
-    const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 60,
-      messages: [{
-        role: "user",
-        content: `电影中文名"${chineseTitle}"的英文原名是什么？只回答英文原名，不要任何解释，不要加引号。如果不确定，回答原文。`,
-      }],
+    const text = await generateSimpleText({
+      prompt: `电影中文名"${chineseTitle}"的英文原名是什么？只回答英文原名，不要任何解释，不要加引号。如果不确定，回答原文。`,
+      maxTokens: 60,
     });
-    const text = (msg.content[0] as { type: string; text: string }).text?.trim() ?? chineseTitle;
     return text.replace(/^["'「『]|["'」』]$/g, "").trim() || chineseTitle;
   } catch {
     return chineseTitle;
   }
 }
 
-// 英文剧情简介 → 中文（用 haiku）
+// 英文剧情简介 → 中文
 async function translatePlot(plot: string): Promise<string> {
   if (!plot || plot === "N/A") return "";
   try {
-    const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 200,
-      messages: [{
-        role: "user",
-        content: `把以下电影剧情简介翻译成中文，保持简洁自然，不加任何解释：\n\n${plot}`,
-      }],
+    return await generateSimpleText({
+      prompt: `把以下电影剧情简介翻译成中文，保持简洁自然，不加任何解释：\n\n${plot}`,
+      maxTokens: 200,
     });
-    return (msg.content[0] as { type: string; text: string }).text?.trim() ?? plot;
   } catch {
     return plot;
   }
 }
 
-// 英文片名 → 中文译名（用 haiku，约 1s）
+// 英文片名 → 中文译名
 async function getChineseTitle(englishTitle: string, year: string): Promise<string> {
   try {
-    const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 40,
-      messages: [{
-        role: "user",
-        content: `电影《${englishTitle}》(${year})的中文译名是什么？只回答中文译名，不要解释，不要加书名号。如没有官方译名，给出最常用的中文名。`,
-      }],
+    const text = await generateSimpleText({
+      prompt: `电影《${englishTitle}》(${year})的中文译名是什么？只回答中文译名，不要解释，不要加书名号。如没有官方译名，给出最常用的中文名。`,
+      maxTokens: 40,
     });
-    const text = (msg.content[0] as { type: string; text: string }).text?.trim() ?? "";
     return text.replace(/^[《「『]|[》」』]$/g, "").trim() || englishTitle;
   } catch {
     return englishTitle;

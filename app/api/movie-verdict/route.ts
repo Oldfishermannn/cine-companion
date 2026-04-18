@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { jsonrepair } from "jsonrepair";
 import { readCache, writeCache } from "@/lib/cache";
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+import { generateStructured } from "@/lib/ai";
 
 function safeParseJSON(val: unknown, fallback: unknown) {
   if (typeof val !== "string") return val ?? fallback;
@@ -34,92 +32,33 @@ export async function GET(req: NextRequest) {
     if (cached) return NextResponse.json({ ...(cached as Record<string, unknown>), cached: true });
   }
 
-  try {
-    const aiMsg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 2048,
-      tools: [
-        {
-          name: "movie_verdict",
-          description: isEn ? "Generate a quick decision card for English-speaking moviegoers" : "为中文语境观众生成电影快速决策卡",
-          input_schema: {
-            type: "object" as const,
-            properties: {
-              one_line_verdict: {
-                type: "string",
-                description: "一句话观影结论，30-50字，说明适合谁、值不值得去影院",
-              },
-              good_for: {
-                type: "array",
-                items: { type: "string" },
-                description: "适合的观众类型，3-5个标签，如：科幻迷、解谜爱好者、约会首选",
-              },
-              not_good_for: {
-                type: "array",
-                items: { type: "string" },
-                description: "不太适合的观众类型，1-3个标签",
-              },
-              prior_knowledge: {
-                type: "string",
-                enum: ["none", "low", "medium", "high"],
-                description: "观影前需要的背景知识量",
-              },
-              pacing: {
-                type: "string",
-                enum: ["slow", "mixed", "fast"],
-                description: "影片节奏",
-              },
-              english_difficulty: {
-                type: "string",
-                enum: ["low", "medium", "high"],
-                description: "英语理解难度（对中文母语观众）",
-              },
-              english_note: {
-                type: "string",
-                description: "英语难度的具体说明，15-25字",
-              },
-              theatrical_need: {
-                type: "string",
-                enum: ["low", "medium", "high"],
-                description: "影院观看的必要性（视觉/音效是否值得大银幕）",
-              },
-              popularity: {
-                type: "string",
-                enum: ["low", "medium", "high"],
-                description: "当前院线热门程度：low=小众冷门，medium=稳健热映，high=现象级爆款（如超级IP首映、全民话题）",
-              },
-              recommendation_score: {
-                type: "number",
-                description: "综合推荐指数，1-10，保留一位小数",
-              },
-              has_credits_scene: {
-                type: "boolean",
-                description: "是否有片尾彩蛋",
-              },
-              credits_detail: {
-                type: "string",
-                description: "片尾彩蛋说明，如有则简要描述何时出现，无则写'无片尾彩蛋'",
-              },
-              one_line_summary: {
-                type: "string",
-                description: "用于首页卡片的超短摘要，18-28个中文字，不剧透，突出风格和适合人群",
-              },
-            },
-            required: [
-              "one_line_verdict", "good_for", "not_good_for",
-              "prior_knowledge", "pacing", "english_difficulty", "english_note",
-              "theatrical_need", "popularity", "recommendation_score",
-              "has_credits_scene", "credits_detail", "one_line_summary",
-            ],
-          },
-        },
-      ],
-      tool_choice: { type: "any" },
-      messages: [
-        {
-          role: "user",
-          content: isEn
-            ? `You are an assistant helping moviegoers make viewing decisions. Based on the following movie info, call the movie_verdict tool to generate a quick decision card. ALL output must be in English.
+  const schema = {
+    type: "object",
+    properties: {
+      one_line_verdict: { type: "string", description: "一句话观影结论，30-50字，说明适合谁、值不值得去影院" },
+      good_for: { type: "array", items: { type: "string" }, description: "适合的观众类型，3-5个标签" },
+      not_good_for: { type: "array", items: { type: "string" }, description: "不太适合的观众类型，1-3个标签" },
+      prior_knowledge: { type: "string", enum: ["none", "low", "medium", "high"], description: "观影前需要的背景知识量" },
+      pacing: { type: "string", enum: ["slow", "mixed", "fast"], description: "影片节奏" },
+      english_difficulty: { type: "string", enum: ["low", "medium", "high"], description: "英语理解难度（对中文母语观众）" },
+      english_note: { type: "string", description: "英语难度的具体说明，15-25字" },
+      theatrical_need: { type: "string", enum: ["low", "medium", "high"], description: "影院观看的必要性" },
+      popularity: { type: "string", enum: ["low", "medium", "high"], description: "当前院线热门程度" },
+      recommendation_score: { type: "number", description: "综合推荐指数，1-10，保留一位小数" },
+      has_credits_scene: { type: "boolean", description: "是否有片尾彩蛋" },
+      credits_detail: { type: "string", description: "片尾彩蛋说明" },
+      one_line_summary: { type: "string", description: "首页卡片摘要，18-28个中文字" },
+    },
+    required: [
+      "one_line_verdict", "good_for", "not_good_for",
+      "prior_knowledge", "pacing", "english_difficulty", "english_note",
+      "theatrical_need", "popularity", "recommendation_score",
+      "has_credits_scene", "credits_detail", "one_line_summary",
+    ],
+  };
+
+  const prompt = isEn
+    ? `You are an assistant helping moviegoers make viewing decisions. Generate a quick decision card matching the required schema. ALL output must be in English.
 
 Movie: ${title} (${year})
 Genre: ${genre}
@@ -136,7 +75,7 @@ Requirements:
 5. recommendation_score: 1-10 "is it worth the theater trip?" index. Must be consistent with theatrical_need.
 6. has_credits_scene: Best knowledge estimate. Note if speculative.
 7. one_line_summary: A punchy 10-20 word magazine-style blurb for the home page card.`
-            : `你是帮助中文语境观众做出观影决策的助手。请基于以下电影信息，调用 movie_verdict 工具生成快速决策卡。
+    : `你是帮助中文语境观众做出观影决策的助手。请基于以下电影信息生成一份符合 schema 的快速决策卡。
 
 电影：${title}（${year}）
 类型：${genre}
@@ -157,15 +96,14 @@ ${runtime ? `时长：${runtime}` : ""}
    分数要有梯度，不要全堆在 6–7。真正值得推荐的和真正建议流媒体的之间要有 2–3 分的明显差距。
    分数衡量的是「去影院的必要性」，包含：视觉音效损耗 + **事件型价值**（热门IP、首映社群氛围、错过就是错过）。一部好文艺片流媒体无损所以分低；但一部热门大IP首映，社群体验本身就是价值，score 应相应偏高。
 6. has_credits_scene 请基于你的知识判断。如果电影尚未上映或你不确定，根据同系列/同导演的惯例推测，并在 credits_detail 中注明是推测。
-7. one_line_summary 用于首页展示，要像杂志短评一样精练有态度。示例：「硬科幻解谜，对白密集但值得影院」「轻松约会首选，笑点密集无门槛」`,
-        },
-      ],
+7. one_line_summary 用于首页展示，要像杂志短评一样精练有态度。示例：「硬科幻解谜，对白密集但值得影院」「轻松约会首选，笑点密集无门槛」`;
+
+  try {
+    const input = await generateStructured<Record<string, unknown>>({
+      prompt,
+      schema,
+      maxTokens: 2048,
     });
-
-    const toolUse = aiMsg.content.find((b) => b.type === "tool_use");
-    if (!toolUse || toolUse.type !== "tool_use") throw new Error("AI did not call tool");
-
-    const input = toolUse.input as Record<string, unknown>;
     const theatricalNeed = String(input.theatrical_need || "medium");
     let rawScore = Number(input.recommendation_score) || 7;
     // Enforce score/theatrical_need consistency server-side

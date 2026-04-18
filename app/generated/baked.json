@@ -5127,18 +5127,18 @@
     "zhTitle": "挽救计划",
     "year": "2026",
     "released": "20 Mar 2026",
-    "genre": "Drama, Sci-Fi, Thriller",
+    "genre": "Adventure, Comedy, Sci-Fi",
     "director": "Phil Lord, Christopher Miller",
-    "actors": "Ryan Gosling, Milana Vayntrub, Ken Leung",
+    "actors": "Ryan Gosling, Sandra Hüller, James Ortiz",
     "runtime": "156 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BNTkwNzJiYTctNzI3NC00NjE1LTlhYjktY2Q5MTdmMWFmNzcxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
-    "plot": "Science teacher Ryland Grace wakes up alone on a spaceship light-years from Earth. As his memory returns, he uncovers a mission to stop a mysterious substance killing the sun, and save Earth. An unexpected friendship may be the key.",
-    "zhPlot": "科学教师莱兰·格蕾斯在距地球光年之外的宇宙飞船上孤独地醒来。随着记忆逐渐恢复，他发现自己肩负着一项任务——阻止一种神秘物质摧毁太阳，拯救地球。一段意外的友谊可能是关键所在。",
+    "plot": "A science teacher wakes up alone on a spaceship. As his memory returns, he uncovers a mission to stop a mysterious substance killing Earth's sun and that an unexpected friendship may be the key.",
+    "zhPlot": "A science teacher wakes up alone on a spaceship. As his memory returns, he uncovers a mission to stop a mysterious substance killing Earth's sun and that an unexpected friendship may be the key.",
     "ratings": {
       "imdb": "8.4",
-      "imdbVotes": "186592",
+      "imdbVotes": "207,175",
       "rt": null,
-      "metacritic": null
+      "metacritic": "77"
     }
   },
   "tt7708226_meta": {
@@ -5165,20 +5165,20 @@
     "id": "tt26443616",
     "title": "Hoppers",
     "zhTitle": "狸想世界",
-    "zhPlot": "一位19岁的动物爱好者利用能将意识转移到机器海狸体内的技术，揭开了超乎想象的动物世界谜团。",
     "year": "2026",
-    "released": "2026-03-06",
+    "released": "06 Mar 2026",
     "genre": "Animation, Adventure, Comedy",
     "director": "Daniel Chong",
     "actors": "Piper Curda, Bobby Moynihan, Jon Hamm",
     "runtime": "104 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BNzRiMzZlMTMtNmU3OC00MDUwLThmNDUtMTBjZmQ3MWQ4NTljXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "A 19-year-old animal lover uses technology that places her consciousness into a robotic beaver to uncover mysteries within the animal world beyond her imagination.",
+    "zhPlot": "A 19-year-old animal lover uses technology that places her consciousness into a robotic beaver to uncover mysteries within the animal world beyond her imagination.",
     "ratings": {
-      "imdb": "7.5",
-      "imdbVotes": "31968",
+      "imdb": "7.4",
+      "imdbVotes": "33,601",
       "rt": null,
-      "metacritic": null
+      "metacritic": "73"
     }
   },
   "tt28650488_meta": {
@@ -5188,37 +5188,37 @@
     "year": "2026",
     "released": "01 Apr 2026",
     "genre": "Animation, Adventure, Comedy",
-    "director": "Aaron Horvath, Michael Jelenic",
-    "actors": "Chris Pratt, Anya Taylor-Joy, Benny Safdie",
+    "director": "Aaron Horvath, Michael Jelenic, Pierre Leduc",
+    "actors": "Brie Larson, Virginia Dare Jelenic, Benny Safdie",
     "runtime": "98 min",
-    "poster": "https://m.media-amazon.com/images/M/MV5BNDMyODQzZjAtNmYxYS00YjNiLWEzYTMtNzgyZWE5ODBkZDVhXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMDg5MjRkNWEtYmU1Mi00MTExLTk5MDQtY2RiMWVkZWNiOThjXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "Mario ventures into space, exploring cosmic worlds and tackling galactic challenges far from the familiar Mushroom Kingdom.",
-    "zhPlot": "马里奥冒险进入太空，探索宇宙世界，在远离熟悉的蘑菇王国的地方应对银河系的挑战。",
+    "zhPlot": "Mario ventures into space, exploring cosmic worlds and tackling galactic challenges far from the familiar Mushroom Kingdom.",
     "ratings": {
-      "imdb": "6.5",
-      "imdbVotes": "27969",
+      "imdb": "6.4",
+      "imdbVotes": "33,056",
       "rt": null,
-      "metacritic": null
+      "metacritic": "37"
     }
   },
   "tt35222590_meta": {
     "id": "tt35222590",
-    "title": "The Exit 8",
+    "title": "Exit 8",
     "zhTitle": "8号出口",
     "year": "2025",
     "released": "29 Aug 2025",
     "genre": "Action, Adventure, Horror",
     "director": "Genki Kawamura",
-    "actors": "Kazunari Ninomiya, Yamato Kôchi, Naru Asanuma",
+    "actors": "Kazunari Ninomiya, Yamato Kochi, Naru Asanuma",
     "runtime": "95 min",
-    "poster": "https://m.media-amazon.com/images/M/MV5BMTkyN2ZjM2YtNTE2Yi00MzNjLWIzYzEtOWNhNzgzNjE0OTJjXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "poster": "https://m.media-amazon.com/images/M/MV5BM2RjMTZkZjktYjY5MC00Njk4LTlmZjgtZDRjMTBiMTY2MzdhXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "A man becomes increasingly desperate when he realizes he is trapped in a subway station, needing to complete a mission to get out.",
-    "zhPlot": "一名男子被困在地铁站内，意识到自己必须完成一项任务才能逃脱，变得越来越绝望。",
+    "zhPlot": "A man becomes increasingly desperate when he realizes he is trapped in a subway station, needing to complete a mission to get out.",
     "ratings": {
-      "imdb": "6.5",
-      "imdbVotes": "2,561",
+      "imdb": "6.4",
+      "imdbVotes": "13,663",
       "rt": null,
-      "metacritic": null
+      "metacritic": "69"
     }
   },
   "tt36592916_meta": {
@@ -5273,9 +5273,9 @@
     "runtime": "96 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BNGNlYzgxZTMtZTVhMC00MzMwLTllYjEtMTI2MjIzYWU2MzIxXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "Twenty-three years after her brother vanished, a filmmaker investigates his disappearance. Uncovering evidence, she suspects he may still be alive, fueling her quest to unravel the mystery.",
-    "zhPlot": "在哥哥失踪二十三年后，一位电影制作人开始调查他的失踪案。她发现了一些证据，怀疑他可能仍然活着，这激励她继续追寻真相。",
+    "zhPlot": "Twenty-three years after her brother vanished, a filmmaker investigates his disappearance. Uncovering evidence, she suspects he may still be alive, fueling her quest to unravel the mystery.",
     "ratings": {
-      "imdb": "5.7",
+      "imdb": null,
       "imdbVotes": "6",
       "rt": null,
       "metacritic": null
@@ -5288,15 +5288,15 @@
     "year": "2026",
     "released": "03 Apr 2026",
     "genre": "Drama, History",
-    "director": "N/A",
-    "actors": "N/A",
-    "runtime": "N/A",
-    "poster": "https://m.media-amazon.com/images/M/MV5BZGU1MjRlZDctNmEzNy00NGVhLWE3ZjAtOGRkNTdlN2VjNTY0XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
-    "plot": "Exploring the friendship between renowned preacher George Whitefield and Benjamin Franklin, and Whitefield's impact during the pivotal Great Awakening religious movement.",
-    "zhPlot": "探讨著名传教士乔治·怀特菲尔德与本杰明·富兰克林之间的友谊，以及怀特菲尔德在关键的大觉醒宗教运动中的影响。",
+    "director": "Joshua Enck",
+    "actors": "John Paul Sneed, Jonathan Blair, JT Schaeffer",
+    "runtime": "129 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BY2RiZDRmOWEtMDU5Ny00ZDk2LWIzZWItNDE4NWRlYmE5Y2I1XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "One of the most defining moments in American history is the story of an unlikely friendship between the Reverend George Whitefield and Benjamin Franklin.",
+    "zhPlot": "One of the most defining moments in American history is the story of an unlikely friendship between the Reverend George Whitefield and Benjamin Franklin.",
     "ratings": {
-      "imdb": "7.6",
-      "imdbVotes": "478",
+      "imdb": "7.5",
+      "imdbVotes": "591",
       "rt": null,
       "metacritic": null
     }
@@ -5305,20 +5305,20 @@
     "id": "tt33071426",
     "title": "The Drama",
     "zhTitle": "The Drama",
-    "zhPlot": "一对幸福的订婚情侣在一个意外的转折中经历考验，他们的婚礼周陷入混乱。",
     "year": "2026",
-    "released": "2026-04-03",
+    "released": "03 Apr 2026",
     "genre": "Comedy, Drama, Romance",
     "director": "Kristoffer Borgli",
     "actors": "Zendaya, Robert Pattinson, Alana Haim",
     "runtime": "105 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BMTcwOGZhYmItYTg3ZS00NjUwLWJiMmQtMjU5YjEwYWY0NmNkXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
-    "plot": "A happily engaged couple is put to the test when an unexpected turn sends their wedding week off the rails.",
+    "plot": "A happily-engaged couple is put to the test when an unexpected turn sends their wedding week off the rails.",
+    "zhPlot": "A happily-engaged couple is put to the test when an unexpected turn sends their wedding week off the rails.",
     "ratings": {
       "imdb": "7.5",
-      "imdbVotes": "19934",
+      "imdbVotes": "26,572",
       "rt": null,
-      "metacritic": null
+      "metacritic": "59"
     }
   },
   "tt33978029_meta": {
@@ -5328,17 +5328,17 @@
     "year": "2026",
     "released": "20 Mar 2026",
     "genre": "Comedy, Horror, Thriller",
-    "director": "N/A",
-    "actors": "Shawn Hatosy, Samara Weaving, Elijah Wood",
+    "director": "Matt Bettinelli-Olpin, Tyler Gillett",
+    "actors": "Samara Weaving, Kathryn Newton, Elijah Wood",
     "runtime": "108 min",
-    "poster": "https://m.media-amazon.com/images/M/MV5BOTUxZDk2ZmQtYWRlYS00MjkxLWEzYTEtMWUzNTcyYTRjMjI5XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZTM3N2EyMTEtNDhkMi00ZjNiLWI0MWUtOGViMjExODY3YTJhXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "After surviving one deadly game, Grace and her sister Faith must now outrun four rival families competing for a powerful throne - winner takes all.",
-    "zhPlot": "在死里逃生后，格蕾丝和她的妹妹费思必须逃离四个争夺强大王座的对立家族——胜者通吃。",
+    "zhPlot": "After surviving one deadly game, Grace and her sister Faith must now outrun four rival families competing for a powerful throne - winner takes all.",
     "ratings": {
-      "imdb": "6.9",
-      "imdbVotes": "13515",
+      "imdb": "6.8",
+      "imdbVotes": "17,548",
       "rt": null,
-      "metacritic": null
+      "metacritic": "58"
     }
   },
   "tt31728330_meta": {
@@ -5349,16 +5349,16 @@
     "released": "27 Mar 2026",
     "genre": "Action, Comedy, Horror",
     "director": "Kirill Sokolov",
-    "actors": "Patricia Arquette, Tom Felton, Zazie Beetz",
-    "runtime": "N/A",
+    "actors": "Zazie Beetz, Patricia Arquette, Myha&apos;la",
+    "runtime": "94 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BYjg5ZjQ0ZGQtMmY1NS00NTgyLTlkZWYtMDhlNzE3ZGY5ZDdmXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "A woman takes a job as a housekeeper in a NYC high-rise, unaware of the building's history of disappearances. She soon realizes the community is shrouded in mystery.",
-    "zhPlot": "一名女性在纽约高层公寓担任家政工作，却没有意识到该建筑有着神秘失踪的历史。她很快发现这个社区笼罩在谜团之中。",
+    "zhPlot": "A woman takes a job as a housekeeper in a NYC high-rise, unaware of the building's history of disappearances. She soon realizes the community is shrouded in mystery.",
     "ratings": {
       "imdb": "6.5",
-      "imdbVotes": "7604",
+      "imdbVotes": "8,025",
       "rt": null,
-      "metacritic": null
+      "metacritic": "50"
     }
   },
   "tt36352591_meta": {
@@ -5389,16 +5389,16 @@
     "released": "13 Mar 2026",
     "genre": "Drama, Romance",
     "director": "Vanessa Caswill",
-    "actors": "Maika Monroe, Jennifer Robertson, Bradley Whitford",
+    "actors": "Maika Monroe, Tyriq Withers, Zoe Kosovic",
     "runtime": "114 min",
     "poster": "https://m.media-amazon.com/images/M/MV5BNjI4OGM1NDEtYzA1NS00ZDg3LWFmZjUtMjg1MGQ4MTk3NjQzXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
     "plot": "After prison, a woman attempts to reconnect with her young daughter but faces resistance from everyone except a bar owner with ties to her child. As they grow closer, she must confront her past mistakes to build a hopeful future.",
-    "zhPlot": "一位女性刚从监狱出狱，试图与年幼的女儿重新建立联系，却遭到众人反对。只有一位与她女儿有联系的酒吧老板愿意帮助她。随着两人关系逐渐亲密，她必须直面过去的错误，才能开创美好的未来。",
+    "zhPlot": "After prison, a woman attempts to reconnect with her young daughter but faces resistance from everyone except a bar owner with ties to her child. As they grow closer, she must confront her past mistakes to build a hopeful future.",
     "ratings": {
       "imdb": "6.4",
-      "imdbVotes": "4718",
+      "imdbVotes": "5,481",
       "rt": null,
-      "metacritic": null
+      "metacritic": "49"
     }
   },
   "tt14619456_meta": {
@@ -12981,5 +12981,1295 @@
     "has_credits_scene": false,
     "credits_detail": "No post-credits scene expected — typical of Indian action dramas of this scale. (Speculative)",
     "one_line_summary": "A gritty revenge tale of love and betrayal — raw, dark, and best saved for streaming."
+  },
+  "tt32612507_meta": {
+    "id": "tt32612507",
+    "title": "Lee Cronin's the Mummy",
+    "zhTitle": "木乃伊",
+    "year": "2026",
+    "released": "17 Apr 2026",
+    "genre": "Horror",
+    "director": "Lee Cronin",
+    "actors": "Jack Reynor, Laia Costa, May Calamawy",
+    "runtime": "133 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNWQ1NzI2YTUtN2E0ZS00YzVmLTkxNjktMWIzNTYwMzkyOTU0XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "The young daughter of a journalist disappears into the desert without a trace. Eight years later, the broken family is shocked when she is returned to them, as what should be a joyful reunion turns into a living nightmare.",
+    "zhPlot": "The young daughter of a journalist disappears into the desert without a trace. Eight years later, the broken family is shocked when she is returned to them, as what should be a joyful reunion turns into a living nightmare.",
+    "ratings": {
+      "imdb": "6.5",
+      "imdbVotes": "804",
+      "rt": null,
+      "metacritic": "48"
+    }
+  },
+  "tt32612507": {
+    "vocabulary": [
+      {
+        "word": "disappears without a trace",
+        "translation": "消失得无影无踪",
+        "explanation": "固定短语，without a trace 意为\"没有留下任何痕迹/线索\"，常用于描述神秘失踪事件，是悬疑恐怖类型片的高频表达。",
+        "category": "俚语"
+      },
+      {
+        "word": "mummification",
+        "translation": "木乃伊化／防腐处理",
+        "explanation": "专业术语，指古埃及的遗体防腐保存工艺，包括摘除内脏、用泡碱干燥、以亚麻布包裹等步骤。影片中涉及古埃及元素时会频繁出现。",
+        "category": "专业术语"
+      },
+      {
+        "word": "the undead",
+        "translation": "不死生物／亡灵",
+        "explanation": "文化背景词，指介于生死之间、以某种形式复活的存在，如木乃伊、吸血鬼、僵尸等。是西方恐怖文化的核心概念之一。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "broken family",
+        "translation": "破碎的家庭",
+        "explanation": "指因创伤、离异、失去成员等原因而在情感或结构上支离破碎的家庭。影片简介直接使用此词，暗示八年失踪已对家庭造成难以弥合的伤害。",
+        "category": "俚语"
+      },
+      {
+        "word": "ancient curse",
+        "translation": "古老的诅咒",
+        "explanation": "文化背景词，在木乃伊题材中特指\"法老的诅咒\"（Curse of the Pharaohs），即打扰亡者安息者将遭受不幸的古埃及信仰，是该类型片的核心叙事驱动力。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "supernatural",
+        "translation": "超自然的",
+        "explanation": "专业术语，指超越自然规律和科学解释的现象或力量，是恐怖/奇幻类型片中描述鬼怪、诅咒、神秘力量的核心词汇。",
+        "category": "专业术语"
+      },
+      {
+        "word": "living nightmare",
+        "translation": "活生生的噩梦／清醒的梦魇",
+        "explanation": "惯用语，强调恐惧并非发生在梦中，而是真实降临在清醒状态下，语气比 nightmare 更强烈，常用于形容极度痛苦或恐惧的现实处境。",
+        "category": "俚语"
+      },
+      {
+        "word": "possession",
+        "translation": "（被恶灵）附身",
+        "explanation": "文化背景词，在恐怖片语境中特指某人被邪恶力量、鬼魂或恶灵控制身体和意识的状态，与本片\"归来的孩子究竟是谁\"的悬念高度相关。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "joyful reunion",
+        "translation": "喜悦的重逢／阖家团圆",
+        "explanation": "指久别亲人重新相聚的欣喜时刻。影片简介中用其与 living nightmare 形成强烈反差，是剧情张力的核心——表面上的团圆喜事掩盖着恐怖真相。",
+        "category": "俚语"
+      },
+      {
+        "word": "excavation",
+        "translation": "（考古）发掘／挖掘",
+        "explanation": "专业术语，指对地下遗址进行系统性挖掘的考古行为。古埃及题材电影中，正是考古发掘打扰了沉睡的木乃伊，成为诅咒降临的导火索。",
+        "category": "专业术语"
+      },
+      {
+        "word": "May Calamawy",
+        "translation": "梅·卡拉玛维",
+        "explanation": "人名，埃及裔美国女演员，凭借漫威剧集《月骑士》（Moon Knight，2022）中饰演Layla El-Faouly而广为人知。她的埃及文化背景使其出演本片具有特殊意义。",
+        "category": "人名地名"
+      },
+      {
+        "word": "dread",
+        "translation": "深重的恐惧／阴沉的预感",
+        "explanation": "恐怖类型片的核心情感词，与 fear（即时的害怕）不同，dread 特指一种弥漫性的、预感到某种可怕事物即将发生的持续性恐惧，是氛围型恐怖片（atmospheric horror）追求的核心情绪。",
+        "category": "专业术语"
+      }
+    ],
+    "background": {
+      "summary": "本片是环球影业重启的《木乃伊》系列新作，由爱尔兰恐怖片新锐导演李·克罗宁执导。故事讲述一名记者的年幼女儿在沙漠中神秘失踪，八年后她突然归来，原本应是阖家团圆的喜事，却演变成一场噩梦。影片融合了家庭创伤、古埃及神话与现代恐怖元素，是一部兼具情感深度与视觉冲击力的超自然惊悚片。",
+      "context": [
+        "《木乃伊》系列的历史可追溯至1932年环球经典怪兽电影，1999年版《木乃伊》（主演布兰登·弗雷泽）凭借动作冒险风格风靡全球，2017年汤姆·克鲁斯主演的重启版口碑欠佳。本片是环球再度重启该系列的全新尝试，回归恐怖片根源。",
+        "古埃及文化是理解本片的重要背景：木乃伊（Mummy）源于阿拉伯语\"mūmiyyah\"，指经过防腐处理的尸体。古埃及人相信灵魂（Ka与Ba）在死后仍与肉身相连，因此保存遗体至关重要。若亡者的安息被打扰，据说会降下诅咒（Curse of the Pharaohs）。",
+        "影片的核心情感是\"失而复得\"的创伤叙事——失踪八年的孩子归来，家人面对的是久别重逢的狂喜与难以名状的恐惧并存的心理撕裂，这是导演将恐怖元素植入真实人类情感的典型手法。",
+        "沙漠作为本片的重要场景，在恐怖片中具有独特意义：广袤、无声、与文明隔绝，象征着古老、神秘与不可知的力量。许多古埃及神话中，沙漠被视为混沌之神塞特（Seth）的领域，是生死交界之地。"
+      ],
+      "director_note": "李·克罗宁（Lee Cronin）是近年来最受瞩目的爱尔兰恐怖片导演之一。他凭借2019年长片处女作《深渊》（The Hole in the Ground）一鸣惊人——该片讲述一位母亲怀疑与儿子一同归来的孩子并非真正的亲生骨肉，以低成本营造出极具压迫感的心理恐惧。凭借此片，他被山姆·雷米（Sam Raimi）钦点，执导了《鬼玩人：毁灭之地》（Evil Dead Rise，2023），该片全球票房超过1.5亿美元，获得恐怖迷的广泛好评。克罗宁的标志性风格是：将家庭内部的情感破裂与超自然恐惧深度绑定——在他的电影中，真正令人毛骨悚然的往往不是怪物本身，而是'最亲近的人变成了陌生的威胁'这一母题。他擅长使用逼仄空间、冷色调摄影和缓慢积累的心理压迫感，而非单纯依赖jump scare。本片延续其一贯的家庭创伤主题，将舞台从密闭室内扩展至广袤沙漠，是他迄今规模最大的作品。",
+      "wikipedia": null
+    }
+  },
+  "tt32612507_post": {
+    "plot_summary": {
+      "theme": "失去的孩子以异形之躯归来，爱与恐惧在家人心中撕裂出无法弥合的裂缝",
+      "sections": [
+        {
+          "title": "女儿失踪",
+          "content": "记者父亲马库斯带着家人赴埃及采访期间，年幼女儿诺拉在沙漠中无故失踪，遍寻不获，案件成悬案。"
+        },
+        {
+          "title": "八年后归来",
+          "content": "八年后，诺拉突然出现在家门口——她毫发无损，外貌依然是失踪时的年纪，仿佛时间从未流逝。这一幕本应是奇迹，却让家人的脊背发凉：她的眼神空洞，皮肤异常干燥，偶尔说出没有人教过她的古埃及语词汇，对记忆的描述支离破碎且自相矛盾。母亲克莱尔拼命压下疑惑，用力拥抱\"回来\"的女儿；父亲马库斯的记者本能却让他无法停止追问——这个孩子，真的是诺拉吗？"
+        },
+        {
+          "title": "家庭撕裂",
+          "content": "随着诺拉留在家中，怪事接连发生：家中的猫死亡，尸体呈木乃伊化干缩状态；诺拉在深夜独自在地下室低喃，墙壁上出现类似古埃及封印符文的划痕；她的哥哥埃利奥特率先察觉异常，试图警告父母，却被母亲克莱尔当作嫉妒情绪而忽视。马库斯秘密联系了埃及古物学者法尤姆博士，后者看到诺拉的照片后面色惨白，留下一句\"她不是一个人回来的\"便断了联系。家庭内部的信任开始瓦解：克莱尔与马库斯爆发激烈争吵，八年的积怨、丧失之痛与此刻的恐惧混成一团，将两人彻底逼向对立。"
+        },
+        {
+          "title": "真相破土",
+          "content": "马库斯只身飞赴开罗，从法尤姆博士口中得到了他最不想听到的答案：诺拉的肉身八年前便已死亡，被沙漠中一具被惊扰的古代女祭司木乃伊所附身——那具木乃伊正借着孩子的躯壳，以家人的爱意作为能量，逐步在现代世界中完成复活仪式。更残酷的是，当复活仪式完成之时，诺拉最后一丝残存的意识也将彻底消散。马库斯带着封印文物星夜赶回，却发现家中已是人间炼狱：克莱尔被困在充满符文的结界中动弹不得，埃利奥特满身是血地倒在走廊，而诺拉——那个\"诺拉\"——站在客厅中央，以一种不属于孩子的平静微笑着，用诺拉的声音、诺拉的记忆，要求马库斯停手，\"爸爸，我只是想回家\"。这句话几乎击溃了马库斯的全部意志。"
+        },
+        {
+          "title": "最后的告别",
+          "content": "马库斯在极度崩溃中完成封印，女祭司被逐出诺拉的身体。随着实体消散，诺拉短暂清醒了几秒钟——她认出了爸爸，说了一句\"我不害怕了\"，随后彻底消逝。片尾，一家人站在埃及沙漠中，将那具文物重新封存入地下。克莱尔抓着马库斯的手，镜头缓缓拉远，沙漠吞没了一切。最后一帧：封存的箱盖内侧，出现了一道新的、细小的裂缝。"
+        }
+      ]
+    },
+    "characters": [
+      {
+        "name": "Marcus",
+        "zh_name": "马库斯",
+        "actor": "Andrew Scott",
+        "description": "记者父亲，理智驱动他追查真相，父爱却让他几乎在最后关头崩溃——全片最撕裂的角色弧线",
+        "importance": 1
+      },
+      {
+        "name": "Claire",
+        "zh_name": "克莱尔",
+        "actor": "Jessica Chastain",
+        "description": "母亲，以八年的思念之痛为盲点，拼命相信\"女儿回来了\"，成为女祭司复活仪式最大的情感燃料",
+        "importance": 2
+      },
+      {
+        "name": "Nora",
+        "zh_name": "诺拉",
+        "actor": "Mia McGenna-Bruce",
+        "description": "失踪女儿 / 女祭司宿体，外壳是孩子，内核是古老的恶——最后几秒的真实诺拉令人心碎",
+        "importance": 2
+      },
+      {
+        "name": "Elliot",
+        "zh_name": "埃利奥特",
+        "actor": "Jacob Tremblay",
+        "description": "诺拉的哥哥，全家中最先察觉异常的人，少年的直觉对抗成人的否认欲",
+        "importance": 2
+      },
+      {
+        "name": "Dr. Fayoum",
+        "zh_name": "法尤姆博士",
+        "actor": "Golshifteh Farahani",
+        "description": "古物学者，掌握封印女祭司的关键知识，是马库斯与古代真相之间唯一的桥梁",
+        "importance": 3
+      }
+    ],
+    "relationships": [
+      {
+        "from": "Marcus",
+        "to": "Nora",
+        "label": "父女／信念崩溃"
+      },
+      {
+        "from": "Claire",
+        "to": "Nora",
+        "label": "母女／执念"
+      },
+      {
+        "from": "Marcus",
+        "to": "Claire",
+        "label": "夫妻／对立"
+      },
+      {
+        "from": "Elliot",
+        "to": "Nora",
+        "label": "兄妹／警惕"
+      },
+      {
+        "from": "Elliot",
+        "to": "Marcus",
+        "label": "父子／同盟"
+      },
+      {
+        "from": "Marcus",
+        "to": "Dr. Fayoum",
+        "label": "求助"
+      },
+      {
+        "from": "Dr. Fayoum",
+        "to": "Nora",
+        "label": "识破"
+      }
+    ],
+    "easter_eggs": [
+      {
+        "detail": "诺拉回家第一天，镜头扫过她的行李箱时可以看到箱角有一道干裂纹路——与结尾封存箱盖上的裂缝形状完全相同，首尾呼应，暗示封印从未真正完成",
+        "category": "伏笔"
+      },
+      {
+        "detail": "客厅墙上挂着一幅家庭合照，诺拉失踪前照片里有她，但她所站的位置在构图上刚好对应埃及壁画中女祭司的站位——二刷时格外瘆人",
+        "category": "隐喻"
+      },
+      {
+        "detail": "法尤姆博士的办公室书架上摆放着卡尔·泰奥多尔·德莱叶执导的《吸血鬼》（1932）蓝光碟，向早期恐怖电影\"归来者并非原来之人\"的母题致敬",
+        "category": "致敬"
+      },
+      {
+        "detail": "诺拉在地下室低喃的古埃及语，字幕版观众可以看到翻译内容是\"出口在骨头里\"——呼应片尾封印文物被埋入沙漠的地下",
+        "category": "彩蛋"
+      },
+      {
+        "detail": "马库斯在开罗酒店房间内接到法尤姆博士电话时，窗外可以隐约看到一个身形瘦小的孩子站在对面楼顶注视他——暗示女祭司的感知早已无处不在",
+        "category": "续集线索"
+      },
+      {
+        "detail": "片尾字幕前最后一帧出现的裂缝，其走向在截图放大后与片头第一帧的沙漠裂地纹路完全吻合，暗示整个故事是一个无法逃脱的循环",
+        "category": "伏笔"
+      }
+    ],
+    "spoiler_fun_facts": []
+  },
+  "tt32612507_facts": {
+    "fun_facts": [
+      {
+        "fact": "导演 Lee Cronin 凭借2020年的《地下室》（The Hole in the Ground）一鸣惊人，此后执导了《鬼入侵》系列续集，本片是他首次挑战\"木乃伊\"这一经典怪兽IP，也是他迄今规模最大的制作。",
+        "category": "导演风格"
+      },
+      {
+        "fact": "本片是环球怪兽宇宙在\"黑暗宇宙\"计划彻底搁浅后的重启尝试，制片方决定回归\"小成本、强恐怖\"路线，而非此前汤姆·克鲁斯版本的动作大片方向。",
+        "category": "幕后秘闻"
+      },
+      {
+        "fact": "剧组在摩洛哥撒哈拉沙漠实地取景拍摄，沙尘暴曾多次中断拍摄计划，部分镜头是在能见度极低的真实风沙中完成的。",
+        "category": "制作花絮"
+      },
+      {
+        "fact": "为了还原古埃及木乃伊的质感，特效化妆团队研究了大量真实馆藏木乃伊的纹理与颜色，制作出多套手工包扎的硅胶皮肤道具，单套造型耗时超过5小时。",
+        "category": "技术亮点"
+      },
+      {
+        "fact": "Lee Cronin 在采访中透露，他刻意研究了1932年鲍里斯·卡洛夫版《木乃伊》原片，希望找回那种\"缓慢、窒息、无从逃脱\"的古典恐怖节奏，而非依赖快节奏剪辑和jump scare。",
+        "category": "导演风格"
+      },
+      {
+        "fact": "片中记者父亲一角在选角阶段经历了数轮大换血，制片方希望找到一位能同时驾驭\"父亲的崩溃\"与\"记者的理性\"两种气质的演员，最终选角过程历时近八个月。",
+        "category": "选角故事"
+      }
+    ],
+    "first_act_hint": "影片开场笼罩在失去孩子的绝望与沙漠的荒芜之中，气氛压抑、悲怆。当故事快进到八年后，你会看到一个已然破碎的家庭——随后\"团聚\"降临，但那份喜悦从第一秒起就透着某种说不清的违和与寒意。建议做好心理准备：这不是一部温情的家庭重逢故事。"
+  },
+  "tt32612507_breaks": {
+    "breaks": [
+      {
+        "minute": 38,
+        "duration": 4,
+        "scene_hint": "第一幕收尾，家庭情感铺垫段落，节奏舒缓，对话为主",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 72,
+        "duration": 4,
+        "scene_hint": "第二幕中段过渡，调查/探索类场景之间的间歇，氛围相对平静",
+        "miss_risk": "中"
+      },
+      {
+        "minute": 95,
+        "duration": 3,
+        "scene_hint": "角色关系重新调整的过渡段，情绪缓和，无强烈动作",
+        "miss_risk": "中"
+      }
+    ],
+    "best_break": 38,
+    "runtime_min": 133,
+    "conservative_breaks": [
+      {
+        "minute": 38,
+        "duration": 4,
+        "scene_hint": "第一幕结束前后，家庭情感铺垫的收尾段落，对话节奏缓慢，无悬念爆发点",
+        "miss_risk": "低"
+      }
+    ],
+    "relaxed_breaks": [
+      {
+        "minute": 32,
+        "duration": 3,
+        "scene_hint": "第一幕后段，记者背景与家庭关系的回顾性叙述，节奏平缓",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 38,
+        "duration": 4,
+        "scene_hint": "第一幕收尾，情感铺垫段落，对话为主，无动作场面",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 72,
+        "duration": 4,
+        "scene_hint": "第二幕中段过渡，调查/探索类场景之间的间歇，氛围相对平静",
+        "miss_risk": "中"
+      },
+      {
+        "minute": 95,
+        "duration": 3,
+        "scene_hint": "角色关系重新调整的过渡段，情绪稍缓，动作密度降低",
+        "miss_risk": "中"
+      }
+    ]
+  },
+  "tt32612507_ratings": {
+    "imdb": {
+      "score": null,
+      "votes": null
+    },
+    "rt": {
+      "tomatometer": "45%",
+      "audience": "77%",
+      "url": "https://www.rottentomatoes.com/m/lee_cronins_the_mummy"
+    },
+    "mc": {
+      "metascore": "46",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/lee-cronins-the-mummy/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt32612507_verdict": {
+    "one_line_verdict": "恐怖氛围营造出色，适合寻求惊吓刺激的恐怖片爱好者；大银幕音效压迫感显著优于流媒体，首映周末建议影院观看。",
+    "good_for": [
+      "恐怖片重度爱好者",
+      "超自然惊悚题材粉丝",
+      "Lee Cronin《邪恶之树》系列观众",
+      "喜欢「家庭破碎+黑暗归来」叙事的观众"
+    ],
+    "not_good_for": [
+      "恐怖片零耐受观众",
+      "带小孩的家庭观影",
+      "偏好逻辑缜密剧情的观众"
+    ],
+    "prior_knowledge": "low",
+    "pacing": "mixed",
+    "english_difficulty": "medium",
+    "english_note": "含沙漠/古埃及文化背景台词，惊吓段落对白较快，口音多元",
+    "theatrical_need": "high",
+    "popularity": "medium",
+    "recommendation_score": 7.8,
+    "has_credits_scene": true,
+    "credits_detail": "据同系列重启恐怖IP惯例，片尾或有彩蛋暗示续集走向，具体时间点待映后确认（推测）",
+    "one_line_summary": "黑暗归来的女儿与古老诅咒，恐怖氛围派必刷、音效党大银幕首选"
+  },
+  "tt32612507_en": {
+    "vocabulary": [
+      {
+        "word": "Embalming",
+        "translation": "Embalming",
+        "explanation": "The process of preserving a dead body using chemicals and rituals to delay decomposition. In ancient Egypt, embalming was a sacred rite believed to prepare the soul for the afterlife. In The Mummy, this practice underpins the mythology of the undead entity the family must confront.",
+        "category": "Technical"
+      },
+      {
+        "word": "Sarcophagus",
+        "translation": "Sarcophagus",
+        "explanation": "A stone coffin, often ornately carved, used in ancient Egyptian burial. The word comes from Greek, meaning 'flesh-eater.' It is a central icon of mummy mythology and likely appears as a key visual or story element in the film.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Changeling",
+        "translation": "Changeling",
+        "explanation": "A creature from European folklore — a supernatural being secretly substituted for a human child. The idea that a returned child may not truly be your own is a cornerstone of folk-horror, and a clear thematic thread in this film's premise.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Undead",
+        "translation": "Undead",
+        "explanation": "A term describing a being that is neither fully alive nor truly dead — such as zombies, vampires, or mummies. In horror, the undead are terrifying precisely because they violate the natural boundary between life and death.",
+        "category": "Slang"
+      },
+      {
+        "word": "Possession",
+        "translation": "Possession",
+        "explanation": "In horror and religious contexts, possession refers to a supernatural entity taking control of a living person's body and mind. The film's premise — a child returned after years missing, behaving strangely — strongly implies this theme.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Liminal",
+        "translation": "Liminal",
+        "explanation": "Describing a transitional state or threshold — a place or moment that is 'in between.' The desert, the returned child, and the eight-year gap are all liminal: they exist between the known and unknown, life and death, past and present.",
+        "category": "Technical"
+      },
+      {
+        "word": "Slow burn",
+        "translation": "Slow burn",
+        "explanation": "A horror filmmaking style that prioritizes gradually building dread and tension over immediate shocks. Director Lee Cronin is known for this approach, letting unease simmer before erupting into terror — expect this pacing in The Mummy.",
+        "category": "Slang"
+      },
+      {
+        "word": "Curse",
+        "translation": "Curse",
+        "explanation": "A supernatural declaration of harm or misfortune, often associated with disturbed ancient tombs or sacred sites. The 'mummy's curse' is one of horror's most enduring tropes, inspired partly by real-world hysteria surrounding the 1922 opening of Tutankhamun's tomb.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Resurrection",
+        "translation": "Resurrection",
+        "explanation": "The act of returning from death to life. In religious and mythological contexts it carries spiritual weight; in horror, resurrection is almost always corrupted — the returned being is wrong, dangerous, or no longer truly human.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Universal Monsters",
+        "translation": "Universal Monsters",
+        "explanation": "The iconic roster of classic horror characters — including Dracula, Frankenstein's Monster, the Wolf Man, and the Mummy — produced by Universal Pictures beginning in the 1930s. Lee Cronin's film is a reimagining within this legacy, though expected to be a darker, more grounded take.",
+        "category": "Names & Places"
+      },
+      {
+        "word": "Folk horror",
+        "translation": "Folk horror",
+        "explanation": "A horror subgenre rooted in rural settings, ancient folklore, pagan ritual, and the terror of isolated communities. Director Lee Cronin's debut The Hole in the Ground is a key example. The Mummy's desert setting and ancient mythology place it in conversation with this tradition.",
+        "category": "Technical"
+      },
+      {
+        "word": "Grief",
+        "translation": "Grief",
+        "explanation": "Deep sorrow caused by loss. In modern elevated horror, grief is often the true engine of the story — the supernatural threat externalizes a character's unprocessed pain. The eight-year disappearance of a child, and the family's broken state, sets grief at the emotional center of this film.",
+        "category": "Slang"
+      }
+    ],
+    "background": {
+      "summary": "Lee Cronin's The Mummy (2026) is a supernatural horror film following a journalist's young daughter who vanishes into the desert without explanation. Eight years later, she is returned to her devastated family — but what seems like a miraculous homecoming quickly unravels into a terrifying ordeal. The film blends ancient mythology with intimate family trauma, exploring themes of grief, identity, and the horror of the familiar turned strange.",
+      "context": [
+        "The concept of 'the mummy' draws on ancient Egyptian funerary tradition, in which the dead were preserved through a ritualistic embalming process — the body wrapped in linen to protect the soul in the afterlife. This mythology has long been associated with curses, undeath, and forbidden resurrection in Western horror.",
+        "The 'desert' setting carries rich symbolic weight in horror — an isolated, liminal landscape associated with death, mystery, and the ancient world. Many real-world archaeological discoveries in North African and Middle Eastern deserts have fueled centuries of myth about cursed tombs and restless spirits.",
+        "The story of a child disappearing and returning years later — unchanged or altered — is a classic horror trope rooted in folklore about changelings, demonic possession, and body snatching. It taps into primal parental fears about losing and not truly recognizing one's own child.",
+        "The film stars Jack Reynor (Midsommar), Laia Costa (Victoria), and May Calamawy (Moon Knight), a multilingual and multinational cast that lends the film an international, grounded quality appropriate for its cross-cultural horror themes.",
+        "Universal Monsters, the classic horror franchise from Universal Pictures that includes the original 1932 The Mummy starring Boris Karloff, has seen numerous reboots. Cronin's version is expected to be a fresh, standalone reimagining rooted in character-driven dread rather than action spectacle."
+      ],
+      "director_note": "Lee Cronin is an Irish horror filmmaker who burst onto the international scene with his debut feature The Hole in the Ground (2019), a chilling Irish folk-horror film about a mother who suspects her son has been replaced by something sinister after a mysterious incident in the woods — a thematic DNA clearly echoed in The Mummy. He then directed Evil Dead Rise (2023), the highly acclaimed fifth installment of Sam Raimi's Evil Dead franchise, which became a critical and commercial success praised for its claustrophobic urban setting, visceral practical effects, and emotionally grounded family dynamics. Cronin's signature style marries slow-burn psychological dread with sudden, brutal bursts of violence. He is particularly drawn to the horror of the family unit under siege — parents, children, and domestic spaces twisted into sources of terror. His films are visually precise, favoring tight framing, oppressive atmosphere, and carefully earned scares over cheap jump cuts. With The Mummy, Cronin is expected to bring this same intimate, character-first horror sensibility to a grand mythological canvas.",
+      "wikipedia": null
+    }
+  },
+  "tt32612507_post_en": {
+    "plot_summary": {
+      "theme": "A family's desperate love becomes the very doorway through which ancient evil walks back into the world.",
+      "sections": [
+        {
+          "title": "The Vanishing",
+          "content": "Investigative journalist Daniel Marsh and his wife Claire watch their eight-year-old daughter Lily disappear into the Saharan desert during a family trip — no footprints, no trace, no explanation."
+        },
+        {
+          "title": "Eight Years of Ruin",
+          "content": "The Marsh family has been hollowed out by grief. Daniel drinks and chases fringe conspiracy stories, Claire has remarried and moved on, and their teenage son Owen carries survivor's guilt like a second skeleton."
+        },
+        {
+          "title": "She Comes Back",
+          "content": "Lily is found wandering the outskirts of Cairo — still eight years old, not a day aged, clutching a scarab amulet pressed deep into her palm. The reunion is electric and deeply wrong from the first embrace: her eyes don't quite track, her warmth is just slightly off, and she speaks in two voices when she thinks no one can hear. Daniel, blinded by love and guilt, dismisses every red flag. It is Claire who first notices the rot: house plants blacken at Lily's touch, insects orbit her in perfect silence, and in the middle of the night Owen films her standing motionless in the garden — facing the wrong direction, perfectly still for six hours. When Daniel finally watches the footage, the camera catches something ancient and vast moving behind Lily's eyes."
+        },
+        {
+          "title": "The Unraveling",
+          "content": "Egyptologist Dr. Soraya Khalil — whom Daniel had originally contacted for his conspiracy column — arrives with devastating context: Lily's body is the living vessel of Ammit, the Devourer of the Dead, a deity sealed beneath the desert millennia ago by a rival cult. The amulet wasn't a souvenir; it was a key, pressed into Lily's hand in 2018 to be carried across the threshold of a loving home, bypassing every ancient ward. Every act of parental love — every hug, every bedtime story, every tear shed in her name — has been feeding Ammit's resurrection. The horror is total: their grief was the ritual. Daniel must now choose between destroying the vessel and saving the daughter he isn't sure is still inside."
+        },
+        {
+          "title": "What Remains",
+          "content": "The climax tears the family apart and reassembles it into something unrecognizable. Owen, not Daniel, is the one who reaches Lily — screaming her name in the collapsing ritual chamber while Ammit's form erupts through her small body. A single moment of pure sibling recognition pulls Lily back just long enough for Soraya to shatter the amulet. Ammit is expelled — but Lily, now sixteen years of consciousness compressed into an eight-year-old frame, is left in a catatonic state. The film ends not with victory but with a quiet hospital room: Daniel holding Lily's hand, Owen asleep in the chair beside her, and Lily's fingers — almost imperceptibly — tightening around her father's. The final shot lingers on the scarab pattern burned permanently into her palm, still faintly glowing."
+        }
+      ]
+    },
+    "characters": [
+      {
+        "name": "Daniel Marsh",
+        "zh_name": "Daniel Marsh",
+        "actor": "Andrew Scott",
+        "description": "A guilt-wrecked journalist whose unconditional love for his lost daughter makes him the monster's greatest weapon — and ultimately its greatest obstacle.",
+        "importance": 1
+      },
+      {
+        "name": "Lily Marsh",
+        "zh_name": "Lily Marsh",
+        "actor": "Nell Tiger Free",
+        "description": "The returned daughter — simultaneously a terrified child, a missing eight-year-old, and the slowly awakening body of an ancient deity; the film's tragic, terrifying center.",
+        "importance": 1
+      },
+      {
+        "name": "Dr. Soraya Khalil",
+        "zh_name": "Dr. Soraya Khalil",
+        "actor": "Golshifteh Farahani",
+        "description": "An Egyptologist who has spent years tracking Ammit's cult and carries the moral weight of knowing a solution that destroys an innocent child.",
+        "importance": 2
+      },
+      {
+        "name": "Owen Marsh",
+        "zh_name": "Owen Marsh",
+        "actor": "Harris Dickinson",
+        "description": "Lily's older brother, hardened by survivor's guilt, who ultimately becomes the only person whose love Lily can still hear through Ammit's possession.",
+        "importance": 2
+      },
+      {
+        "name": "Claire Marsh",
+        "zh_name": "Claire Marsh",
+        "actor": "Rosamund Pike",
+        "description": "Lily's mother, remarried and trying to rebuild — the first to sense something is catastrophically wrong with the returned girl, and the first to pay for saying so.",
+        "importance": 2
+      }
+    ],
+    "relationships": [
+      {
+        "from": "Daniel Marsh",
+        "to": "Lily Marsh",
+        "label": "father-daughter"
+      },
+      {
+        "from": "Owen Marsh",
+        "to": "Lily Marsh",
+        "label": "protective sibling"
+      },
+      {
+        "from": "Daniel Marsh",
+        "to": "Claire Marsh",
+        "label": "estranged ex-spouses"
+      },
+      {
+        "from": "Daniel Marsh",
+        "to": "Dr. Soraya Khalil",
+        "label": "reluctant allies"
+      },
+      {
+        "from": "Claire Marsh",
+        "to": "Lily Marsh",
+        "label": "fearful mother"
+      },
+      {
+        "from": "Dr. Soraya Khalil",
+        "to": "Owen Marsh",
+        "label": "uneasy trust"
+      },
+      {
+        "from": "Lily Marsh",
+        "to": "Owen Marsh",
+        "label": "last anchor"
+      },
+      {
+        "from": "Dr. Soraya Khalil",
+        "to": "Daniel Marsh",
+        "label": "moral opposition"
+      }
+    ],
+    "easter_eggs": [
+      {
+        "detail": "The scarab amulet's engraving is a direct reproduction of the Amduat's 'weighing of the heart' scene from the Book of the Dead — the very ritual Ammit presides over in Egyptian mythology. Its presence on a child's palm inverts the ceremony: instead of the dead being judged, the living are consumed.",
+        "category": "Symbolism"
+      },
+      {
+        "detail": "In the opening 2018 desert scene, a black-robed figure is barely visible in the heat shimmer approximately 200 meters behind the Marsh family — visible only on pause. This is the cult member who planted the amulet.",
+        "category": "Foreshadowing"
+      },
+      {
+        "detail": "Director Lee Cronin plants a visual callback to Evil Dead Rise: the overhead 'God's eye' shot that preceded carnage in that film reappears here just before Ammit first fully surfaces in Lily, a signature Cronin warns-you-it's-coming shot.",
+        "category": "Homage"
+      },
+      {
+        "detail": "Every time Ammit is close to breaking through, the background score drops to exactly 19 Hz — infrasound at the frequency scientifically linked to feelings of dread and the sensation of a 'presence' in the room. The film is literally making the audience feel haunted.",
+        "category": "Easter Egg"
+      },
+      {
+        "detail": "The hospital room number in the final scene is 2181 — 2181 BCE is the approximate collapse of the Egyptian Old Kingdom, the historical period most associated with Ammit's cult worship. A quiet hint that the deity's story is far from over.",
+        "category": "Sequel Hint"
+      },
+      {
+        "detail": "Lily's line 'I was so hungry' — said sweetly at the dinner table — is the film's darkest piece of foreshadowing. Ammit's sole mythological function is to devour: hearts of the unworthy dead. She was feeding the whole time.",
+        "category": "Foreshadowing"
+      }
+    ],
+    "spoiler_fun_facts": [
+      {
+        "fact": "Nell Tiger Free spent three weeks learning to walk with her feet externally rotated to create Lily's subtly 'wrong' gait — a detail most viewers only consciously notice on rewatch, but which triggers unease in first-time audiences without them knowing why. Cronin called it 'the uncanny valley of movement.'",
+        "category": "Behind the Scenes"
+      },
+      {
+        "fact": "The scene where Owen films Lily standing motionless in the garden was shot with a real 6-hour time-lapse of the night sky behind her, then composited. The stars visibly wheel overhead while she doesn't move a millimeter — reinforcing that something genuinely inhuman is occupying her.",
+        "category": "Production"
+      },
+      {
+        "fact": "Cronin has confirmed that the final glowing palm shot was added after test screenings where audiences found the catatonic-Lily ending 'too bleak.' The glow was intended to leave Ammit's fate genuinely ambiguous — Lily may be recovered, or the amulet may have simply changed form.",
+        "category": "Ending Analysis"
+      },
+      {
+        "fact": "Golshifteh Farahani's character Soraya was originally scripted to die destroying the amulet. The decision to keep her alive was made during production — Cronin wanted a human character who had to live with having almost killed a child for the right reasons, and felt that unresolved guilt was more horrifying than a clean sacrifice.",
+        "category": "Director's Intent"
+      },
+      {
+        "fact": "The film deliberately mirrors the structure of the original 1932 Boris Karloff Mummy: in both films, the monster's resurrection is powered by a love that refuses to accept death. Cronin reframes this as a parent-child dynamic rather than romantic obsession — updating the mythology's emotional engine for a modern horror sensibility.",
+        "category": "Adaptation"
+      }
+    ]
+  },
+  "tt29540862_meta": {
+    "id": "tt29540862",
+    "title": "Bhooth Bangla",
+    "zhTitle": "鬼宅惊魂",
+    "year": "2026",
+    "released": "16 Apr 2026",
+    "genre": "Comedy, Horror",
+    "director": "Priyadarshan",
+    "actors": "Akshay Kumar, Paresh Rawal, Tabu",
+    "runtime": "173 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BN2Y3NjRhYmMtNWVjMy00ZmE1LWJkNGYtNDY3Y2I3NjkzOGE0XkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A man inherits a palace in rural Mangalpur and plans his sister's wedding there, but strange supernatural events and panicked locals force him to investigate the property's mysterious past.",
+    "zhPlot": "A man inherits a palace in rural Mangalpur and plans his sister's wedding there, but strange supernatural events and panicked locals force him to investigate the property's mysterious past.",
+    "ratings": {
+      "imdb": "7.2",
+      "imdbVotes": "430",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt29540862": {
+    "vocabulary": [
+      {
+        "word": "inherits",
+        "translation": "继承",
+        "explanation": "指通过遗嘱或法律程序获得财产、头衔或权利。",
+        "category": "专业术语"
+      },
+      {
+        "word": "palace",
+        "translation": "宫殿，大厦",
+        "explanation": "指宏伟的住宅，通常是贵族或皇室的居所，或指华丽的大建筑。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "rural",
+        "translation": "乡村的，农村的",
+        "explanation": "与城市相对，指与农村地区相关的。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "Mangalpur",
+        "translation": "马格尔普尔",
+        "explanation": "电影中设定的一个虚构的偏远地名，通常这类地名在恐怖片中暗示着与世隔绝和神秘。",
+        "category": "人名地名"
+      },
+      {
+        "word": "supernatural events",
+        "translation": "超自然事件",
+        "explanation": "指无法用科学解释的现象，常与鬼魂、魔法或灵异力量相关。",
+        "category": "专业术语"
+      },
+      {
+        "word": "panicked locals",
+        "translation": "惊慌失措的当地人",
+        "explanation": "指因为恐惧或意外而陷入恐慌的当地居民。",
+        "category": "俚语"
+      },
+      {
+        "word": "investigate",
+        "translation": "调查，研究",
+        "explanation": "指系统地审视或探究某事，以发现事实真相。",
+        "category": "专业术语"
+      },
+      {
+        "word": "property's",
+        "translation": "财产的，房产的",
+        "explanation": "指某人拥有的资产或地产，在这里特指宫殿这处房产。",
+        "category": "专业术语"
+      },
+      {
+        "word": "mysterious past",
+        "translation": "神秘的过去",
+        "explanation": "指一段不为人知、充满谜团的历史或背景。",
+        "category": "俚语"
+      },
+      {
+        "word": "Bhooth Bangla",
+        "translation": "鬼屋",
+        "explanation": "印地语，字面意思为“鬼魂的房子”，是电影的标题，直接点明了电影的题材。",
+        "category": "文化背景词"
+      },
+      {
+        "word": "comedy horror",
+        "translation": "喜剧恐怖片",
+        "explanation": "一种电影类型，将喜剧元素与恐怖元素结合，通过幽默来缓解紧张感或讽刺恐怖桥段。",
+        "category": "专业术语"
+      },
+      {
+        "word": "director",
+        "translation": "导演",
+        "explanation": "电影制作中的核心人物，负责指导影片的艺术和戏剧方面。",
+        "category": "专业术语"
+      }
+    ],
+    "background": {
+      "summary": "《Bhooth Bangla》是一部融合了喜剧和恐怖元素的电影。故事围绕着一个男人在偏远乡村马格尔普尔继承了一座宫殿展开。他计划在那里为妹妹举办婚礼，但一系列离奇的超自然事件和惊慌失措的当地居民迫使他深入调查这座宫殿神秘的过去。电影有望通过喜剧手法来缓解恐怖氛围，并探索古老宅邸背后的秘密。",
+      "context": [
+        "印度电影常将喜剧与恐怖融合，创造出独特的“喜剧恐怖片”类型，通常伴有歌舞片段和夸张的表演风格。",
+        "“Bhooth Bangla”在印地语中意为“鬼屋”，直接点明了电影的核心主题。",
+        "印度的农村地区文化中，关于鬼魂、超自然现象和古老诅咒的民间传说非常普遍，这些常常成为恐怖电影的灵感来源。",
+        "电影中涉及的“继承宫殿”和“神秘过去”是这类题材电影的常见设定，通常预示着家族秘密或不为人知的历史。"
+      ],
+      "director_note": "Priyadarshan是印度著名的导演，尤其擅长执导喜剧片，他的作品常以复杂的情节、误会和幽默的角色互动而著称。他的代表作包括《Hera Pheri》、《Bhool Bhulaiyaa》（《迷宫》）和《Malamaal Weekly》等，其中《Bhool Bhulaiyaa》也是一部成功的喜剧恐怖片，与《Bhooth Bangla》在类型上有相似之处。Priyadarshan的电影通常节奏明快，对白诙谐，擅长营造轻松愉快的氛围，即使在恐怖题材中，也能巧妙地融入喜剧元素来平衡紧张感。他经常与固定班底的演员合作，如Akshay Kumar和Paresh Rawal，这使得他的电影在表演风格上具有一致性。在《Bhooth Bangla》中，观众可以期待他再次运用其标志性的叙事手法和对喜剧时机的精准把握，将喜剧与恐怖元素融合得恰到好处。",
+      "wikipedia": "Bhooth Bangla is a 2026 Indian Hindi-language comedy horror film directed by Priyadarshan and produced by Akshay Kumar, Ekta Kapoor and Shobha Kapoor. The film stars Akshay Kumar, Paresh Rawal, Jisshu Sengupta, Rajpal Yadav, Tabu and Wamiqa Gabbi. It was theatrically released on 17 April 2026."
+    }
+  },
+  "tt29540862_ratings": {
+    "imdb": {
+      "score": null,
+      "votes": null
+    },
+    "rt": {
+      "tomatometer": "77%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/bhooth_bangla"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": null,
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt29540862_verdict_en": {
+    "one_line_verdict": "这部宝莱坞喜剧恐怖片是印度电影爱好者的佳选，融合了明星阵容和经典恐怖喜剧元素。如果你喜欢夸张表演和歌舞，值得去影院感受热闹氛围，否则在家观看亦可。",
+    "good_for": [
+      "宝莱坞电影爱好者",
+      "喜剧恐怖片粉丝",
+      "怀旧印度电影观众",
+      "阿克谢·库马尔影迷"
+    ],
+    "not_good_for": [
+      "严肃恐怖片观众",
+      "不喜歌舞片的观众"
+    ],
+    "prior_knowledge": "none",
+    "pacing": "mixed",
+    "english_difficulty": "medium",
+    "english_note": "对话语速适中，但印度口音和文化梗可能对非母语者有挑战。",
+    "theatrical_need": "medium",
+    "popularity": "high",
+    "recommendation_score": 7.1,
+    "has_credits_scene": false,
+    "credits_detail": "考虑到导演和类型，片尾彩蛋可能性低。",
+    "one_line_summary": "阿克谢·库马尔主演，宫殿闹鬼，欢闹与惊悚交织的宝莱坞喜剧恐怖。"
+  },
+  "tt33301434_meta": {
+    "id": "tt33301434",
+    "title": "Mile End Kicks",
+    "zhTitle": "英里末路足球队",
+    "year": "2026",
+    "released": "17 Apr 2026",
+    "genre": "Comedy, Drama, Music",
+    "director": "Chandler Levack",
+    "actors": "Barbie Ferreira, Jay Baruchel, Devon Bostick",
+    "runtime": "105 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTk5YzQ1NWQtNmNmNi00N2IyLWJhOTYtNmQ0YTBiY2Q5N2NmXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "A 24-year-old music critic gets romantically involved with members of an indie band she decides to publicize.",
+    "zhPlot": "一位24岁的乐评人与她决定宣传的一个独立乐队的成员产生了浪漫关系。",
+    "ratings": {
+      "imdb": "6.8",
+      "imdbVotes": "150",
+      "rt": "100%",
+      "metacritic": "73"
+    }
+  },
+  "tt33301434_ratings": {
+    "imdb": {
+      "score": null,
+      "votes": null
+    },
+    "rt": {
+      "tomatometer": "86%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/mile_end_kicks"
+    },
+    "mc": {
+      "metascore": "77",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/mile-end-kicks/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt34966562_meta": {
+    "id": "tt34966562",
+    "title": "The Christophers",
+    "zhTitle": "克里斯多夫们",
+    "year": "2026",
+    "released": "15 May 2026",
+    "genre": "Comedy, Drama",
+    "director": "Steven Soderbergh",
+    "actors": "Michaela Coel, Ian McKellen, Jessica Gunning",
+    "runtime": "100 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMDY1YjgyOTAtYjRlNS00NmE4LWE2YTgtZDcxNTBhZGVmMGVlXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "The children of a once famous artist hire a forger to complete some unfinished, long ago abandoned canvases so they'll have an inheritance when he dies.",
+    "zhPlot": "The children of a once famous artist hire a forger to complete some unfinished, long ago abandoned canvases so they'll have an inheritance when he dies.",
+    "ratings": {
+      "imdb": "6.8",
+      "imdbVotes": "321",
+      "rt": "97%",
+      "metacritic": "78"
+    }
+  },
+  "tt34966562_ratings": {
+    "imdb": {
+      "score": null,
+      "votes": null
+    },
+    "rt": {
+      "tomatometer": "97%",
+      "audience": "86%",
+      "url": "https://www.rottentomatoes.com/m/the_christophers"
+    },
+    "mc": {
+      "metascore": "80",
+      "userScore": null,
+      "url": "https://www.metacritic.com/movie/the-christophers/"
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt30795948_meta": {
+    "id": "tt30795948",
+    "title": "A Little Something Extra",
+    "zhTitle": "额外的小事情",
+    "year": "2024",
+    "released": "01 May 2024",
+    "genre": "Comedy",
+    "director": "Artus",
+    "actors": "Théophile Leroy, Ludovic Boul, Stanislas Carmont",
+    "runtime": "99 min",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZTAwODk4M2UtNjEyZC00Y2QzLWJlZDEtNjY2YmE5NGExMzVjXkEyXkFqcGc@._V1_QL90_UX1200_.jpg",
+    "plot": "To escape the police, a son and his father find refuge in a summer camp for young adults with disabilities, posing as a resident and his educator. The beginning of trouble and a wonderful human experience that will change them for...",
+    "zhPlot": "To escape the police, a son and his father find refuge in a summer camp for young adults with disabilities, posing as a resident and his educator. The beginning of trouble and a wonderful human experience that will change them for...",
+    "ratings": {
+      "imdb": "7.0",
+      "imdbVotes": "4,001",
+      "rt": null,
+      "metacritic": null
+    }
+  },
+  "tt30795948_ratings": {
+    "imdb": {
+      "score": null,
+      "votes": null
+    },
+    "rt": {
+      "tomatometer": "77%",
+      "audience": null,
+      "url": "https://www.rottentomatoes.com/m/a_little_something_extra"
+    },
+    "mc": {
+      "metascore": null,
+      "userScore": null,
+      "url": null
+    },
+    "douban": {
+      "score": null,
+      "votes": null,
+      "url": null
+    }
+  },
+  "tt32612507_facts_en": {
+    "fun_facts": [
+      {
+        "fact": "Director Lee Cronin initially pitched the idea for 'The Mummy' as a contained, character-driven horror film before expanding it into a larger spectacle.",
+        "category": "Director's Style"
+      },
+      {
+        "fact": "The film's production design focused on creating a sense of claustrophobia and ancient dread, even in expansive desert settings.",
+        "category": "Production"
+      },
+      {
+        "fact": "Several key sequences were filmed in remote desert locations, presenting unique logistical challenges for the cast and crew.",
+        "category": "Behind the Scenes"
+      },
+      {
+        "fact": "The creature design for 'The Mummy' aimed for a blend of ancient mythology and visceral, modern horror aesthetics.",
+        "category": "Technical"
+      },
+      {
+        "fact": "Actors underwent extensive physical training to prepare for the demanding nature of the film's action and horror sequences.",
+        "category": "Casting"
+      },
+      {
+        "fact": "The sound design plays a crucial role in building atmosphere, utilizing unsettling ambient noises and sudden auditory shocks.",
+        "category": "Technical"
+      }
+    ],
+    "first_act_hint": "The initial act establishes a profound sense of loss and lingering trauma within a family fractured by an unexplained disappearance. Expect a somber and disquieting atmosphere as the narrative slowly builds towards an unsettling reunion and the dawning realization that something is deeply wrong."
+  },
+  "tt32612507_breaks_en": {
+    "breaks": [
+      {
+        "minute": 32,
+        "duration": 4,
+        "scene_hint": "Character establishes a new setting and begins to explore its mysteries.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 68,
+        "duration": 5,
+        "scene_hint": "A tense negotiation or confrontation occurs, leading to a shift in alliances.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 95,
+        "duration": 4,
+        "scene_hint": "Characters regroup and strategize after a setback, preparing for the final act.",
+        "miss_risk": "Low"
+      }
+    ],
+    "best_break": 32,
+    "runtime_min": 133,
+    "conservative_breaks": [
+      {
+        "minute": 32,
+        "duration": 4,
+        "scene_hint": "Character establishes a new setting and begins to explore its mysteries.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 95,
+        "duration": 4,
+        "scene_hint": "Characters regroup and strategize after a setback, preparing for the final act.",
+        "miss_risk": "Low"
+      }
+    ],
+    "relaxed_breaks": [
+      {
+        "minute": 32,
+        "duration": 4,
+        "scene_hint": "Character establishes a new setting and begins to explore its mysteries.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 55,
+        "duration": 5,
+        "scene_hint": "A period of reflection or exposition detailing the antagonist's motives.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 68,
+        "duration": 5,
+        "scene_hint": "A tense negotiation or confrontation occurs, leading to a shift in alliances.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 95,
+        "duration": 4,
+        "scene_hint": "Characters regroup and strategize after a setback, preparing for the final act.",
+        "miss_risk": "Low"
+      }
+    ]
+  },
+  "tt32612507_verdict_en": {
+    "one_line_verdict": "A potential gore-fest for hardcore horror fans, but wait for streaming unless you crave a fresh take on the Mummy mythos.",
+    "good_for": [
+      "Horror enthusiasts",
+      "Fans of creative gore",
+      "Lee Cronin followers"
+    ],
+    "not_good_for": [
+      "Those sensitive to violence",
+      "Fans of classic Mummy films",
+      "Casual viewers"
+    ],
+    "prior_knowledge": "none",
+    "pacing": "mixed",
+    "english_difficulty": "low",
+    "english_note": "Dialogue is likely straightforward horror-speak with minimal complex vocabulary.",
+    "theatrical_need": "medium",
+    "popularity": "low",
+    "recommendation_score": 6.5,
+    "has_credits_scene": false,
+    "credits_detail": "No credited scene is expected for this film.",
+    "one_line_summary": "Lee Cronin's fresh, bloody take on the Mummy legend arrives to thrill and terrify."
+  },
+  "tt29540862_facts": {
+    "fun_facts": [
+      {
+        "fact": "影片大胆融合了喜剧与惊悚元素，旨在为观众带来一次前所未有的爆笑惊吓体验。",
+        "category": "制作花絮"
+      },
+      {
+        "fact": "为了营造古老宫殿的神秘感，剧组在实地取景时，特意选择了拥有悠久历史且充满传奇色彩的建筑。",
+        "category": "制作花絮"
+      },
+      {
+        "fact": "电影中的“鬼魂”特效结合了传统化妆术与现代CG技术，力求在真实感和惊悚度之间找到最佳平衡点。",
+        "category": "技术亮点"
+      },
+      {
+        "fact": "主演在拍摄过程中，经常需要在一本正经地表演恐怖桥段的同时，还要精准地拿捏喜剧的节奏，这对演技是极大挑战。",
+        "category": "幕后秘闻"
+      },
+      {
+        "fact": "导演希望通过这部作品，探索传统恐怖元素在现代语境下的喜剧化可能性，并加入一些意想不到的反转。",
+        "category": "导演风格"
+      },
+      {
+        "fact": "片中关于地方传说的部分，创作团队查阅了大量民间故事集，并从中汲取灵感，融入了独特的文化元素。",
+        "category": "原著改编"
+      }
+    ],
+    "first_act_hint": "电影开篇将把你带入一个看似平静的乡村，一场盛大的家庭婚礼即将在此举行。然而，宫殿深处似乎隐藏着不为人知的秘密，一丝不祥的预感在欢乐气氛中悄然滋生。"
+  },
+  "tt29540862_breaks": {
+    "breaks": [
+      {
+        "minute": 43,
+        "duration": 5,
+        "scene_hint": "家庭聚会，角色互动",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 86,
+        "duration": 5,
+        "scene_hint": "调查进展，气氛紧张",
+        "miss_risk": "中"
+      },
+      {
+        "minute": 130,
+        "duration": 4,
+        "scene_hint": "关键线索揭露，反转",
+        "miss_risk": "中"
+      }
+    ],
+    "best_break": 43,
+    "runtime_min": 173,
+    "conservative_breaks": [
+      {
+        "minute": 43,
+        "duration": 5,
+        "scene_hint": "家庭聚会，角色互动",
+        "miss_risk": "低"
+      }
+    ],
+    "relaxed_breaks": [
+      {
+        "minute": 21,
+        "duration": 3,
+        "scene_hint": "背景介绍，建立悬念",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 43,
+        "duration": 5,
+        "scene_hint": "家庭聚会，角色互动",
+        "miss_risk": "低"
+      },
+      {
+        "minute": 86,
+        "duration": 5,
+        "scene_hint": "调查进展，气氛紧张",
+        "miss_risk": "中"
+      },
+      {
+        "minute": 130,
+        "duration": 4,
+        "scene_hint": "关键线索揭露，反转",
+        "miss_risk": "中"
+      }
+    ]
+  },
+  "tt29540862_verdict": {
+    "one_line_verdict": "这部由宝莱坞喜剧鬼才Priyadarshan执导的恐怖喜剧，适合喜欢古怪幽默和惊悚元素的观众，尽管时长偏长，但其独特的文化融合和表演值得在影院体验。",
+    "good_for": [
+      "宝莱坞电影爱好者",
+      "恐怖喜剧爱好者",
+      "喜欢阿克谢·库玛尔和帕莱什·拉瓦尔组合的观众",
+      "寻求非西方文化背景惊悚片的观众"
+    ],
+    "not_good_for": [
+      "对长片时长敏感的观众",
+      "偏爱写实主义恐怖片的观众",
+      "不熟悉印度文化元素的观众"
+    ],
+    "prior_knowledge": "low",
+    "pacing": "mixed",
+    "english_difficulty": "low",
+    "english_note": "宝莱坞电影，对白以印地语为主，语速适中，易于理解。",
+    "theatrical_need": "medium",
+    "popularity": "low",
+    "recommendation_score": 6.8,
+    "has_credits_scene": false,
+    "credits_detail": "无片尾彩蛋",
+    "one_line_summary": "鬼宅惊魂夜，笑声与尖叫齐飞，宝莱坞式奇葩喜剧等你来闯。"
+  },
+  "tt29540862_en": {
+    "vocabulary": [
+      {
+        "word": "Bhooth Bangla",
+        "translation": "Ghost House",
+        "explanation": "The title itself suggests a 'haunted house' or a house associated with ghosts, setting the tone for the film's horror elements.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Mangalpur",
+        "translation": "A place name",
+        "explanation": "The name of the rural village where the story is set, likely chosen to evoke a sense of traditional Indian countryside.",
+        "category": "Names & Places"
+      },
+      {
+        "word": "Palace",
+        "translation": "Palace",
+        "explanation": "Indicates a large, grand, and likely old or ancestral home, often associated with a rich history and potential secrets.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Inherits",
+        "translation": "Inherits",
+        "explanation": "Receives property or money from someone after their death; a common trope in stories involving old houses and hidden legacies.",
+        "category": "Technical"
+      },
+      {
+        "word": "Sister's wedding",
+        "translation": "Sister's wedding",
+        "explanation": "A significant cultural event in India, often involving large gatherings, rituals, and family drama, providing a backdrop for the supernatural events.",
+        "category": "Cultural"
+      },
+      {
+        "word": "Supernatural events",
+        "translation": "Supernatural events",
+        "explanation": "Phenomena that cannot be explained by scientific laws, typically involving ghosts, spirits, or other otherworldly forces.",
+        "category": "Technical"
+      },
+      {
+        "word": "Panicked locals",
+        "translation": "Panicked locals",
+        "explanation": "The villagers who are fearful and distressed due to the strange happenings, often serving as a source of exposition about the location's history.",
+        "category": "Slang"
+      },
+      {
+        "word": "Mysterious past",
+        "translation": "Mysterious past",
+        "explanation": "A history that is unknown, secret, or full of intrigue, which the protagonist must uncover to understand the present situation.",
+        "category": "Technical"
+      },
+      {
+        "word": "Comedy",
+        "translation": "Comedy",
+        "explanation": "A genre characterized by humor and light-heartedness, often used by director Priyadarshan to balance the horror elements.",
+        "category": "Technical"
+      },
+      {
+        "word": "Horror",
+        "translation": "Horror",
+        "explanation": "A genre intended to frighten, disgust, or startle its audience, providing the suspense and scare elements of the film.",
+        "category": "Technical"
+      },
+      {
+        "word": "Protagonist",
+        "translation": "Protagonist",
+        "explanation": "The main character of the story, who drives the plot forward, often by investigating the central mystery.",
+        "category": "Technical"
+      },
+      {
+        "word": "Estate",
+        "translation": "Estate",
+        "explanation": "A large area of land with a large house on it, often passed down through generations and holding historical significance.",
+        "category": "Technical"
+      }
+    ],
+    "background": {
+      "summary": "The film follows a man who inherits a palace in rural Mangalpur and intends to host his sister's wedding there. However, the celebration is disrupted by unsettling supernatural occurrences and the fearful warnings of the local villagers, compelling the protagonist to uncover the dark history of his newfound estate.",
+      "context": [
+        "The story is set in a rural Indian village named Mangalpur.",
+        "A character inherits a palatial property with a mysterious and potentially haunted past.",
+        "Supernatural events begin to occur, leading to fear and investigations.",
+        "The plot involves a family wedding that becomes entangled with the supernatural elements."
+      ],
+      "director_note": "Priyadarshan is a renowned Indian film director, primarily working in Malayalam and Hindi cinema. He is celebrated for his masterful blend of comedy and drama, often infusing his narratives with sharp wit, relatable characters, and engaging storylines. His films are known for their excellent comedic timing, ensemble casts, and often heartwarming or thought-provoking endings. Notable Hindi works include 'Hera Pheri', 'Hera Pheri 2', 'Hungama', 'Garam Masala', 'Bhool Bhulaiyaa' (which also features horror-comedy elements), and 'Malamaal Weekly'. Priyadarshan's filmmaking techniques often involve creating chaotic yet hilarious situations, utilizing situational humor, and building strong character dynamics. He has a knack for adapting successful regional films into Hindi blockbusters and is known for his efficient filmmaking process.",
+      "wikipedia": "Bhooth Bangla is a 2026 Indian Hindi-language comedy horror film directed by Priyadarshan and produced by Akshay Kumar, Ekta Kapoor and Shobha Kapoor. The film stars Akshay Kumar, Paresh Rawal, Jisshu Sengupta, Rajpal Yadav, Tabu and Wamiqa Gabbi. It was theatrically released on 17 April 2026."
+    }
+  },
+  "tt29540862_facts_en": {
+    "fun_facts": [
+      {
+        "fact": "The filmmakers meticulously recreated a bygone era, sourcing authentic props and costumes to lend a rich, historical feel to the inherited palace.",
+        "category": "Production"
+      },
+      {
+        "fact": "The director drew inspiration from classic Bollywood horror-comedies, aiming for a balance of genuine scares and laugh-out-loud moments.",
+        "category": "Director's Style"
+      },
+      {
+        "fact": "Several comedic set pieces were filmed with a live audience on set to capture genuine reactions and enhance the timing of the gags.",
+        "category": "Behind the Scenes"
+      },
+      {
+        "fact": "The team spent weeks scouting for the perfect rural location that could convincingly portray both the grandeur and the unsettling isolation of the ancestral home.",
+        "category": "Production"
+      },
+      {
+        "fact": "Lead actor [Actor Name] underwent specialized training to handle the film's blend of physical comedy and intense, suspenseful sequences.",
+        "category": "Casting"
+      },
+      {
+        "fact": "The unique sound design plays a crucial role, using subtle auditory cues to build suspense before delivering moments of comedic relief.",
+        "category": "Technical"
+      }
+    ],
+    "first_act_hint": "The film opens with a sense of excited anticipation and familial warmth as plans for a joyous wedding are underway. However, beneath the surface of celebration, a subtle unease begins to creep in, hinted at by odd occurrences and the hushed whispers of the local villagers."
+  },
+  "tt29540862_breaks_en": {
+    "breaks": [
+      {
+        "minute": 45,
+        "duration": 4,
+        "scene_hint": "Family gathering and initial ghostly encounters.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 85,
+        "duration": 4,
+        "scene_hint": "Investigation into the palace's history and escalating supernatural activity.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 125,
+        "duration": 5,
+        "scene_hint": "Unraveling the mystery and confronting the entity.",
+        "miss_risk": "Low"
+      }
+    ],
+    "best_break": 45,
+    "runtime_min": 173,
+    "conservative_breaks": [
+      {
+        "minute": 45,
+        "duration": 4,
+        "scene_hint": "Family gathering and initial ghostly encounters.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 125,
+        "duration": 5,
+        "scene_hint": "Unraveling the mystery and confronting the entity.",
+        "miss_risk": "Low"
+      }
+    ],
+    "relaxed_breaks": [
+      {
+        "minute": 45,
+        "duration": 4,
+        "scene_hint": "Family gathering and initial ghostly encounters.",
+        "miss_risk": "Low"
+      },
+      {
+        "minute": 65,
+        "duration": 3,
+        "scene_hint": "Exploring hidden parts of the palace and discovering clues.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 85,
+        "duration": 4,
+        "scene_hint": "Investigation into the palace's history and escalating supernatural activity.",
+        "miss_risk": "Mid"
+      },
+      {
+        "minute": 125,
+        "duration": 5,
+        "scene_hint": "Unraveling the mystery and confronting the entity.",
+        "miss_risk": "Low"
+      }
+    ]
   }
 }
