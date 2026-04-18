@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
             zh_name:     { type: "string", description: "角色中文译名" },
             actor:       { type: "string", description: "演员名" },
             description: { type: "string", description: "一句话描述角色定位和弧线" },
-            importance:  { type: "integer", description: "角色重要程度：1=核心主角（整部电影围绕TA），2=重要配角（大量戏份），3=次要角色（少量戏份）。只允许 1/2/3。", minimum: 1, maximum: 3 },
+            importance:  { type: "integer", description: "角色重要程度：1=核心主角（整部电影围绕TA），2=重要配角（大量戏份），3=次要角色（少量戏份）。只允许 1/2/3。" },
           },
           required: ["name", "zh_name", "actor", "description", "importance"],
         },
