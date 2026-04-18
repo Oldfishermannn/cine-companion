@@ -5,7 +5,11 @@
 import { google } from "@ai-sdk/google";
 import { generateObject, generateText, jsonSchema } from "ai";
 
-type JSONSchema = Parameters<typeof jsonSchema>[0];
+// JSONSchema7 from the `ai` package narrows `type` to a literal union, which
+// rejects plain object literals written as `{ type: "object", ... }` (TS widens
+// them to `string`). Accept a broader record here and cast at the call site —
+// the schema still reaches Gemini unchanged.
+type JSONSchema = Record<string, unknown>;
 
 // Alias GEMINI_API_KEY → GOOGLE_GENERATIVE_AI_API_KEY (what AI SDK reads)
 if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY && process.env.GEMINI_API_KEY) {
@@ -32,7 +36,7 @@ export async function generateStructured<T = Record<string, unknown>>(opts: {
 }): Promise<T> {
   const { object } = await generateObject({
     model: google(opts.model ?? STRUCTURED_MODEL),
-    schema: jsonSchema<T>(opts.schema),
+    schema: jsonSchema<T>(opts.schema as Parameters<typeof jsonSchema>[0]),
     prompt: opts.prompt,
     maxOutputTokens: opts.maxTokens,
     providerOptions: NO_THINKING,
