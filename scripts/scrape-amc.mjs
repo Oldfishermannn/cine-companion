@@ -6,16 +6,23 @@
  * talks to the user's Chrome (port 9222). Residential IP + real browser
  * fingerprint bypasses Cloudflare bot protection.
  *
+ * Hardening:
+ *   - Reuse any existing amctheatres.com tab (warm session) before opening new.
+ *   - Warm the homepage first before navigating to /movies — AMC returns
+ *     HTTP 500 for cold CDP tabs that go directly to /movies.
+ *   - Retry on 500 / empty-DOM by re-warming and re-navigating.
+ *
  * Outputs JSON array to stdout: [{ title, date, slug }, ...]
  *
  * Exit codes:
  *   0 — success, at least 1 movie found
  *   1 — proxy unreachable
- *   2 — Chrome not responding / page failed to load
+ *   2 — Chrome not responding / page failed to load after retries
  *   3 — zero movies (likely Cloudflare block or DOM changed)
  */
 
 const PROXY = "http://localhost:3456";
+const AMC_HOME = "https://www.amctheatres.com/";
 const AMC_URL = "https://www.amctheatres.com/movies";
 
 function sleep(ms) {
@@ -28,8 +35,16 @@ async function proxy(path, opts = {}) {
   return res.json();
 }
 
+async function listTargets() {
+  return proxy(`/targets`);
+}
+
 async function openTab(url) {
   return proxy(`/new?url=${encodeURIComponent(url)}`);
+}
+
+async function navigate(target, url) {
+  return proxy(`/navigate?target=${target}&url=${encodeURIComponent(url)}`);
 }
 
 async function evalJS(target, js) {
@@ -39,7 +54,6 @@ async function evalJS(target, js) {
   });
   if (!res.ok) throw new Error(`eval → HTTP ${res.status}`);
   const data = await res.json();
-  // Proxy returns { value: "<stringified result>" }
   return data.value;
 }
 
@@ -55,36 +69,72 @@ async function ensureProxyUp() {
   try {
     const r = await fetch(`${PROXY}/targets`);
     if (!r.ok) throw new Error(`targets → HTTP ${r.status}`);
-  } catch (e) {
+  } catch {
     console.error(`[scrape-amc] CDP Proxy not reachable at ${PROXY}`);
     console.error(`[scrape-amc] Start it with: node ~/.claude/plugins/cache/web-access/web-access/2.4.2/scripts/check-deps.mjs`);
     process.exit(1);
   }
 }
 
-async function main() {
-  await ensureProxyUp();
+// Detect AMC's cloudflare / server-error page so we can retry instead of
+// extracting nothing. Returns true if the page looks broken.
+async function isErrorPage(target) {
+  const resultStr = await evalJS(
+    target,
+    `JSON.stringify({
+       title: document.title || "",
+       h1: (document.querySelector("h1") || {}).innerText || "",
+       hasH3: document.querySelectorAll("h3").length
+     })`,
+  );
+  try {
+    const info = JSON.parse(resultStr || "{}");
+    const bad = /error 500|access denied|just a moment|cloudflare/i;
+    if (bad.test(info.title) || bad.test(info.h1)) return true;
+    if (info.hasH3 === 0) return true;
+    return false;
+  } catch {
+    return true;
+  }
+}
 
-  console.error(`[scrape-amc] Opening ${AMC_URL}...`);
-  const { targetId } = await openTab(AMC_URL);
-  if (!targetId) {
-    console.error(`[scrape-amc] Failed to open tab`);
-    process.exit(2);
+// Open/reuse a warm AMC tab and navigate it to /movies. Returns { targetId, opened }
+// where `opened` indicates whether we created the tab (caller should close it).
+async function getWarmMoviesTab() {
+  const targets = await listTargets();
+  const existing = Array.isArray(targets)
+    ? targets.find(
+        (t) =>
+          t.type === "page" &&
+          typeof t.url === "string" &&
+          t.url.includes("amctheatres.com"),
+      )
+    : null;
+
+  if (existing) {
+    console.error(`[scrape-amc] Reusing existing AMC tab ${existing.targetId}`);
+    // If not already on /movies, navigate it there. The warm session's
+    // cookies/fingerprint survive the nav and AMC serves a real page.
+    if (!existing.url.includes("/movies")) {
+      await navigate(existing.targetId, AMC_URL);
+      await sleep(5000);
+    }
+    return { targetId: existing.targetId, opened: false };
   }
 
-  try {
-    // Wait for initial page load
-    await sleep(8000);
+  // No warm tab — warm the homepage first, then navigate to /movies.
+  // Opening /movies cold returns HTTP 500 for CDP-driven tabs.
+  console.error(`[scrape-amc] No warm tab — warming homepage...`);
+  const { targetId } = await openTab(AMC_HOME);
+  if (!targetId) throw new Error("Failed to open warmup tab");
+  await sleep(6000);
+  console.error(`[scrape-amc] Navigating warmed tab to /movies...`);
+  await navigate(targetId, AMC_URL);
+  await sleep(6000);
+  return { targetId, opened: true };
+}
 
-    // Trigger lazy-load by scrolling down in stages
-    for (let i = 1; i <= 8; i++) {
-      await scroll(targetId, i * 1500);
-      await sleep(1200);
-    }
-    await sleep(2000);
-
-    // Extract movies — h3 under card container, href from sibling <a>
-    const extractJS = `
+const EXTRACT_JS = `
 JSON.stringify(
   Array.from(document.querySelectorAll('h3'))
     .map(h3 => {
@@ -106,19 +156,58 @@ JSON.stringify(
     .filter((m, i, arr) => arr.findIndex(x => x.slug === m.slug) === i)
 )`.trim();
 
-    const resultStr = await evalJS(targetId, extractJS);
-    const movies = JSON.parse(resultStr || "[]");
+async function attemptScrape(target) {
+  // Give React time to hydrate + cards time to render
+  await sleep(3000);
 
-    if (movies.length === 0) {
-      console.error(`[scrape-amc] ZERO movies found — likely Cloudflare block or DOM changed`);
+  // Bail early if AMC served an error/challenge page
+  if (await isErrorPage(target)) {
+    return { ok: false, reason: "error-page" };
+  }
+
+  // Trigger lazy-load by scrolling down in stages
+  for (let i = 1; i <= 8; i++) {
+    await scroll(target, i * 1500);
+    await sleep(1000);
+  }
+  await sleep(1500);
+
+  const resultStr = await evalJS(target, EXTRACT_JS);
+  const movies = JSON.parse(resultStr || "[]");
+  return { ok: movies.length > 0, movies, reason: movies.length ? null : "empty" };
+}
+
+async function main() {
+  await ensureProxyUp();
+
+  let { targetId, opened } = await getWarmMoviesTab();
+  let attempt;
+
+  try {
+    // Up to 3 tries: scroll/extract → if empty or error, re-nav + wait + retry
+    for (let attemptNum = 1; attemptNum <= 3; attemptNum++) {
+      console.error(`[scrape-amc] Attempt ${attemptNum}...`);
+      attempt = await attemptScrape(targetId);
+      if (attempt.ok) break;
+
+      console.error(`[scrape-amc] Attempt ${attemptNum} failed: ${attempt.reason}. Re-navigating...`);
+      // Back off: homepage warmup again then /movies
+      await navigate(targetId, AMC_HOME);
+      await sleep(5000);
+      await navigate(targetId, AMC_URL);
+      await sleep(6000);
+    }
+
+    if (!attempt || !attempt.ok) {
+      console.error(`[scrape-amc] ZERO movies after retries — likely Cloudflare block or DOM changed`);
       process.exit(3);
     }
 
-    console.error(`[scrape-amc] Scraped ${movies.length} movies`);
-    // Print to stdout for consumer
-    console.log(JSON.stringify(movies, null, 2));
+    console.error(`[scrape-amc] Scraped ${attempt.movies.length} movies`);
+    console.log(JSON.stringify(attempt.movies, null, 2));
   } finally {
-    await closeTab(targetId).catch(() => {});
+    // Only close tabs we opened. Don't touch a tab the user was browsing.
+    if (opened) await closeTab(targetId).catch(() => {});
   }
 }
 

@@ -98,6 +98,16 @@ if [[ "$UPDATE_OUT" == NO_CHANGES* ]]; then
   exit 0
 fi
 
+# ── Bake posters for any newly-added movies ────────────────────────────────
+# bake-posters.mjs is OMDb-only (no dev server needed), safe to run in cron.
+# Only fills null posterUrl so existing ones aren't overwritten.
+log "Baking posters..."
+if node scripts/bake-posters.mjs --skip-existing >> "$LOG_FILE" 2>&1; then
+  log "bake-posters ✓"
+else
+  log "WARN: bake-posters exited non-zero — continuing; missing posters show fallback"
+fi
+
 if ! git diff --quiet app/catalog.ts; then
   TODAY=$(date '+%Y-%m-%d')
   # Extract summary from UPDATE_OUT (format: "CHANGED added=N updated=N dropped=N")
