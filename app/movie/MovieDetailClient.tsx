@@ -59,10 +59,11 @@ interface Props {
   query: string;
   zhFromUrl: string;
   amcSlug: string;
+  yearFromUrl?: string;
   initialData: InitialMovieData;
 }
 
-export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialData }: Props) {
+export default function MovieDetailClient({ query, zhFromUrl, amcSlug, yearFromUrl, initialData }: Props) {
   const router = useRouter();
   const { t, lang, genre: tGenre } = useLang();
 
@@ -206,7 +207,12 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, initialDa
       setLoading(true);
     }
 
-    fetch(`/api/movie?q=${encodeURIComponent(query)}`)
+    const catalogYear = MOVIE_CATALOG.find(m => m.title === query)?.year;
+    const yearParam = yearFromUrl || catalogYear || "";
+    const movieUrl = yearParam
+      ? `/api/movie?q=${encodeURIComponent(query)}&year=${encodeURIComponent(yearParam)}`
+      : `/api/movie?q=${encodeURIComponent(query)}`;
+    fetch(movieUrl)
       .then(r => r.json())
       .then(d => {
         if (d.error) { setError(d.error); setLoading(false); return; }

@@ -100,7 +100,7 @@ async function scrapeImdbRatingById(
 // ── IMDb fallback ─────────────────────────────────────────────────────────────
 // 1. Search IMDb __NEXT_DATA__ for title ID + basic info
 // 2. Fetch title page JSON-LD for director / actors
-async function searchIMDb(query: string, zhOverride = ""): Promise<{
+async function searchIMDb(query: string, zhOverride = "", yearHint = ""): Promise<{
   id: string; title: string; zhTitle: string; zhPlot: string; year: string; released: string; genre: string;
   director: string; actors: string; runtime: string;
   poster: string | null; plot: string;
@@ -136,20 +136,30 @@ async function searchIMDb(query: string, zhOverride = ""): Promise<{
       };
     };
 
+    const expYear = yearHint ? parseInt(yearHint, 10) : NaN;
     let best: ImdbItem | null = null;
-    for (const r of results as ImdbItem[]) {
-      const item = r.listItem ?? {};
-      const titleNorm = normStr(item.titleText ?? "");
-      const yr = item.releaseYear ?? 0;
-      // Accept if titles overlap and year is recent (2020+)
-      const words = expectedNorm.split(" ").filter(w => w.length > 2);
-      const overlap = words.length === 0 || words.filter(w => titleNorm.includes(w)).length >= Math.ceil(words.length * 0.6);
-      if (overlap && yr >= 2020) {
-        best = r;
-        break;
+    // Pass 1: exact year match if yearHint given (handles old films like Ferris Bueller 1986, Speed Racer 2008)
+    if (!isNaN(expYear)) {
+      for (const r of results as ImdbItem[]) {
+        const item = r.listItem ?? {};
+        const titleNorm = normStr(item.titleText ?? "");
+        const yr = item.releaseYear ?? 0;
+        const words = expectedNorm.split(" ").filter(w => w.length > 2);
+        const overlap = words.length === 0 || words.filter(w => titleNorm.includes(w)).length >= Math.ceil(words.length * 0.6);
+        if (overlap && Math.abs(yr - expYear) <= 1) { best = r; break; }
       }
-      // Also accept older films if exact title match (user searched classic)
-      if (titleNorm === expectedNorm) { best = r; break; }
+    }
+    // Pass 2: general overlap + recent year
+    if (!best) {
+      for (const r of results as ImdbItem[]) {
+        const item = r.listItem ?? {};
+        const titleNorm = normStr(item.titleText ?? "");
+        const yr = item.releaseYear ?? 0;
+        const words = expectedNorm.split(" ").filter(w => w.length > 2);
+        const overlap = words.length === 0 || words.filter(w => titleNorm.includes(w)).length >= Math.ceil(words.length * 0.6);
+        if (overlap && yr >= 2020) { best = r; break; }
+        if (titleNorm === expectedNorm) { best = r; break; }
+      }
     }
     if (!best) {
       // Fall back to first result regardless of year
@@ -258,22 +268,49 @@ function stripArticle(s: string) {
   return s.replace(/^(the|a|an) /, "");
 }
 
+// 去掉 "Nth Anniversary" / ": Anniversary Edition" / "15th Anniversary" 等后缀
+// 让 "Bridesmaids: 15th Anniversary" 可以匹配到原片 "Bridesmaids"
+function stripReReleaseSuffix(t: string): string {
+  return t
+    .replace(/:\s*\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
+    .replace(/\s+\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
+    .replace(/:\s*Anniversary\s+Edition.*$/i, "")
+    .replace(/\s+\(Re-?release\)$/i, "")
+    .trim();
+}
+
 // Title match: same logic as homepage + movie page
-function isTitleMatch(returnedTitle: string, returnedYear: string, query: string): boolean {
+// `expectedYear` — 目录年份提示。若给出且返回年份匹配（±1），接受；旧片保护关闭。
+function isTitleMatch(
+  returnedTitle: string,
+  returnedYear: string,
+  query: string,
+  expectedYear?: string,
+): boolean {
   const norm = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
   const expected = norm(query);
+  const expectedStripped = norm(stripReReleaseSuffix(query));
   const got = norm(returnedTitle);
   const gotYear = parseInt(returnedYear.slice(0, 4), 10);
-  if (!isNaN(gotYear) && gotYear < 2020 && gotYear < new Date().getFullYear() - 3) return false;
-  // Exact match
-  if (got === expected) return true;
-  // Article-stripped match: "The Exit 8" → "exit 8"
+  const expYear = expectedYear ? parseInt(expectedYear, 10) : NaN;
+
+  // 若目录指定年份且 OMDb 年份匹配（±1），直接信任，不做旧片过滤
+  const yearTrusts = !isNaN(expYear) && !isNaN(gotYear) && Math.abs(gotYear - expYear) <= 1;
+
+  if (!yearTrusts && !isNaN(gotYear) && gotYear < 2020 && gotYear < new Date().getFullYear() - 3) return false;
+
+  // Exact / article-stripped / suffix-stripped exact match
+  if (got === expected || got === expectedStripped) return true;
   if (stripArticle(got) === expected || got === stripArticle(expected)) return true;
   if (stripArticle(got) === stripArticle(expected)) return true;
-  // Word overlap ≥70%
-  const words = expected.split(" ").filter(w => w.length > 2);
-  if (words.length >= 2 && words.filter(w => got.includes(w)).length >= Math.ceil(words.length * 0.7)) return true;
+  if (stripArticle(got) === expectedStripped) return true;
+
+  // Word overlap ≥70% — 对去后缀版本也试一次
+  for (const target of [expected, expectedStripped]) {
+    const words = target.split(" ").filter(w => w.length > 2);
+    if (words.length >= 2 && words.filter(w => got.includes(w)).length >= Math.ceil(words.length * 0.7)) return true;
+  }
   return false;
 }
 
@@ -285,20 +322,27 @@ export async function GET(req: NextRequest) {
   // 主页目录传入人工审核的中文名，直接使用，跳过 AI 翻译
   const zhFromClient = searchParams.get("zh") || "";
 
+  // 目录年份提示：对周年重映 / 老片匹配关键
+  const yearHint = searchParams.get("year") || "";
+
   // 中文片名先翻译成英文再搜索（OMDb/IMDb 不支持中文查询）
   // 同时保留原始中文作为展示用 zhTitle
   const chineseInput = hasChinese(rawQuery) ? rawQuery : null;
   const query = chineseInput ? await translateToEnglishTitle(rawQuery) : rawQuery;
+  // "Bridesmaids: 15th Anniversary" → "Bridesmaids" 用来搜 OMDb 原片
+  const searchQuery = stripReReleaseSuffix(query);
 
   try {
     // ── Stage 1: Try OMDb ─────────────────────────────────────────────────────
     let omdbOk = false;
     try {
-      const searchResult = await fetchOMDb({ s: query, type: "movie" });
+      const omdbParams: Record<string, string> = { s: searchQuery, type: "movie" };
+      if (yearHint) omdbParams.y = yearHint;
+      const searchResult = await fetchOMDb(omdbParams);
       if (searchResult.Response !== "False") {
         const topResult = searchResult.Search[0];
         const detail = await fetchOMDb({ i: topResult.imdbID, plot: "short" });
-        if (detail.Response !== "False" && isTitleMatch(detail.Title, detail.Year, query)) {
+        if (detail.Response !== "False" && isTitleMatch(detail.Title, detail.Year, query, yearHint)) {
           omdbOk = true;
           const rtRating = detail.Ratings?.find(
             (r: { Source: string; Value: string }) => r.Source === "Rotten Tomatoes"
@@ -350,7 +394,7 @@ export async function GET(req: NextRequest) {
 
     // ── Stage 2: OMDb miss or mismatch → IMDb direct scrape ──────────────────
     void omdbOk; // OMDb returned wrong movie; scrape IMDb instead
-    const imdbData = await searchIMDb(query, zhFromClient);
+    const imdbData = await searchIMDb(searchQuery, zhFromClient, yearHint);
     if (imdbData) {
       // 优先：客户端人工审核 > 中文搜索词 > AI 翻译
       const zhTitle = zhFromClient || chineseInput || imdbData.zhTitle;

@@ -104,7 +104,7 @@ export default async function Home() {
             <ul>
               {MOVIE_CATALOG.map(m => (
                 <li key={m.title}>
-                  <a href={`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}`}>
+                  <a href={`/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&year=${encodeURIComponent(m.year)}`}>
                     {m.zh} ({m.title}, {m.year}) — {m.genre}
                   </a>
                 </li>

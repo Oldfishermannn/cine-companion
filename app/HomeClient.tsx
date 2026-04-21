@@ -123,7 +123,7 @@ function HScrollRow({ children }: { children: React.ReactNode }) {
 }
 
 function movieUrl(m: CatalogMovie): string {
-  return `/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}`;
+  return `/movie?q=${encodeURIComponent(m.title)}&zh=${encodeURIComponent(m.zh)}&amc=${encodeURIComponent(m.amc)}&year=${encodeURIComponent(m.year)}`;
 }
 
 /* ═══════════════════════════════════════════════
@@ -137,7 +137,7 @@ function FeaturedSlate({ films }: { films: CatalogMovie[] }) {
   const { lang, title: tTitle, genre: tGenre } = useLang();
 
   const go = (film: CatalogMovie) => {
-    router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}&amc=${encodeURIComponent(film.amc)}`);
+    router.push(`/movie?q=${encodeURIComponent(film.title)}&zh=${encodeURIComponent(film.zh)}&amc=${encodeURIComponent(film.amc)}&year=${encodeURIComponent(film.year)}`);
   };
 
   if (films.length === 0) return null;

@@ -21,12 +21,13 @@ import type { MovieData, AiContent, PostContent, FunFacts, BreaksContent, LiveRa
 export default async function MoviePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; zh?: string; amc?: string }>;
+  searchParams: Promise<{ q?: string; zh?: string; amc?: string; year?: string }>;
 }) {
   const params = await searchParams;
   const query = params.q ?? "";
   const zhFromUrl = params.zh ?? "";
   const amcSlug = params.amc ?? "";
+  const yearFromUrl = params.year ?? "";
 
   const initialData: InitialMovieData = {
     meta: null,
@@ -80,6 +81,7 @@ export default async function MoviePage({
       query={query}
       zhFromUrl={zhFromUrl}
       amcSlug={amcSlug}
+      yearFromUrl={yearFromUrl}
       initialData={initialData}
     />
   );
