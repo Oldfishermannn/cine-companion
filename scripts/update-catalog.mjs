@@ -334,12 +334,29 @@ async function main() {
     console.error(`[update-catalog] Missing ${SCRAPE_PATH}. Run scrape-amc.mjs first.`);
     process.exit(1);
   }
-  const scraped = JSON.parse(fs.readFileSync(SCRAPE_PATH, "utf8"));
-  if (!Array.isArray(scraped) || scraped.length < MIN_EXPECTED) {
-    console.error(`[update-catalog] Scrape too small (${scraped.length} < ${MIN_EXPECTED}). Aborting.`);
+  const scrapedRaw = JSON.parse(fs.readFileSync(SCRAPE_PATH, "utf8"));
+  if (!Array.isArray(scrapedRaw) || scrapedRaw.length < MIN_EXPECTED) {
+    console.error(`[update-catalog] Scrape too small (${scrapedRaw.length} < ${MIN_EXPECTED}). Aborting.`);
     process.exit(1);
   }
-  console.error(`[update-catalog] Scraped: ${scraped.length} movies`);
+  // Filter out AMC's non-film promotional listings (blind-pick events, etc.).
+  // These have no IMDb entry so the detail page can never render; dropping
+  // them at ingest prevents the daily cron from re-adding them after every
+  // manual removal.
+  const BLOCKED_SLUG_PATTERNS = [
+    /^amc-scream-unseen-/i,           // AMC Scream Unseen (blind-pick horror)
+    /^amc-.*-unseen-/i,               // any other AMC Unseen promo variant
+    /^amc-fan-event-/i,               // fan events
+    /^amc-sneak-/i,                   // sneak previews
+  ];
+  const scraped = scrapedRaw.filter((s) => {
+    if (BLOCKED_SLUG_PATTERNS.some((re) => re.test(s.slug))) {
+      console.error(`[update-catalog] Blocked non-film listing: ${s.title} (${s.slug})`);
+      return false;
+    }
+    return true;
+  });
+  console.error(`[update-catalog] Scraped: ${scraped.length} movies (${scrapedRaw.length - scraped.length} blocked)`);
 
   // 2. Parse existing catalog
   const catalogContent = fs.readFileSync(CATALOG_PATH, "utf8");

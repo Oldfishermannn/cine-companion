@@ -44,7 +44,6 @@ export const MOVIE_CATALOG: CatalogMovie[] = [
   { title: "The Christophers",                          zh: "克里斯多夫们",                      year: "2026", released: "April 10, 2026", genre: "喜剧", amc: "the-christophers-82684",                          rank: 21, imdbScore: 6.8, posterUrl: "https://m.media-amazon.com/images/M/MV5BMDY1YjgyOTAtYjRlNS00NmE4LWE2YTgtZDcxNTBhZGVmMGVlXkEyXkFqcGc@._V1_QL90_UX1200_.jpg" },
   { title: "A Little Something Extra",                  zh: "不一样的小事",                      year: "2024", released: "April 17, 2026", genre: "喜剧", amc: "a-little-something-extra-77200",                  rank: 22, imdbScore: 7.0, posterUrl: "https://m.media-amazon.com/images/M/MV5BZTAwODk4M2UtNjEyZC00Y2QzLWJlZDEtNjY2YmE5NGExMzVjXkEyXkFqcGc@._V1_QL90_UX1200_.jpg" },
   { title: "Speed Racer",                               zh: "极速赛车手",                       year: "2008", released: "April 20, 2026", genre: "动作", amc: "speed-racer-83438",                               rank: 23, imdbScore: 6.1, posterUrl: "https://m.media-amazon.com/images/M/MV5BNzE3MWIxNzktYzQyMy00NGQ5LThmZTktM2ZkZjc0NWEzZTg5XkEyXkFqcGc@._V1_QL90_UX1200_.jpg" },
-  { title: "AMC Scream Unseen: April 20",               zh: "AMC Scream Unseen: April 20", year: "2026", released: "April 20, 2026", genre: "恐怖", amc: "amc-scream-unseen-april-20-83301",                rank: 24, imdbScore: null, posterUrl: null },
 ];
 
 export const ALL_GENRES = [...new Set(MOVIE_CATALOG.map(m => m.genre))].sort();
