@@ -47,12 +47,12 @@ npm run dev
 
 **标准模式（跳过已有）：**
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && npm run warm-catalog
+cd /Users/oldfisherman/Projects/cine-companion && npm run warm-catalog
 ```
 
 **强制重烘焙所有内容：**
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && FORCE=1 npm run warm-catalog
+cd /Users/oldfisherman/Projects/cine-companion && FORCE=1 npm run warm-catalog
 ```
 
 **只重烘焙 verdict（修改了决策卡 prompt 后使用）：**
@@ -60,7 +60,7 @@ cd /Users/oldfisherman/Desktop/cine-companion && FORCE=1 npm run warm-catalog
 使用 Node.js 直接调用 API，只更新 `_verdict` 键：
 
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && node -e "
+cd /Users/oldfisherman/Projects/cine-companion && node -e "
 const fs = require('fs');
 const path = require('path');
 
@@ -105,7 +105,7 @@ const entries = [...src.matchAll(/title:\s*\"([^\"]+)\"[^}]*?zh:\s*\"([^\"]+)\"[
 ### 第四步：验证结果
 
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && node -e "
+cd /Users/oldfisherman/Projects/cine-companion && node -e "
 const b = require('./app/generated/baked.json');
 const keys = Object.keys(b);
 const meta = keys.filter(k => k.endsWith('_meta')).length;
@@ -130,7 +130,7 @@ console.log('  total:    ', keys.length, '个键');
 如果内容更新有意义（如修改了 prompt 后重烘焙）：
 
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && git add app/generated/baked.json && git commit -m "chore: rebake AI content$([ -n \"$CONTENT_TYPE\" ] && echo \" ($CONTENT_TYPE)\" || echo \"\")"
+cd /Users/oldfisherman/Projects/cine-companion && git add app/generated/baked.json && git commit -m "chore: rebake AI content$([ -n \"$CONTENT_TYPE\" ] && echo \" ($CONTENT_TYPE)\" || echo \"\")"
 ```
 
 ---

@@ -98,13 +98,13 @@ JSON.stringify(
 对新增片运行补全：
 
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && node scripts/bake-posters.mjs
+cd /Users/oldfisherman/Projects/cine-companion && node scripts/bake-posters.mjs
 ```
 
 ### 第七步：验证 + 提交
 
 ```bash
-cd /Users/oldfisherman/Desktop/cine-companion && npx tsc --noEmit
+cd /Users/oldfisherman/Projects/cine-companion && npx tsc --noEmit
 ```
 
 无报错后提交：

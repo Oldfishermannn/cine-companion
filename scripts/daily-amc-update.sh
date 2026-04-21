@@ -15,7 +15,7 @@
 set -u
 
 # ── Paths ──────────────────────────────────────────────────────────────────
-PROJECT_DIR="/Users/oldfisherman/Desktop/cine-companion"
+PROJECT_DIR="/Users/oldfisherman/Projects/cine-companion"
 LOG_DIR="$HOME/Library/Logs/cine-companion"
 LOG_FILE="$LOG_DIR/daily-amc.log"
 CHECK_DEPS="$HOME/.claude/plugins/cache/web-access/web-access/2.4.2/scripts/check-deps.mjs"
