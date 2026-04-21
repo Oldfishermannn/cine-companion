@@ -78,8 +78,9 @@ async function warmOne({ title, zh, year }) {
   const tag = `${title} (${year})`;
 
   // Step 1 — resolve IMDb ID + full metadata via /api/movie
+  // Pass `year` so anniversary re-releases / historic films match correctly
   const movieRes = await fetch(
-    `${BASE_URL}/api/movie?q=${encodeURIComponent(title)}&zh=${encodeURIComponent(zh)}`,
+    `${BASE_URL}/api/movie?q=${encodeURIComponent(title)}&zh=${encodeURIComponent(zh)}&year=${encodeURIComponent(year || "")}`,
     { signal: AbortSignal.timeout(60_000) },
   );
   if (!movieRes.ok) throw new Error(`/api/movie ${movieRes.status}`);

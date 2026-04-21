@@ -331,18 +331,22 @@ export async function GET(req: NextRequest) {
   const query = chineseInput ? await translateToEnglishTitle(rawQuery) : rawQuery;
   // "Bridesmaids: 15th Anniversary" → "Bridesmaids" 用来搜 OMDb 原片
   const searchQuery = stripReReleaseSuffix(query);
+  const isReRelease = searchQuery !== query;
 
   try {
     // ── Stage 1: Try OMDb ─────────────────────────────────────────────────────
     let omdbOk = false;
     try {
+      // 周年重映 / 重映：URL 的 year 是重映年份，不是原片年份——不传 y 给 OMDb
       const omdbParams: Record<string, string> = { s: searchQuery, type: "movie" };
-      if (yearHint) omdbParams.y = yearHint;
+      if (yearHint && !isReRelease) omdbParams.y = yearHint;
       const searchResult = await fetchOMDb(omdbParams);
       if (searchResult.Response !== "False") {
         const topResult = searchResult.Search[0];
         const detail = await fetchOMDb({ i: topResult.imdbID, plot: "short" });
-        if (detail.Response !== "False" && isTitleMatch(detail.Title, detail.Year, query, yearHint)) {
+        // 重映时不做年份匹配（原片年份 ≠ catalog 年份）；但要绕过 old-film 过滤
+        const effectiveYear = isReRelease ? detail.Year : yearHint;
+        if (detail.Response !== "False" && isTitleMatch(detail.Title, detail.Year, query, effectiveYear)) {
           omdbOk = true;
           const rtRating = detail.Ratings?.find(
             (r: { Source: string; Value: string }) => r.Source === "Rotten Tomatoes"
@@ -394,7 +398,8 @@ export async function GET(req: NextRequest) {
 
     // ── Stage 2: OMDb miss or mismatch → IMDb direct scrape ──────────────────
     void omdbOk; // OMDb returned wrong movie; scrape IMDb instead
-    const imdbData = await searchIMDb(searchQuery, zhFromClient, yearHint);
+    // 重映：yearHint 指向重映年（2026），原片是 1986/2011——不要用它过滤 IMDb 结果
+    const imdbData = await searchIMDb(searchQuery, zhFromClient, isReRelease ? "" : yearHint);
     if (imdbData) {
       // 优先：客户端人工审核 > 中文搜索词 > AI 翻译
       const zhTitle = zhFromClient || chineseInput || imdbData.zhTitle;
