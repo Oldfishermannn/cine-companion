@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "m.media-amazon.com" },
       { protocol: "https", hostname: "ia.media-imdb.com" },
+      // TMDB fallback for posters that IMDb has pulled (e.g. Broken Bird).
+      { protocol: "https", hostname: "image.tmdb.org" },
     ],
   },
   // Include pre-warmed cache files in serverless function bundles on Vercel
