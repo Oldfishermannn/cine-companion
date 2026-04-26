@@ -268,14 +268,19 @@ function stripArticle(s: string) {
   return s.replace(/^(the|a|an) /, "");
 }
 
-// 去掉 "Nth Anniversary" / ": Anniversary Edition" / "15th Anniversary" 等后缀
-// 让 "Bridesmaids: 15th Anniversary" 可以匹配到原片 "Bridesmaids"
+// 去掉重映/纪念版/修复版的尾巴，让 OMDb 能搜到原片：
+//   "Bridesmaids: 15th Anniversary" → "Bridesmaids"
+//   "Fight Club 4K Remaster"        → "Fight Club"
+//   "Apocalypse Now (Re-release)"   → "Apocalypse Now"
 function stripReReleaseSuffix(t: string): string {
   return t
     .replace(/:\s*\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
     .replace(/\s+\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
     .replace(/:\s*Anniversary\s+Edition.*$/i, "")
     .replace(/\s+\(Re-?release\)$/i, "")
+    .replace(/[:\s]+(4K|8K)\s+(Remaster(ed)?|Restoration|Restored|IMAX).*$/i, "")
+    .replace(/[:\s]+(Director'?s|Final|Extended|Theatrical)\s+(Cut|Edition|Version).*$/i, "")
+    .replace(/[:\s]+(Remastered|Restored|IMAX)\s*$/i, "")
     .trim();
 }
 
