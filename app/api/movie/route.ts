@@ -268,9 +268,9 @@ function stripArticle(s: string) {
   return s.replace(/^(the|a|an) /, "");
 }
 
-// 去掉重映/纪念版/修复版的尾巴，让 OMDb 能搜到原片：
-//   "Bridesmaids: 15th Anniversary" → "Bridesmaids"
-//   "Fight Club 4K Remaster"        → "Fight Club"
+// 真正的"重映/纪念版/导演剪辑"——剥后片是老片，年份要按原片来：
+//   "Bridesmaids: 15th Anniversary" → "Bridesmaids" (原 2011)
+//   "Fight Club 4K Remaster"        → "Fight Club"  (原 1999)
 //   "Apocalypse Now (Re-release)"   → "Apocalypse Now"
 function stripReReleaseSuffix(t: string): string {
   return t
@@ -278,9 +278,20 @@ function stripReReleaseSuffix(t: string): string {
     .replace(/\s+\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
     .replace(/:\s*Anniversary\s+Edition.*$/i, "")
     .replace(/\s+\(Re-?release\)$/i, "")
-    .replace(/[:\s]+(4K|8K)\s+(Remaster(ed)?|Restoration|Restored|IMAX).*$/i, "")
+    .replace(/[:\s]+(4K|8K)\s+(Remaster(ed)?|Restoration|Restored).*$/i, "")
     .replace(/[:\s]+(Director'?s|Final|Extended|Theatrical)\s+(Cut|Edition|Version).*$/i, "")
-    .replace(/[:\s]+(Remastered|Restored|IMAX)\s*$/i, "")
+    .replace(/[:\s]+Remastered\s*$/i, "")
+    .replace(/[:\s]+Restored\s*$/i, "")
+    .trim();
+}
+
+// 格式变体——3D / IMAX 只是放映格式，原片年份 = catalog 年份：
+//   "Blue Angels 3D"  → search "Blue Angels"  (still 2024)
+//   "Avatar IMAX"     → search "Avatar"       (still 2009)
+function stripFormatSuffix(t: string): string {
+  return t
+    .replace(/[:\s]+IMAX\s*$/i, "")
+    .replace(/[:\s]+3-?D\s*$/i, "")
     .trim();
 }
 
@@ -334,21 +345,51 @@ export async function GET(req: NextRequest) {
   // 同时保留原始中文作为展示用 zhTitle
   const chineseInput = hasChinese(rawQuery) ? rawQuery : null;
   const query = chineseInput ? await translateToEnglishTitle(rawQuery) : rawQuery;
-  // "Bridesmaids: 15th Anniversary" → "Bridesmaids" 用来搜 OMDb 原片
-  const searchQuery = stripReReleaseSuffix(query);
-  const isReRelease = searchQuery !== query;
+  // 1) 周年/重映剥离 — 触发 isReRelease（搜原片，不传 catalog 年份）
+  // 2) 格式变体 (3D/IMAX) 也剥 — 但 isReRelease 不变，依然用 catalog 年份
+  const reReleaseStripped = stripReReleaseSuffix(query);
+  const isReRelease = reReleaseStripped !== query;
+  const searchQuery = stripFormatSuffix(reReleaseStripped);
 
   try {
     // ── Stage 1: Try OMDb ─────────────────────────────────────────────────────
     let omdbOk = false;
     try {
-      // 周年重映 / 重映：URL 的 year 是重映年份，不是原片年份——不传 y 给 OMDb
-      const omdbParams: Record<string, string> = { s: searchQuery, type: "movie" };
-      if (yearHint && !isReRelease) omdbParams.y = yearHint;
-      const searchResult = await fetchOMDb(omdbParams);
-      if (searchResult.Response !== "False") {
-        const topResult = searchResult.Search[0];
-        const detail = await fetchOMDb({ i: topResult.imdbID, plot: "short" });
+      // OMDb 有两个搜索端点：
+      //   ?s=  全文搜索 — 但对未来年份会返回 SQL 错误，不靠谱
+      //   ?t=  片名精确匹配 — 对 future-year 友好，命中率高，作为优先尝试
+      // 周年重映：URL 的 year 是重映年份，不是原片年份——不传 y 给 OMDb
+      const useYear = yearHint && !isReRelease;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let detail: any = null;
+
+      // 1a) 先试 t= 精确名 — 对新片 / future-year 比 s= 更靠谱
+      try {
+        const tParams: Record<string, string> = { t: searchQuery, plot: "short" };
+        if (useYear) tParams.y = yearHint;
+        const tResult = await fetchOMDb(tParams);
+        if (tResult.Response !== "False" && isTitleMatch(
+          tResult.Title as string,
+          tResult.Year as string,
+          query,
+          isReRelease ? (tResult.Year as string) : yearHint,
+        )) {
+          detail = tResult;
+        }
+      } catch { /* fall through to s= */ }
+
+      // 1b) 退回 s= 全文搜索
+      if (!detail) {
+        const omdbParams: Record<string, string> = { s: searchQuery, type: "movie" };
+        if (useYear) omdbParams.y = yearHint;
+        const searchResult = await fetchOMDb(omdbParams);
+        if (searchResult.Response !== "False") {
+          const topResult = searchResult.Search[0];
+          detail = await fetchOMDb({ i: topResult.imdbID, plot: "short" });
+        }
+      }
+
+      if (detail) {
         // 重映时不做年份匹配（原片年份 ≠ catalog 年份）；但要绕过 old-film 过滤
         const effectiveYear = isReRelease ? detail.Year : yearHint;
         if (detail.Response !== "False" && isTitleMatch(detail.Title, detail.Year, query, effectiveYear)) {
