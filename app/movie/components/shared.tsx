@@ -6,6 +6,7 @@ import { FACT_CATEGORY_ICON, CATEGORY_STYLES } from "../types";
 import { speak, capitalize } from "../utils";
 import { useLang } from "../../i18n/LangProvider";
 import { SPOILER_CAT_EN } from "../../i18n/strings";
+import { wrapAffiliate } from "@/lib/affiliate";
 
 export function RatingBlock({ value, label, href }: { value: string | null; label: string; href?: string }) {
   const inner = (
@@ -136,7 +137,11 @@ export function SourceBadge({ type }: { type: "data" | "ai" | "inferred" | "offi
   return <span className={`source-badge ${type}`}>{t(keyMap[type])}</span>;
 }
 
-/* ── Affiliate URL builder ── */
+/* ── Affiliate URL builder ──
+   Builds the AMC URL with UTM params, then optionally wraps it through
+   the configured affiliate network (FlexOffers / CJ / direct). The wrap
+   is a no-op until NEXT_PUBLIC_AFFILIATE_LIVE=1 is set in Vercel env
+   — see lib/affiliate.ts. */
 export function buildAmcUrl(amcSlug: string, params: {
   movie: string;
   position: "hero" | "inline" | "sticky";
@@ -150,7 +155,10 @@ export function buildAmcUrl(amcSlug: string, params: {
     utm_content: params.position,
     utm_term: params.movie,
   });
-  return `${base}?${utm}`;
+  const fullUrl = `${base}?${utm}`;
+  // Sub-ID lets the affiliate network surface position/movie in reports.
+  const subId = `${params.source ?? "detail"}:${params.position}:${amcSlug}`;
+  return wrapAffiliate(fullUrl, subId);
 }
 
 /* ── Ticket CTA button ── */
