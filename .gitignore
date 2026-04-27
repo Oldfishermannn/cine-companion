@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code runtime
+.claude/scheduled_tasks.lock
+
+# AI content cache (regenerable; do not bloat the repo)
+/cache/
