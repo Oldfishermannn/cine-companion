@@ -259,6 +259,64 @@ body::after {
   }
 }
 
+/* ── HOME INTRO — Editor's Note hero pitch ─────
+   Sits between the masthead and the Editor's Slate. Magazine-style
+   editor's column for first-time visitors arriving from social
+   posts; tells them what the publication is in 3 seconds. */
+
+.home-intro {
+  margin: 36px 0 24px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--rule);
+}
+.home-intro-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.home-intro-mark .sec { color: var(--vermilion); font-size: 0.9rem; }
+.home-intro-mark .rule { flex: 1; height: 1px; background: var(--rule); }
+.home-intro-lead {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: clamp(1.05rem, 2.3vw, 1.4rem);
+  font-weight: 400;
+  color: var(--cream);
+  line-height: 1.65;
+  letter-spacing: 0.005em;
+  margin: 0 0 14px;
+  max-width: 760px;
+}
+.home-intro-features {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  color: var(--amber);
+  margin: 0 0 22px;
+  text-transform: uppercase;
+}
+.home-intro-cta {
+  display: inline-block;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-decoration: none;
+  border: 1px solid var(--amber-dim);
+  padding: 10px 18px;
+  transition: background 0.2s, color 0.2s;
+}
+.home-intro-cta:hover {
+  background: var(--amber);
+  color: var(--ink);
+}
+
 /* ── ① THE EDITOR'S SLATE (top 4 AMC films) ─────
    Asymmetric: one big poster on the left, three smaller ones stepped
    down and to the right. Each poster carries a huge screen-blended

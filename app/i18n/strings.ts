@@ -190,6 +190,10 @@ export const STRINGS: StringTable = {
   "home.sceneScifi":        { zh: "科幻迷友",          en: "Sci-Fi Fans" },
   "home.sceneNew":          { zh: "本周新片",          en: "New This Week" },
   "home.mastheadSub":       { zh: "不剧透，帮你快速决定值不值得去影院看", en: "No spoilers — quickly decide if it's worth the trip to the theater" },
+  "home.heroSection":       { zh: "Editor's Note · 编者按",   en: "Editor's Note" },
+  "home.heroLead":          { zh: "听不懂英语电影笑点？字幕都看不全？Lights Out 用 AI 把每部 AMC 院线片 为北美华人读了一遍。", en: "Missing the jokes in English films? Lights Out reads every AMC release for you, in Chinese, before you sit down." },
+  "home.heroFeatures":      { zh: "词汇预习 · 背景知识 · 厕所时间 · 观后复盘 · 暗光实时查词", en: "Vocabulary · Background · Bathroom timing · Post-film review · In-theater word lookup" },
+  "home.heroCta":           { zh: "看本周热映", en: "See What's Showing" },
 
   // ── Post-movie extras ─────────────────────────────────────────────────
   "post.q1":                { zh: "还行",              en: "Meh" },

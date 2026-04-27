@@ -6,6 +6,7 @@ import { readCache } from "@/lib/cache";
 import { lookupImdbId } from "@/lib/baked-index";
 import { LangSwitcher } from "./components/LangSwitcher";
 import { MastheadSub } from "./components/MastheadSub";
+import { HomeIntro } from "./components/HomeIntro";
 
 export const metadata: Metadata = {
   title: "Lights Out — 值不值得看",
@@ -97,6 +98,9 @@ export default async function Home() {
             <MastheadSub />
           </div>
         </header>
+
+        {/* ── EDITOR'S NOTE — 3-second value prop for first-time visitors ── */}
+        <HomeIntro />
 
         {/* SEO: server-rendered movie list for crawlers */}
         <noscript>

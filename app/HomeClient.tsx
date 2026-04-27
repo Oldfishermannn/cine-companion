@@ -376,7 +376,7 @@ export function HomeClient({ catalog, genres, verdictMap = {} }: {
       <FeaturedSlate films={editorsSlate} />
 
       {/* ── ② NOW SHOWING (AMC GRID) ── */}
-      <section className="fade-up" style={{ animationDelay: "180ms", marginTop: 12 }}>
+      <section id="now-showing" className="fade-up" style={{ animationDelay: "180ms", marginTop: 12, scrollMarginTop: 24 }}>
         <div className="section-mark">
           <span className="sec">§</span>
           <span>02 · Now Showing · AMC · {filterCount} Films</span>
