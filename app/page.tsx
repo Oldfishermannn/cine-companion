@@ -7,6 +7,7 @@ import { lookupImdbId } from "@/lib/baked-index";
 import { LangSwitcher } from "./components/LangSwitcher";
 import { MastheadSub } from "./components/MastheadSub";
 import { HomeIntro } from "./components/HomeIntro";
+import { SocialFollow } from "./components/SocialFollow";
 
 export const metadata: Metadata = {
   title: "Lights Out — 值不值得看",
@@ -122,6 +123,9 @@ export default async function Home() {
 
         {/* ── ⑦ COLOPHON ── */}
         <footer className="fade-up" style={{ animationDelay: "400ms", marginTop: 72, paddingTop: 24, borderTop: "1px solid var(--rule)" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
+            <SocialFollow variant="footer" />
+          </div>
           <div style={{
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.58rem",

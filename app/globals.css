@@ -317,6 +317,69 @@ body::after {
   color: var(--ink);
 }
 
+/* ── XIAOHONGSHU FOLLOW CTA ─────
+   Used in footers + after share-card actions. Quietly editorial,
+   not flashy — fits the magazine aesthetic. */
+
+.xhs-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  text-decoration: none;
+  background: rgba(255, 60, 60, 0.06);
+  border: 1px solid rgba(255, 60, 60, 0.25);
+  color: var(--cream);
+  transition: background 0.2s, border-color 0.2s;
+  font-family: var(--font-body), sans-serif;
+}
+.xhs-follow:hover {
+  background: rgba(255, 60, 60, 0.12);
+  border-color: rgba(255, 60, 60, 0.5);
+}
+.xhs-follow .xhs-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: #ff2741;
+  color: #fff;
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.xhs-follow .xhs-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.25;
+}
+.xhs-follow .xhs-line1 {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+}
+.xhs-follow .xhs-line2 {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.xhs-follow .xhs-arrow {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-left: 2px;
+}
+.xhs-follow-footer {
+  margin: 0 auto 8px;
+}
+.xhs-follow-inline {
+  margin-top: 14px;
+}
+
 /* ── ① THE EDITOR'S SLATE (top 4 AMC films) ─────
    Asymmetric: one big poster on the left, three smaller ones stepped
    down and to the right. Each poster carries a huge screen-blended

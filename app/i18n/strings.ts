@@ -214,6 +214,9 @@ export const STRINGS: StringTable = {
   "share.copyFallback":     { zh: "复制下面这条链接：", en: "Copy this link:" },
   "share.platforms":        { zh: "适合 · 小红书 · 朋友圈 · 即刻 · 微信群", en: "Best on · Xiaohongshu · WeChat · Discord" },
 
+  // ── Social ────────────────────────────────────────────────────────────
+  "social.xhsFollow":       { zh: "关注小红书 · 每周新片速览", en: "Follow on Xiaohongshu · Weekly picks" },
+
   // ── Source badges ─────────────────────────────────────────────────────
   "badge.data":             { zh: "数据来源",          en: "Data Source" },
   "badge.ai":               { zh: "AI 整理",           en: "AI Generated" },

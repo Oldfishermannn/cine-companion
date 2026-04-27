@@ -18,6 +18,7 @@ import { RATING_DIMS } from "../types";
 import type { MovieData } from "../types";
 import { track } from "@/lib/analytics";
 import { SectionLabel } from "./shared";
+import { SocialFollow } from "../../components/SocialFollow";
 
 const SITE_URL = "lights-out-cinema.vercel.app";
 
@@ -358,6 +359,10 @@ export function ShareCard({ data, scores, oneLiner }: Props) {
         }}>
           {t("share.platforms")}
         </p>
+
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <SocialFollow variant="inline" />
+        </div>
       </div>
     </section>
   );
