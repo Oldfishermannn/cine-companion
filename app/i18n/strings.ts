@@ -217,6 +217,17 @@ export const STRINGS: StringTable = {
   // ── Social ────────────────────────────────────────────────────────────
   "social.xhsFollow":       { zh: "关注小红书 · 每周新片速览", en: "Follow on Xiaohongshu · Weekly picks" },
 
+  // ── PWA install prompt ────────────────────────────────────────────────
+  "pwa.installCta":         { zh: "添加到主屏幕",         en: "Add to Home Screen" },
+  "pwa.installHint":        { zh: "一键打开 · 看片更快",   en: "One tap, faster launch" },
+  "pwa.addBtn":             { zh: "添加",                en: "Add" },
+  "pwa.iosBtn":             { zh: "怎么加",              en: "How" },
+  "pwa.dismiss":            { zh: "稍后再说",             en: "Later" },
+  "pwa.iosTitle":           { zh: "添加 影伴 到主屏幕",    en: "Add Lights Out to Home Screen" },
+  "pwa.iosStep1":           { zh: "Safari 底部点 ⤴︎ 分享按钮", en: "Tap ⤴︎ Share at the bottom in Safari" },
+  "pwa.iosStep2":           { zh: "向下找「添加到主屏幕」",  en: "Scroll to 'Add to Home Screen'" },
+  "pwa.iosStep3":           { zh: "右上角点「添加」",        en: "Tap 'Add' in the top right" },
+
   // ── Source badges ─────────────────────────────────────────────────────
   "badge.data":             { zh: "数据来源",          en: "Data Source" },
   "badge.ai":               { zh: "AI 整理",           en: "AI Generated" },

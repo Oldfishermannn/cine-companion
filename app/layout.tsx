@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Outfit, Fraunces, JetBrains_Mono, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "./i18n/LangProvider";
+import { InstallPrompt } from "./components/InstallPrompt";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-display-alt",
@@ -50,6 +51,17 @@ const notoSerifSC = Noto_Serif_SC({
 export const metadata: Metadata = {
   title: "Lights Out — 值不值得看",
   description: "北美院线观影助手",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "影伴",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#08080C",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -63,7 +75,10 @@ export default function RootLayout({
       className={`${cormorant.variable} ${outfit.variable} ${fraunces.variable} ${jetbrainsMono.variable} ${notoSerifSC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          {children}
+          <InstallPrompt />
+        </LangProvider>
       </body>
     </html>
   );

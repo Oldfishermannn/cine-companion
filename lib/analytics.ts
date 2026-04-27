@@ -26,7 +26,11 @@ type EventName =
   | "share_card_download"
   | "share_card_copy_link"
   | "xhs_follow_click"
-  | "hero_cta_click";
+  | "hero_cta_click"
+  | "pwa_install_click"
+  | "pwa_install_choice"
+  | "pwa_install_dismiss"
+  | "pwa_install_ios_open";
 
 type EventProps = Record<string, string | number | boolean | null | undefined>;
 

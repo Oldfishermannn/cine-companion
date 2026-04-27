@@ -2574,9 +2574,173 @@ body::after {
 }
 .act-head .title { color: var(--cream); }
 
+/* ── PWA INSTALL PROMPT ─────────────
+   Floating bottom bar that asks Android Chrome to install, or shows
+   iOS Safari users the manual ⤴︎ → Add to Home Screen flow. Sits above
+   everything else (z-index: 80) but below modals. Surfaces 25s after
+   first paint so the visitor can read the Editor's Note first. */
 
+.install-prompt {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(14, 14, 20, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--amber-dim);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+}
 
+.install-prompt-icon {
+  font-family: var(--font-mono), monospace;
+  font-size: 1.4rem;
+  color: var(--amber);
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
 
+.install-prompt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.install-prompt-cta {
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.install-prompt-hint {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+}
+
+.install-prompt-add {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--amber);
+  border: 1px solid var(--amber);
+  padding: 8px 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.install-prompt-add:hover {
+  background: var(--cream);
+  border-color: var(--cream);
+}
+
+.install-prompt-close {
+  font-family: var(--font-mono), monospace;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.install-prompt-close:hover {
+  color: var(--cream);
+}
+
+/* iOS instructions overlay */
+.install-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(8, 8, 12, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.install-overlay-card {
+  background: var(--bg-card);
+  border: 1px solid var(--amber-dim);
+  padding: 24px 22px 18px;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.install-overlay-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.install-overlay-steps {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--font-zh-display), 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--cream);
+}
+
+.install-overlay-steps li::marker {
+  color: var(--amber);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.78rem;
+}
+
+.install-overlay-close {
+  align-self: flex-end;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: transparent;
+  border: 1px solid var(--amber-dim);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.install-overlay-close:hover {
+  background: var(--amber);
+  color: var(--ink);
+}
 
 
 
