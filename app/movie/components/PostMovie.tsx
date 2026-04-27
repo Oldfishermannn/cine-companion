@@ -6,6 +6,7 @@ import { RATING_DIMS, EGG_ICON } from "../types";
 import { saveRating } from "../utils";
 import { SectionLabel, FactCard, ErrorBanner } from "./shared";
 import { CharacterGraph } from "./CharacterGraph";
+import { ShareCard } from "./ShareCard";
 import { useLang } from "../../i18n/LangProvider";
 import { EGG_CAT_EN, SPOILER_CAT_EN } from "../../i18n/strings";
 
@@ -19,6 +20,7 @@ interface PostMovieProps {
   setPostUnlocked: (v: boolean) => void;
   personalScores: number[];
   setPersonalScores: (v: number[]) => void;
+  oneLiner?: string;
 }
 
 /* ── Radar Chart (SVG, 5-axis) ── */
@@ -227,6 +229,7 @@ function PlotSummary({ sections, theme }: { sections: { title: string; content: 
 export function PostMovie({
   data, postContent, postLoading, postFromCache, postError,
   postUnlocked, setPostUnlocked, personalScores, setPersonalScores,
+  oneLiner,
 }: PostMovieProps) {
   const { lang, t } = useLang();
   return (
@@ -446,6 +449,9 @@ export function PostMovie({
               })()}
             </div>
           </section>
+
+          {/* ── Share Card — viral loop, only renders if any dim rated ── */}
+          <ShareCard data={data} scores={personalScores} oneLiner={oneLiner} />
         </>
       )}
     </div>

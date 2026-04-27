@@ -22,7 +22,11 @@ type EventName =
   | "home_page_view"
   | "home_card_click"
   | "home_filter_click"
-  | "home_sort_click";
+  | "home_sort_click"
+  | "share_card_download"
+  | "share_card_copy_link"
+  | "xhs_follow_click"
+  | "hero_cta_click";
 
 type EventProps = Record<string, string | number | boolean | null | undefined>;
 

@@ -200,6 +200,16 @@ export const STRINGS: StringTable = {
   "post.protagonist":       { zh: "主角",              en: "Lead" },
   "post.supporting":        { zh: "配角",              en: "Supporting" },
 
+  // ── Share card ────────────────────────────────────────────────────────
+  "share.title":            { zh: "分享我的观影笔记",   en: "Share My Review" },
+  "share.hint":             { zh: "保存图片发到小红书 / 朋友圈，或复制链接发给朋友", en: "Save the image for Xiaohongshu / WeChat, or copy the link" },
+  "share.download":         { zh: "保存图片",           en: "Save Image" },
+  "share.downloading":      { zh: "生成中…",            en: "Saving…" },
+  "share.copyLink":         { zh: "复制链接",           en: "Copy Link" },
+  "share.copied":           { zh: "✓ 已复制",           en: "✓ Copied" },
+  "share.copyFallback":     { zh: "复制下面这条链接：", en: "Copy this link:" },
+  "share.platforms":        { zh: "适合 · 小红书 · 朋友圈 · 即刻 · 微信群", en: "Best on · Xiaohongshu · WeChat · Discord" },
+
   // ── Source badges ─────────────────────────────────────────────────────
   "badge.data":             { zh: "数据来源",          en: "Data Source" },
   "badge.ai":               { zh: "AI 整理",           en: "AI Generated" },

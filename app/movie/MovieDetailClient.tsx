@@ -543,6 +543,7 @@ export default function MovieDetailClient({ query, zhFromUrl, amcSlug, yearFromU
                   setPostUnlocked={setPostUnlocked}
                   personalScores={personalScores}
                   setPersonalScores={setPersonalScores}
+                  oneLiner={verdictContent?.one_line_summary || undefined}
                 />
               )}
             </div>
