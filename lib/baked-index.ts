@@ -14,6 +14,7 @@
  */
 
 import baked from "@/app/generated/baked.json";
+import { stripAllSuffixes } from "./title-strip";
 
 type MetaEntry = { title?: string };
 
@@ -43,13 +44,21 @@ for (const [key, value] of Object.entries(baked as Record<string, unknown>)) {
  *   1. Exact match
  *   2. Case-insensitive match (e.g. catalog "Goat" vs OMDb "GOAT")
  *   3. Article-stripped match (e.g. catalog "Exit 8" vs OMDb "The Exit 8")
+ *   4. Re-release/format-stripped match (e.g. catalog "Fight Club 4K
+ *      Remaster" vs baked "Fight Club"; "Blue Angels 3D" vs "The Blue Angels")
+ *      — runs both stripAllSuffixes AND article-strip on the result, since
+ *      the canonical form may also have a leading article.
  * Returns null for non-catalog movies that haven't been warmed.
  */
 export function lookupImdbId(title: string): string | null {
+  const stripped = stripAllSuffixes(title);
   return (
     TITLE_TO_ID.get(title) ??
     TITLE_TO_ID_LOWER.get(title.toLowerCase()) ??
     TITLE_TO_ID_NORMALIZED.get(normalizeTitle(title)) ??
+    TITLE_TO_ID.get(stripped) ??
+    TITLE_TO_ID_LOWER.get(stripped.toLowerCase()) ??
+    TITLE_TO_ID_NORMALIZED.get(normalizeTitle(stripped)) ??
     null
   );
 }

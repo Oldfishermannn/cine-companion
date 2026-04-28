@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSimpleText } from "@/lib/ai";
+import { stripReReleaseSuffix, stripFormatSuffix } from "@/lib/title-strip";
 
 const GOOGLEBOT_UA = "Googlebot/2.1 (+http://www.google.com/bot.html)";
 
@@ -268,32 +269,10 @@ function stripArticle(s: string) {
   return s.replace(/^(the|a|an) /, "");
 }
 
-// 真正的"重映/纪念版/导演剪辑"——剥后片是老片，年份要按原片来：
-//   "Bridesmaids: 15th Anniversary" → "Bridesmaids" (原 2011)
-//   "Fight Club 4K Remaster"        → "Fight Club"  (原 1999)
-//   "Apocalypse Now (Re-release)"   → "Apocalypse Now"
-function stripReReleaseSuffix(t: string): string {
-  return t
-    .replace(/:\s*\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
-    .replace(/\s+\d+(st|nd|rd|th)\s+Anniversary.*$/i, "")
-    .replace(/:\s*Anniversary\s+Edition.*$/i, "")
-    .replace(/\s+\(Re-?release\)$/i, "")
-    .replace(/[:\s]+(4K|8K)\s+(Remaster(ed)?|Restoration|Restored).*$/i, "")
-    .replace(/[:\s]+(Director'?s|Final|Extended|Theatrical)\s+(Cut|Edition|Version).*$/i, "")
-    .replace(/[:\s]+Remastered\s*$/i, "")
-    .replace(/[:\s]+Restored\s*$/i, "")
-    .trim();
-}
-
-// 格式变体——3D / IMAX 只是放映格式，原片年份 = catalog 年份：
-//   "Blue Angels 3D"  → search "Blue Angels"  (still 2024)
-//   "Avatar IMAX"     → search "Avatar"       (still 2009)
-function stripFormatSuffix(t: string): string {
-  return t
-    .replace(/[:\s]+IMAX\s*$/i, "")
-    .replace(/[:\s]+3-?D\s*$/i, "")
-    .trim();
-}
+// stripReReleaseSuffix / stripFormatSuffix moved to lib/title-strip so the
+// home-grid imdbId lookup (lib/baked-index) can share the same regex set —
+// otherwise re-release titles like "Fight Club 4K Remaster" silently miss
+// verdictMap and fall to the end of the home grid.
 
 // Title match: same logic as homepage + movie page
 // `expectedYear` — 目录年份提示。若给出且返回年份匹配（±1），接受；旧片保护关闭。
