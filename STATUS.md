@@ -1,6 +1,6 @@
 # Lights Out · 影伴 — STATUS
 
-> Updated: 2026-04-27 (CEO mode session: distribution stack P0)
+> Updated: 2026-04-27 (P1: PWA shipped + verified on prod)
 > Live: https://lights-out-cinema.vercel.app
 > Repo: github.com/Oldfishermannn/lights-out (main)
 
@@ -8,9 +8,9 @@
 
 ## 当前进度
 
-P0 「分发漏斗补丁」全部 ship 到 main，等 Vercel deploy 完成端到端验证。
+P1 「PWA 添加到主屏幕」上线、prod 验证通过。下一项 P1（邮件订阅 / 小红书 4 篇文案）继续推。
 
-### 已完成（4 个 commit 上 main）
+### 已完成（5 个 commit 上 main）
 
 | Commit | What | Why |
 |--------|------|-----|
@@ -18,6 +18,7 @@ P0 「分发漏斗补丁」全部 ship 到 main，等 Vercel deploy 完成端到
 | `3b54ebb` | **首页 Editor's Note hero** | 3 秒钟向小红书来访者解释"我能帮你做什么"，杂志风 §章+amber CTA scroll to grid |
 | `638e1ab` | **小红书关注 CTA** + `lib/social.ts` | footer + share card 双位置；env 控制（`NEXT_PUBLIC_XHS_LIVE`）现在隐藏，账号建好就开 |
 | `83f10d0` | **AMC affiliate 链路 scaffold** + `lib/affiliate.ts` | 所有 TicketCTA 自动 wrap，FlexOffers 注册后只需设 env 就开始计费 |
+| `acdb468` | **PWA 添加到主屏幕** | manifest.ts + icon.tsx (512 amber 影) + apple-icon.tsx (180) + InstallPrompt.tsx（Android `beforeinstallprompt` + iOS Safari ⤴︎ 引导）；25s 延迟+7d dismiss 冷却；prod verified |
 
 ### 设计原则记录
 
@@ -34,9 +35,9 @@ P0 「分发漏斗补丁」全部 ship 到 main，等 Vercel deploy 完成端到
 2. **FlexOffers 注册批准后** → 加 `NEXT_PUBLIC_AFFILIATE_WRAP_URL` (含 `{url}` 占位符) + `NEXT_PUBLIC_AFFILIATE_LIVE=1`
 
 ### P1 · 我下一个 session 可继续的
-3. **PWA 添加到主屏幕** —— manifest.json + 引导弹窗（留存）
-4. **邮件订阅"新片上映提醒"** —— Vercel + Resend 免费层，主动召回用户
-5. **5 篇小红书笔记完整文案** —— 按董事长之前要求的"互联网套路"，已经给了 1 篇 demo（在对话里），其余 4 篇待写
+3. **邮件订阅"新片上映提醒"** —— Vercel + Resend 免费层，主动召回用户
+4. **5 篇小红书笔记完整文案** —— 按董事长之前要求的"互联网套路"，已经给了 1 篇 demo（在对话里），其余 4 篇待写
+5. ~~PWA 添加到主屏幕~~ ✅ shipped in `acdb468`
 
 ### P2 · 流量起来再做
 6. 单点付费 / sponsorship BD
@@ -77,3 +78,12 @@ P0 「分发漏斗补丁」全部 ship 到 main，等 Vercel deploy 完成端到
 - [x] **生产 JS bundle**: `0xw2myj7_vn4t.js` 含 `share.title` / `share.download` 键，`0k_f~fkp0ib~v.js` 含中文文案"保存图片"，`AFFILIATE_LIVE` env 检查已 ship
 - [x] **本地 dev 渲染**: `.home-intro` section 渲染，CTA `home-intro-cta` 链接到 `#now-showing` 锚点正确，`.xhs-follow` 隐藏（XHS_LIVE 未设）
 - [x] **运行时无 console error**（本地 dev 通过 preview MCP 检查）
+
+### PWA `acdb468`（prod verified 2026-04-27）
+
+- [x] `/manifest.webmanifest` 返回 200 + JSON（name `Lights Out · 影伴`、theme_color `#08080C`、icons 引用 /icon + /apple-icon）
+- [x] `/icon` 返回 PNG 512×512 RGBA 15.5KB（amber 影 字 on ink bg + 顶部 amber 条）
+- [x] `/apple-icon` 返回 PNG 180×180 RGBA 3.8KB
+- [x] HTML 注入：`theme-color #08080C`、`<link rel="manifest">`、`mobile-web-app-capable yes`、`apple-mobile-web-app-title 影伴`、`apple-mobile-web-app-status-bar-style black-translucent`、`apple-touch-icon` link
+- [x] **生产 JS bundle**: chunk `00z.r3sqjbue-.js` 含 `beforeinstallprompt`、`lo_pwa_dismissed_until`、所有 `pwa.*` i18n 键 → InstallPrompt 组件真上线
+- [x] tsc + next build clean（routes: `/manifest.webmanifest` `/icon` `/apple-icon` 都 prerendered as static）
